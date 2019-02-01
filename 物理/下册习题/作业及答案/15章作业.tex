@@ -1,0 +1,63 @@
+\documentclass[twocolumn]{revtex4}
+\usepackage{graphicx}
+\usepackage{CJK}
+%本文意在分析零温零密下手征磁化率出现发散的原因
+%采用非自洽1、A=1，不含fermion传播子标量的boson单圈近似Pi；2、A=1，含fermion自能的boson极化值
+\begin{document}
+\begin{CJK}{GBK}{song}
+
+\title{第十五章作业及参考答案}
+\maketitle
+
+第一题、已知一束光波波长为$\lambda=2\times10^{-2}nm$，其波长的不确定度为$1\times10^{-2}nm$，若动量不确定关系满足$\Delta
+x\Delta p=h$请问其光子位置的不确定度为多少？
+
+\bigskip
+
+解：
+
+首先我们根据光波长与光子动量的关系
+\begin{equation}\label{Eq1}
+   p=\frac{h}{\lambda}\Longrightarrow\Delta p=\frac{h}{\lambda^2}\Delta\lambda
+\end{equation}
+再考虑到动量不确定与位置的不确定性关系为
+\begin{equation}\label{eq2}
+    \Delta x=\frac{h}{\Delta p}=\frac{\lambda^2}{\Delta\lambda}=4\times10^{-2}nm
+\end{equation}
+
+
+第二题、试证明一维势阱中各个能级的粒子分布波函数彼此正交。
+
+\bigskip
+
+解：
+
+假设此一维势阱宽度为$~a~$。首先我们根据一维势阱性质，利用量子力学的有关知识可以知道任意能级的波函数为
+\begin{equation}\label{eq3}
+\psi(x)=\left\{
+  \begin{array}{ll}
+    0, & (x<0, ~x>a )\\
+   \sqrt{\frac{2}{a}}\sin\frac{n\pi}{a}x, & (0<x<a)
+  \end{array}
+\right.
+\end{equation}
+若证明函数正交，需要对于不同的$~n~$，计算函数域积分
+\begin{eqnarray*}
+% \nonumber to remove numbering (before each equation)
+  &&\int^\infty_{-\infty} \sqrt{\frac{2}{a}}\sin\frac{n\pi}{a}x\sqrt{\frac{2}{a}}\sin\frac{m\pi}{a}x \mathrm{d}x \nonumber\\
+&&=\frac{2}{a}\int^a_0 \sin\frac{n\pi}{a}x\sin\frac{m\pi}{a}x
+\mathrm{d}x\\
+   &&=\frac{1}{a}\int^a_0\left\{\cos\left[\frac{(n-m)\pi x}{a}\right]-\cos\left[\frac{(n+m)\pi x}{a}\right]\right\}\mathrm{d}x\\
+   &&=\frac{1}{a}\left[\frac{a}{(n-m)\pi}\left.\sin\frac{(n-m)\pi x}{a}\right|^a_0\right.\\&&~~~\left.-\frac{a}{(n+m)\pi}\left.\sin\frac{(n+m)\pi
+x}{a}\right|^a_0\right]\\
+&&=\left\{
+     \begin{array}{ll}
+       1, & n=m \\
+       0, & n\neq m
+     \end{array}
+   \right.
+\end{eqnarray*}
+得证。
+
+\end{CJK}
+\end{document}

@@ -1,0 +1,104 @@
+\documentclass[twocolumn]{revtex4}
+\usepackage{CJK}
+\begin{document}
+\begin{CJK}{GBK}{song}
+\title{第十一章作业及参考答案}
+
+\maketitle
+
+\begin{itemize}
+  \item 第一题、杨氏干涉实验中，已知双缝间距为$d$，缝屏距离为$d'$。如果用波长分别为$\lambda_1,~\lambda_2$的紫光和红光垂直照射双缝的中央。请问展示屏中何处红光紫光干涉条纹最强点重合？
+
+解：根据干涉加强条件
+\begin{equation}\label{eq1}
+    d\sin\theta=k\lambda~(k=0,1,\cdots)
+\end{equation}
+其中最大的亮纹级数为
+\begin{equation}\label{eq2}
+    k=\left[\frac{d}{\lambda}\right]
+\end{equation}
+在紫光红光重合处满足
+\begin{equation}\label{eq3}
+    k\lambda_1=k'\lambda_2\Longrightarrow\frac{k}{k'}=\frac{\lambda_2}{\lambda_1}
+\end{equation}
+此时的$\frac{k}{k'}$为最简分数表述形式。于是红紫光重合处的级数具有
+\begin{equation}\label{eq4}
+    n=kk'\leq\left[\frac{d}{\lambda_2}\right]
+\end{equation}
+
+  \item
+  第二题、在其他装置不变的情况下，仅上下平移单缝，发现中央明纹并不随缝上下移动，试解释其原由
+
+  答：
+
+  穿过凸透镜的平行光因玻璃折射发生弯曲，在焦点处平行光汇聚一点。该点的位置所对应的方向角仅与衍射加强光方向有关。
+  联系到本书所指的单缝衍射为弗朗赫菲衍射，入射光为平行光。仅改变单缝位置并没有改变透镜和展示屏的位置，因此中央明纹位置不变。
+
+
+  \item 第三题、一衍射光栅 300 条/mm ，入射光包括红光和紫光两种成分，垂直入射到光栅发现与光栅法线$24.46^\circ$角的方位上，红光和紫光谱线重合。
+  已知红、紫光波长大约为$\lambda_2\approx700nm,~\lambda_1\approx400nm$.
+
+  试问：(1)红光和紫光 的波长；(2)在何处还会出现红紫重合谱线？(3)在何处出现单一的红光谱线？
+
+解：根据明纹条件$(b+b')\sin \theta=\pm k\lambda$
+
+(1)、由题意可知光栅常数
+\begin{equation}\label{e31}
+(b+b')=\frac{1mm}{300}=3.33\times10^3nm
+\end{equation}
+对于红光
+\begin{eqnarray}
+% \nonumber to remove numbering (before each equation)
+  k &=& \frac{(b+b')\sin \theta}{\lambda_2}=\frac{3.33\times10^3nm}{700}\sin 24.26^\circ=1.95\approx2 \nonumber\\
+  \Rightarrow\lambda_2&=&\frac{(b+b')\sin \theta}{2}=690nm
+\end{eqnarray}
+同理可得紫光的波长为
+\begin{eqnarray}
+% \nonumber to remove numbering (before each equation)
+  k &=& \frac{(b+b')\sin \theta}{\lambda_1}=\frac{3.33\times10^3nm}{400}\sin 24.26^\circ=3.42\approx3 \nonumber\\
+ \Rightarrow \lambda_1&=&\frac{(b+b')\sin \theta}{3}=460nm
+\end{eqnarray}
+
+(2)、两光重合处满足$k'\lambda_1=k\lambda_2$ 于是就有
+\begin{equation}\label{e32}
+    \frac{k'}{k}=\frac{\lambda_2}{\lambda_1}=\frac{460}{690}=\frac{2}{3},\frac{4}{6},\frac{6}{9},\cdots
+\end{equation}
+而红光最大级数
+\begin{equation}
+k=\frac{b+b'}{\lambda_2}=4.8\rightarrow4
+\end{equation}
+紫光最大级数
+\begin{equation}
+k'=\frac{b+b'}{\lambda_1}=7.2\rightarrow7
+\end{equation}
+因此仅有
+$\frac{4}{6}$满足，也即亮纹第三次在红光第四级或者紫光第六级重合
+
+(3)、红光独立处也就是红光的第1，第3级；对应的衍射角为
+\begin{eqnarray}
+% \nonumber to remove numbering (before each equation)
+  k=1,~ \theta_1&=& \arcsin\frac{\lambda}{b+b'}=11.9^\circ \\
+ k=3,~ \theta_3&=& \arcsin\frac{3\lambda}{b+b'}=38.4^\circ
+\end{eqnarray}
+  \item
+  第四题、一束光以布儒斯特角$i$的入射角从上射入平行玻璃，此时玻璃内的透射光在玻璃的另一个接触面也存在一反射光，请问这束反射光是何种偏振光？
+
+  解：  假定入射光所在材料折射率为$n_1$，折射材料为$n_2$，令折射角为$r$。
+
+  根据折射率和布儒斯特角关系
+  \begin{equation}\label{e41}
+    n_1\sin i=n_2\sin r;~\tan i=\frac{n_2}{n_1}=\frac{\sin i}{\cos i}
+  \end{equation}
+我们可以得到
+\begin{equation}\label{e42}
+    \sin i=\cos r\Longrightarrow \angle i+\angle r=\frac{\pi}{2}
+\end{equation}
+也即入射角和折射角互余。因此
+\begin{equation}\label{e43}
+    \tan r=\frac{n_1}{n_2}
+\end{equation}
+满足布儒斯特角，因此此部分反射线也是完全线偏振光。
+\end{itemize}
+
+\end{CJK}
+\end{document}

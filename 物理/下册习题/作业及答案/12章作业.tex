@@ -1,0 +1,61 @@
+\documentclass[twocolumn]{revtex4}
+\usepackage{graphicx}
+\usepackage{CJK}
+
+\begin{document}
+\begin{CJK}{GBK}{song}
+
+\title{第十二章作业及参考答案}
+\maketitle
+
+第一题、简述如何取得更低的温度(请参照朱棣文工作)
+
+\bigskip
+
+答：温度的高低依赖于分子的平均平动动能；分子接收和发出光子可以改变光子方向的动量，进而改变分子的动能；
+如果将分子置于大量光子环境中将使分子不断吸收发出光子最后降低本身速度进而降温。这种方法可以很快将温度将为0.1K以下。
+
+
+第二题、简述随温度升高氢气的自由度变化(最好作图)
+
+\begin{figure}[htp]
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=0.45\textwidth]{120.eps}\\
+  \caption{如图所示：随着温度升高，氢气的自由度逐渐上升~1)、从看作是单原子分子(i=3)；2)、刚性分子(i=5)；3)、弹性分子(i=7)；到电子电离之后转为单原子分子气体此时自由度转回(i=3)}
+\end{figure}
+
+第三题：如果气体分子的速率分布函数在坐标上为国际单位制下的等边三角形，请求出该分布函数表达式，并计算平均速率。
+\begin{figure}[htp]
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=0.45\textwidth]{121.eps}\\
+\end{figure}
+
+
+解：首先可知该函数$f(v)$反映的是存在上限分子速率的函数，假设该上限为$v_u$。
+根据概率关系可知：
+\begin{eqnarray}\label{ep1}
+   && \int_0^{v_u}f(v)\mathrm{d}v=1\\
+   &&\Rightarrow\frac{\sqrt{3}}{4}v_u=1\\
+   &&\Rightarrow v_u=\frac{4}{3}\sqrt{3}(SI)
+\end{eqnarray}
+
+故我们可以得到该分布函数表达式
+\begin{equation}\label{eq2}
+   f(v)=\left\{
+          \begin{array}{ll}
+            \sqrt{3}v, & (v<\frac{2}{3}\sqrt{3}) \\
+             4v-\sqrt{3}v, & (\frac{2}{3}\sqrt{3}\leq v<\frac{4}{3}\sqrt{3})
+          \end{array}
+        \right.
+\end{equation}
+
+假设分子数为N，其平均速率可为：
+\begin{eqnarray}
+% \nonumber to remove numbering (before each equation)
+  \bar v &=& \frac{\int_0^{v_u}Nvf(v)\mathrm{d}v}{\int_0^{v_u}Nf(v)\mathrm{d}v} \\
+  &=&\int_0^{v_u}vf(v)\mathrm{d}v\\
+  &=&\frac{224\sqrt{3}}{27}-16
+\end{eqnarray}
+
+\end{CJK}
+\end{document}

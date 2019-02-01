@@ -1,0 +1,72 @@
+\documentclass[twocolumn]{revtex4}
+\usepackage{graphicx}
+\usepackage{CJK}
+%本文意在分析零温零密下手征磁化率出现发散的原因
+%采用非自洽1、A=1，不含fermion传播子标量的boson单圈近似Pi；2、A=1，含fermion自能的boson极化值
+\begin{document}
+\begin{CJK}{GBK}{song}
+
+\title{第九章作业及参考答案}
+\maketitle
+
+第一题、倔强系数为$k$的水平轻质弹簧一端固定，另一端连接一轻质长棉线，且棉线的自由终端连接质量为$m$的小球。
+棉线中间放置于转动惯量为$J$、半径为$r$的与棉线间不滑动的滑轮上。若静止情况下，弹簧与棉线部分保持水平。
+
+问：忽略一切其他摩擦力，待装置静止之后，轻轻地竖直下拉质量球，问$m$是否做简谐运动，若做简谐运动其周期如何？
+
+解：设在弹簧+棉线的原长为$L_0$，在悬挂质量小球之后长为$L'$。显然系统满足
+\begin{equation}\label{q1}
+    mg=k(L'-L_0)
+\end{equation}
+轻拉之后长度延长$x$，此时$m$受力向上，考虑到棉线向下延长。假设连接小球端绳子张力$T_2$，弹簧张力为$T_1$小球加速度为$a$。
+
+则力学关系，特别是转动定理
+\begin{eqnarray}
+% \nonumber to remove numbering (before each equation)
+  T_2 &=& mg+ma \\
+  T_1 &=& k(L'+x-L_0) \\
+  (T_1-T_2)r &=& J\alpha\\
+  \alpha r&=&a
+\end{eqnarray}
+结合上述几个式子我们可以得到
+\begin{equation}\label{q3}
+    \left(\frac{J}{r^2}+m\right)\frac{d^2x}{dt^2}=kx
+\end{equation}
+鉴于$x$与$a$之间方向相反。故而就有
+\begin{equation}\label{q4}
+  \left(\frac{J}{r^2}+m\right)\frac{d^2\vec x}{dt^2}=-k\vec x
+\end{equation}
+对应的震动周期为：
+\begin{equation}\label{q5}
+    T=2\pi\sqrt{\frac{\frac{J}{r^2}+m}{k}}
+\end{equation}
+
+第二题、一均质长$l$、质量$m$的木杆上端连接天花板，但可自由活动。下端连接一水平轻质弹簧，弹簧另一端固定于竖直墙壁。
+在木杆竖直时弹簧处于原长。
+
+问：沿弹簧直线方向轻拉木杆下端，木杆作何运动？若为简谐运动，其周期多少？
+
+解：
+
+轻拉木杆之后，木杆离开竖直摆角为$\theta$。木杆受到两个力作用：1、木杆本身重力；2、弹簧形变。
+
+则木杆受力力矩：
+\begin{eqnarray}
+% \nonumber to remove numbering (before each equation)
+ M_1 &=& mg\frac{l}{2}\sin\theta \\
+  M_2 &=& kl\cdot l\sin\theta
+\end{eqnarray}
+显然两个力矩方向一致，但是与$\theta$方向相反。根据转动定理得到
+\begin{eqnarray}
+    &\frac{1}{3}ml^2\frac{\mathrm{d}^2\theta}{\mathrm{d}t^2}&=-\left(mg\frac{l}{2}\sin\theta+kl^2\sin\theta\right)\approx-\left(mg\frac{l}{2}+kl^2\right)\theta\nonumber\\
+    &&\Longrightarrow\frac{\mathrm{d}^2\theta}{\mathrm{d}t^2}+\left(\frac{3g}{2l}+\frac{3k}{m}\right)\theta=0
+\end{eqnarray}
+为简谐运动的二阶偏微分方程，所以杆子的下端点做简谐运动。
+
+对应的周期为：
+\begin{equation}
+ T=2\pi\sqrt{\frac{2ml}{3mg+6kl}}
+\end{equation}
+
+\end{CJK}
+\end{document}
