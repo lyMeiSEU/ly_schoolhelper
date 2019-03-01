@@ -1,0 +1,20 @@
+什么是操作系统：
+1、	计算机核心程序（kernel program）
+2、	用户接口程序（interface program）
+3、	资源分配与回收的控制程序（control program）
+操作系统是位于Hardware与User之间的程序集合
+
+硬件：
+	启动：执行引导程序，载入operation program kernel（ROM/EPROM中）
+	中断：告知操作系统执行中断处理程序/策略（interrupt/trap）
+	Interrupt driven：中断-挂起-中断处理-中断返回
+	通用中断功能：Interrupt service routine（由中断向量保存）、save address（程序恢复）、disable interrupt（进程同步）
+Memory： 寄存器-main memory（内存）-electronic disk（U盘）-magnetic disk（磁盘）-optical disk
+		内存： CPU可以直接访问的唯一的大型存储介质
+IO设备：控制器local buffer和外设交互的过程（I/O过程无需CPU干预，中断响应方式）
+系统保护：Dual-Mode（用户，内核态）、CPU（进程时间控制）、内存（程序地址控制）、IO保护（全privilege）
+	Privileged Instruction特权指令：可能对硬件造成伤害的指令，在内核态执行
+
+发展：
+	单任务系统、多道程序系统（提高CPU利用率，发挥程序并发性，内存，CPU，任务，IO资源控制决策）
+	CPU利用率：CPU非空闲时间占比

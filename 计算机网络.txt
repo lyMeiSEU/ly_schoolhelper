@@ -1,0 +1,43 @@
+计算机网络简介：
+	单机系统-分时多用户系统（前端机通信控制）-远程终端访问系统（调制解调器进行信号转换）-计算机网络系统（分组交换网）
+	覆盖网：忽略网络物理层的面向应用的网络
+	以共享资源（硬件、软件、信息）为目标在协议控制下互连起来的计算机系统集合
+	互联性、自主性、规范性
+
+网络分类：
+Geographical：Personal（PAN）、Local（LAN）、Wide（WAN）area Network、Wireless Local area Network（WLAN）
+Topology：BUS（总线结构，效率低，易丢包）、Star（中央交换机负载大）、Ring（单向传输，最大传输时延可预测）、Mesh（组网成本高，稳定性强）、Tree（拓展性强，易排错，子树之间不会相互影响）
+		Transmission technology（传输技术）：广播（Broadcast），Point-to-Point
+		Switch：电路交换、报文交换（Message switching，保存与转发）、Packet switching（分组交换，分割，保存，转发，重组）
+		Function： 通信子网（内外通信）、资源子网（共享资源）
+
+计算机通信： 
+		进程间通信（对等实体间）
+
+协议：
+		建路，发请求，拆路
+		一组约定和规则的集合（语义，语法，时序规则）
+	
+基本通信原理：
+	Source（信源）-Channel（信道）-Destination（信宿）
+	Modem（编码器）：数字信号-模拟信号、Codec（解码器）：模拟信号-数字信号
+	信道：单向传输（wired（双绞线、同轴电缆、光纤）/wireless（定向，全向） channel）
+	信号：Time（周期），Frequency（频率） domain
+	Fourier series将信号分解为多个正弦函数（便于滤波）
+	信道带宽（B）：不失真的频率范围B（Band）=2*H
+	信道容量（H）：最大信号量
+	信道数据速率（C）：C（kbps）=2*H*log2 N=H*log2 （1+S/N 信噪比（dB））
+	波特率：信号电平每秒变化次数（变化一次传输1码元）
+	比特率：数据传输速率（传输比特，波特率*组合数）
+	数据传输速率与信道容量的比率取决于调制技术 
+	速率：额定数据传输速率 带宽：某信道所能通过最大数据速率
+	吞吐量：实际数据量 Delay：发送，传播、处理、排队时延
+	带宽时延积（bandwidth-delay）：发送但未确认的数据 往返时延（RTT）：一次交互的时间
+	利用率：信道、网络传输数据时间百分比
+调制方法：
+		Modulation调制（数字-模拟），Demodulation解调（模拟-数字）
+		ASK振幅（Amplitude-shift keying）：将信号调制成振幅不同频率相同
+		PSK相位（Phase-shift keying）：通过相邻信号相位变化判断载波信息
+		组合调制（振幅，频率，相位），提高传输速率
+	频率为F的模拟信号不失真的采样频率至少为2F
+
