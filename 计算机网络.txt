@@ -5,8 +5,8 @@
 	»¥ÁªÐÔ¡¢×ÔÖ÷ÐÔ¡¢¹æ·¶ÐÔ
 
 ÍøÂç·ÖÀà£º
-Geographical£ºPersonal£¨PAN£©¡¢Local£¨LAN£©¡¢Wide£¨WAN£©area Network¡¢Wireless Local area Network£¨WLAN£©
-Topology£ºBUS£¨×ÜÏß½á¹¹£¬Ð§ÂÊµÍ£¬Ò×¶ª°ü£©¡¢Star£¨ÖÐÑë½»»»»ú¸ºÔØ´ó£©¡¢Ring£¨µ¥Ïò´«Êä£¬×î´ó´«ÊäÊ±ÑÓ¿ÉÔ¤²â£©¡¢Mesh£¨×éÍø³É±¾¸ß£¬ÎÈ¶¨ÐÔÇ¿£©¡¢Tree£¨ÍØÕ¹ÐÔÇ¿£¬Ò×ÅÅ´í£¬×ÓÊ÷Ö®¼ä²»»áÏà»¥Ó°Ïì£©
+	Geographical£ºPersonal£¨PAN£©¡¢Local£¨LAN£©¡¢Wide£¨WAN£©area Network¡¢Wireless Local area Network£¨WLAN£©	
+	Topology£ºBUS£¨×ÜÏß½á¹¹£¬Ð§ÂÊµÍ£¬Ò×¶ª°ü£©¡¢Star£¨ÖÐÑë½»»»»ú¸ºÔØ´ó£©¡¢Ring£¨µ¥Ïò´«Êä£¬×î´ó´«ÊäÊ±ÑÓ¿ÉÔ¤²â£©¡¢Mesh£¨×éÍø³É±¾¸ß£¬ÎÈ¶¨ÐÔÇ¿£©¡¢Tree£¨ÍØÕ¹ÐÔÇ¿£¬Ò×ÅÅ´í£¬×ÓÊ÷Ö®¼ä²»»áÏà»¥Ó°Ïì£©
 		Transmission technology£¨´«Êä¼¼Êõ£©£º¹ã²¥£¨Broadcast£©£¬Point-to-Point
 		Switch£ºµçÂ·½»»»¡¢±¨ÎÄ½»»»£¨Message switching£¬±£´æÓë×ª·¢£©¡¢Packet switching£¨·Ö×é½»»»£¬·Ö¸î£¬±£´æ£¬×ª·¢£¬ÖØ×é£©
 		Function£º Í¨ÐÅ×ÓÍø£¨ÄÚÍâÍ¨ÐÅ£©¡¢×ÊÔ´×ÓÍø£¨¹²Ïí×ÊÔ´£©
@@ -20,7 +20,8 @@ Topology£ºBUS£¨×ÜÏß½á¹¹£¬Ð§ÂÊµÍ£¬Ò×¶ª°ü£©¡¢Star£¨ÖÐÑë½»»»»ú¸ºÔØ´ó£©¡¢Ring£¨µ¥Ïò´
 	
 »ù±¾Í¨ÐÅÔ­Àí£º
 	Source£¨ÐÅÔ´£©-Channel£¨ÐÅµÀ£©-Destination£¨ÐÅËÞ£©
-	Modem£¨±àÂëÆ÷£©£ºÊý×ÖÐÅºÅ-Ä£ÄâÐÅºÅ¡¢Codec£¨½âÂëÆ÷£©£ºÄ£ÄâÐÅºÅ-Êý×ÖÐÅºÅ
+	Ä£ÄâÐÅÔ´£ºModem£¨±àÂëÆ÷£©£ºÊý×ÖÐÅºÅ-Ä£ÄâÐÅºÅ¡¢Codec£¨½âÂëÆ÷£©£ºÄ£ÄâÐÅºÅ-Êý×ÖÐÅºÅ£¨Ä£Äâ-Êý×Ö£º²ÉÑù£¬Á¿»¯£¬±àÂë£©
+	Êý×ÖÐÅÔ´£ºModulationµ÷ÖÆ£¨Êý×Ö-Ä£Äâ£©£¬Demodulation½âµ÷£¨Ä£Äâ-Êý×Ö£©
 	ÐÅµÀ£ºµ¥Ïò´«Êä£¨wired£¨Ë«½ÊÏß¡¢Í¬ÖáµçÀÂ¡¢¹âÏË£©/wireless£¨¶¨Ïò£¬È«Ïò£© channel£©
 	ÐÅºÅ£ºTime£¨ÖÜÆÚ£©£¬Frequency£¨ÆµÂÊ£© domain
 	Fourier series½«ÐÅºÅ·Ö½âÎª¶à¸öÕýÏÒº¯Êý£¨±ãÓÚÂË²¨£©
@@ -40,4 +41,30 @@ Topology£ºBUS£¨×ÜÏß½á¹¹£¬Ð§ÂÊµÍ£¬Ò×¶ª°ü£©¡¢Star£¨ÖÐÑë½»»»»ú¸ºÔØ´ó£©¡¢Ring£¨µ¥Ïò´
 		PSKÏàÎ»£¨Phase-shift keying£©£ºÍ¨¹ýÏàÁÚÐÅºÅÏàÎ»±ä»¯ÅÐ¶ÏÔØ²¨ÐÅÏ¢
 		×éºÏµ÷ÖÆ£¨Õñ·ù£¬ÆµÂÊ£¬ÏàÎ»£©£¬Ìá¸ß´«ÊäËÙÂÊ
 	ÆµÂÊÎªFµÄÄ£ÄâÐÅºÅ²»Ê§ÕæµÄ²ÉÑùÆµÂÊÖÁÉÙÎª2F
+	RS-232£º²»Í¬µçÆ½±íÊ¾¶þ½øÖÆÖµ
+	²»¹éÁã½»Ìæ£¨NRZI£©£ºÏàÁÚµçÆ½±ä»¯Îª1£¬²»±äÎª0
+	Âü³¹Ë¹ÌØ±àÂë£º±ÈÌØÊ±¼äÒ»·ÖÎª¶þ£¬£¨²é·Ö£©Ò»¸ö±ÈÌØÖÜÆÚÖÐ²¿·¢ÉúÌø±ä£¨±àÂëÐ§ÂÊµÍ£©
+	4b/5bÂë£ºÃ¿¸ö·ûºÅÖÁÉÙ³öÏÖÁ½´Î1£¬×î¶àÈý¸öÁ¬Ðø0£¨Ô­-£¨¸ßÎ»ÓÅÏÈ£©±í¸ñ×ª»»-£¨¸ßÎ»ÓÅÏÈ£©Êä³ö£©
+
+ÐÅµÀ´«Êä£º
+	´«ÊäÄ£Ê½£ºParallel²¢ÐÐ£¬Serial´®ÐÐ£¨Í¬²½£ºÍ¬²½·ûºÅ+Êý¾Ý¿é+Í¬²½·ûºÅ£¬Òì²½£ºµ¥¸ö×Ö·û¶ÀÁ¢´«Êä£¬Ã¿¸ö×Ö·ûÄÚµÄ±ÈÌØÓÐ¹Ì¶¨Ê±¼äÄ£Ê½¶ÀÁ¢µÄÆðÊ¼ÖÕÖ¹Î»£¬´«ÊäÐ§ÂÊµÍ£©
+	Í¬²½¼¼Êõ£ºBitÎ»Í¬²½£¨×ÔÍ¬²½£º×Ô´øÍ¬²½ÐÅºÅ£¨Âü³¹Ë¹ÌØ±àÂë£©£¬ÍâÍ¬²½·¨£¨ÆðÖÕÖ¹´«Êä£©£©£¬Character×Ö·ûÍ¬²½
+
+	BSC£¨Binary Synshronous Communication£©£º½öÖ§³ÖASCII£¬ÃæÏò×Ö·ûÐÍ´«Êä¹æÔò£¬¿ØÖÆ×Ö·ûÀ´ÃèÊö×´Ì¬£¬×ªÒå×Ö·û·ÀÖ¹ÆçÒå£¨ACKÈ·ÈÏ£¬NAK·ñÈÏ£¬ENQÑ¯ÎÊ£¬EOT²ðÁ´£©°ëË«¹¤£¬Í£µÈÐ­Òé£¬³¬Ê±ÖØ´«
+	HDLC£¨High Data Link Control£©£ºÖ§³ÖÈÎÒâ¶þ½øÖÆÊý¾Ý£¬Ã÷ÏÔµÄÆðÊ¼£¬ÖÕÖ¹±êÖ¾£¬Áã±ÈÌØ±êÖ¾·¨·ÀÖ¹Êý¾Ý¶Î³öÏÖÆçÒå±êÊ¶·û£¬Ä£8Î»´°¿Ú³ß´çÎª7£¬ÉÓ´ø´«ÊäÆÚÍû×Ö·ûÊý
+	´«Êä·½Ïò£ºµ¥¹¤£¨µ¥ÐÅµÀ£¬µ¥Ïò£©£¬°ëË«¹¤£¨µ¥ÐÅµÀ£¬·ÖÊ±Ë«Ïò£©£¬È«Ë«¹¤£¨Ë«ÐÅµÀ£©
+
+²î´í¼ì²â£º
+	·¢ËÍÂëÖÐ°üº¬¼ì´íÂë£¬½ÓÊÜ·½»Ø¸´È·ÈÏÊÇ·ñÖØ´«£¬³¬Ê±ÔòÖØ´«
+	Stop-and-wait protocolÍ£µÈÐ­Òé£ºÍ£Ö¹·¢ËÍ£¬µÈ´ýÈ·ÈÏ»ò³¬Ê±
+	Sliding window protocol»¬¶¯´°¿ÚÐ­Òé£ºÈ«Ë«¹¤£¬Ò»´ÎÁ¬Ðø·¢ËÍ¶à¿é£¨´°¿ÚÊý£©£¬´°¿ÚÂúºóµÈ´ý·´À¡£¨½ÓÊÕ·½ÔÚ·¢ÏÖ´íÎóÊ±Á¢¿Ì·´À¡£©ACK n£¨1-nÊÕµ½£©£¬NCK n£¨1-£¨n-1£©£©ÊÕµ½
+	¼ì´íÂë£ºÐÅÏ¢×Ö¶Î+Ð£Ñé×Ö¶Î
+	ÆæÅ¼Ð£Ñé£¨Parity£©£ºË®Æ½ÆæÅ¼Ð£Ñé ÆæÊýÎ»´íÎó£¬´¹Ö±£¨ÐÅÏ¢×é×éÎªµ¥Î»ÊúÖ±Ð£Ñé£©ÆæÅ¼Ð£Ñé Í»·¢ÐÔ´íÎó£¬Ë®Æ½´¹Ö±Å¼Ð£Ñé ¿É¾À´í£¨³ýÏà»¥²¹³¥µÄÅ¼Êý¸ö´í£©
+	Hamming code£ºÊÕµ½ÎÞÐ§Âë£¬Ñ¡ÔñÓëÖ®×î½üµÄºÏ·¨ÂëÌæ´ú£¨ºÏ·¨Âë×Ö¼ä¾àÀë£ºd>=2t+1£©£¬Ö»¿É¾ÀÕýÒ»Î»´íÎó£¨1.È·¶¨Âë³¤ 2.È·¶¨Ð£ÑéÂëÎ»ÖÃ µÚn¸öÐ£ÑéÂëÔÚ2^n-1Î» 3.È·¶¨Ð£ÑéÂë Pn£º¼ìÑé2^n-1Î»£¬Ìø¹ý2^n-1Î»£©
+	Positive NegativeÕý·´Âë£ºÐÅÏ¢¶Î+Ð£Ñé¶Î£¬ÐÅÏ¢¶Î1¸öÊýÎªÆæÊý£¬Ð£ÑéÂë=ÐÅÏ¢Âë ·ñÔò£¬ºÏ³ÉÂë=ÐÅÏ¢ÂëÈ¡·´ ¼ìÑéÊ±£ººÏ³ÉÂëÈ¡·´£¬Èô½öº¬Ò»¸ö0Ôò0¶ÔÓ¦µÄÐÅÏ¢Î»³ö´í£¬Èô½öº¬Ò»¸ö1Ôò1¶ÔÓ¦Ð£ÑéÎ»³ö´í£©±àÂëÐ§ÂÊ£º50%
+
+
+
+
+
 

@@ -12,9 +12,29 @@
 Memory： 寄存器-main memory（内存）-electronic disk（U盘）-magnetic disk（磁盘）-optical disk
 		内存： CPU可以直接访问的唯一的大型存储介质
 IO设备：控制器local buffer和外设交互的过程（I/O过程无需CPU干预，中断响应方式）
-系统保护：Dual-Mode（用户，内核态）、CPU（进程时间控制）、内存（程序地址控制）、IO保护（全privilege）
+系统保护：Dual-Mode（用户，内核态 0，1模态位）、CPU（进程时间控制 定时器）、内存（程序地址控制 基址，界限寄存器）、IO保护（全privilege）
 	Privileged Instruction特权指令：可能对硬件造成伤害的指令，在内核态执行
 
 发展：
-	单任务系统、多道程序系统（提高CPU利用率，发挥程序并发性，内存，CPU，任务，IO资源控制决策）
+	单任务系统、批处理系统、多道程序系统（提高CPU利用率，发挥程序并发性，内存，CPU，任务，IO资源控制决策 道：并发执行程序个数）、分时系统（多用户共享，CPU调度，系统在用户间快速切换，virtual memory虚拟存储）
+	操作系统特征：并发（Concurrence），共享（Sharing），虚拟（Virtual），异步（Asynchronism）
 	CPU利用率：CPU非空闲时间占比
+	Desktop System：单处理器（Single-Processor），多处理器（Multiprocessor），紧耦合（Tightly coupled），分布式（network云端，shared storage集群系统（hot-standby非对称，对称）），实时（时间约束），终端（Pocket-PC，Cellular telephone）系统
+	优点：高吞吐量（Throughput），资源共享，可靠性高
+功能（Functions）：
+	系统内部具有的能力
+	进程（Program in execution），内存（分配，回收，情况记录），磁盘（Secondary-Storage），文件（文件系统，对外屏蔽硬件），IO管理（屏蔽异步性）
+	
+
+服务（Services）：
+	对外可以提供的服务
+	程序执行，IO操作，文件系统操作（File-system manipulation），进程通信，错误监控
+	系统执行：资源分配，审计（Accounting安全追踪，系统优化），保护
+
+接口：
+	命令行（Command-Line），批处理
+
+结构：
+设计：
+
+
