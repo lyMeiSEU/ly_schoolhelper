@@ -11,6 +11,13 @@
 P(ф)=0
 对立事件：A并B=Ω，A交B=ф
 概率加法：P(A并B)=P(A)+P(B)-P(A交B)
-	 P(A并B并C)=P(A)+P(B)+P(C)+P(A交B交C)
-	  ……
+	 P(A并B并C)=P(A)+P(B)+P(C)- P(A交B（A,B,C任意选两）)+P(A交B交C)
+		  ……
 古典概率模型：样本空间含有限多个基本事件，每个基本事件发生概率等可能
+条件概率：
+Monty Hall Problem：P(换+win)=2/3, P(留+win)=1/3
+	P(A|B)=P(AB)/P(B) （P(B)>0）
+	P(B)=P(A)P(B|A) / P(A|B)
+	P(B)=∑P(Ai) P(B |Ai)（Ai为样本空间划分）
+	贝叶斯：P(Ai |B)=P(Ai)P(B| Ai) / ∑P(Ai)P(B |Ai)
+	
