@@ -56,7 +56,22 @@ IO设备：控制器local buffer和外设交互的过程（I/O过程无需CPU干预，中断响应方式）
 	
 
 什么是进程：
-	执行中的程序按照顺序结构（非一一对应）
-	程序代码，程序计数器，执行内容
+	按照顺序结构执行中的程序，程序决定进程执行顺序（非一一对应）
+	程序代码（Text section），程序计数器（Program Counter），指令寄存器（执行内容Processor Register），堆栈（堆：程序申请的空间 栈：操作系统分配Heap-stack），数据段（Data section）
+	动态性（Dynamic），独立性（independency），并发性（Concurrence），结构化（Structure）
+	进程状态：New（初始）-Ready（准备，获得内存资源）-Running（获得CPU使用权）-Waiting（等待IO响应）-Terminated（exit终止）
+	CPU核心/用户态：执行kernel/user process
+	Process Control Block（PCB进程控制块）：链表方式连接进程，控制进程状态转换（program counter，pointer）
+	Job queues所有进程队列：Ready queue就绪（等待执行），Device queue设备（等待IO操作），其他队列（均在Main memory中）
+	Scheduler调度器：Long-term（长期 内存加载选择，控制多道程序度（内存中存放进程个数）），Short-term（短期 CPU执行进程选择），Medium-term（中期 进程交换swapping 腾出内存空间））
+	IO进程（以IO操作为主），CPU进程（以CPU计算为主）通过调度器控制
+	Context switch上下文切换：PCB，CPU，内存等信息值，用于区分进程状态（在进程切换时保存context状态）
+	进程创建：父进程创建子进程形成进程树，并由Process ID标识每个进程
+		子进程通过getID()获得自己的ID号
+	进程终止：结束，挂起，随父进程终止（级联终止）
+	Inter-Process Communicate进程通信：共享内存（临界区问题，需互斥访问），消息传递（producer consumer）
+	Bounded-Buffer：通过循环队列控制进程的内存数据读写
+	Message-passing：通信连接（物理介质+逻辑链接）
+		实时通信：实时建立链接，链接仅供一对进程使用，双/单向使用
 
 

@@ -27,7 +27,21 @@ Non- Deterministic Polynomial Difficult Problem NPÄÑÎÊÌâ£º²»Ò»¶¨ÎªNPÎÊÌâ£¬NPCÎÊÌ
 TSP£ºÊ±¼ä¸´ÔÓ¶Èn! ×îÓÅ»¯£ºmin{¡Æd£¨Ck,Ck+1£©+d£¨Ck,C1£©} £¨d£¨Ck,Ck+1£©´æÔÚ£©
 
 µÝ¹é·ÖÖÎ£º
-	·ÖÖÎ£º·Ö½âÎÊÌâ£¬½â¾öÐ¡ÎÊÌâ£¨ÎÊÌâ¿É·Ö½âÎª¹æÄ£½ÏÐ¡µÄÏàÍ¬×ÓÎÊÌâ£¬×ÓÎÊÌâ¿ÉÒÔ½â³öÔ­ÎÊÌâ£©	µÝ¹é£ºÖ±/¼ä½Óµ÷ÓÃ×ÔÉí£¨ÖÕÖ¹£¬Í¨ÏîÌõ¼þ£©
+	·ÖÖÎ£º
+		ÎÊÌâ¾ßÓÐ×îÓÅ×Ó½á¹¹ÐÔÖÊ£¨¶þ·ÖËÑË÷£©
+		·Ö½âÎÊÌâ£¬½â¾öÐ¡ÎÊÌâ£¬ºÏ²¢£¬×ÓÎÊÌâÏà»¥¶ÀÁ¢£¨·Ç¶ÀÁ¢ÔòÊ¹ÓÃ¶¯Ì¬¹æ»®£©
+		·ÖÖÎ£º
+	´óÕûÊý³Ë·¨£º
+		X=a(n/2Î»)b(n/2Î») Y=c(n/2Î»)d(n/2Î»)	
+			XY=ac2^n+(ad + bc) *2^(n/2)+bd
+			¿ìËÙ¸µÀïÒ¶±ä»»
+		Strassen¾ØÕó³Ë·¨£º
+			½«¾ØÕó·ÖÎª´óÐ¡ÏàµÈµÄ×Ó¾ØÕó £¬Ê¹ÓÃ·ÖÖÎ·¨½µ½×Çó³ö×Ó¾ØÕó
+			T(n)=8T(n/2)+O(n^2)
+		ÅÅÐòÎÊÌâ£º
+			¶þ·Ö¹é²¢ÅÅÐò£º»®·Ö£¬Çó½â×ÓÎÊÌâ£¬ºÏ²¢£¨Ê±¼ä¸´ÔÓ¶ÈO(n log n)£¬ÎÈ¶¨	£©
+			¿ìËÙÅÅÐò£ºÑ¡ÔñÖáÖµÓëÓÒÖ¸Õë£¬´ÓÓÒ¿ªÊ¼É¨Ãè£¬ÓöÐ¡½»»»£¬´Ó×óÉ¨Ãè£¨²»	ÎÈ¶¨£©
+µÝ¹é£ºÖ±/¼ä½Óµ÷ÓÃ×ÔÉí£¨ÖÕÖ¹£¬Í¨ÏîÌõ¼þ£©
 
 	Ë«µÝ¹éº¯Êý£ºAckermanº¯Êý
 	ÕûÊý»®·Ö£ºq(n, m) mÎª×î´ó¼ÓÊý
@@ -40,8 +54,22 @@ TSP£ºÊ±¼ä¸´ÔÓ¶Èn! ×îÓÅ»¯£ºmin{¡Æd£¨Ck,Ck+1£©+d£¨Ck,C1£©} £¨d£¨Ck,Ck+1£©´æÔÚ£©
 		2.	Hanoi(n-1, A, C, B)
 		3.	Move(A, C)
 		4.	Hanoi(n-1, B, A, C)
-	µÝÍÆ·½³Ì£ºT£¨n£©=2T£¨n-1£©+1£¨T(1)=1£©£¨ÖÕÖ¹Ìõ¼þ£ºT(1)=1£©
-	µü´ú·¨£¨×óÌæÓÒ£¬³õÖµÍ£Ö¹£¬ÕÒ³öT(n)Í¨Ïî¹«Ê½£¬ÊýÑ§¹éÄÉ·¨ÑéÖ¤ÕýÈ·ÐÔ£©
+	µÝÍÆ·½³Ì£ºT£¨n£©=2T£¨n-1£©+1£¨ÖÕÖ¹Ìõ¼þ£ºT(1)=1£©
+		µü´ú·¨Çó½â£¨ÕÒ³öT(n)Í¨Ïî¹«Ê½£¬ÊýÑ§¹éÄÉ·¨ÑéÖ¤ÕýÈ·ÐÔ£©
+		»»Ôªµü´ú·¨£º½«n×ª»»Îª±äÔªKµÄµÝÍÆ£¬
+		T(n)=4T(n/2)+O(n)
+		T(n)=2T(n/2)+n-1£¬Áîn=2^k 
+				T(n)=a*T(n/b)+f(n)
+				¹«Ê½£ºT(n)=n^(log b a)+¡Æa^ i f(n/b^ i )
+			µÝ¹éÊ÷ÑéÖ¤»»Ôªµü´ú·¨£º
+				T(N)µÈÓÚÊ÷ÉÏËùÓÐ½ÚµãµÄÖµ£¨·Çº¯ÊýÏî£©
+				W(m)=£¨º¯ÊýÏî£©W(m1)+¡­+W(mk)+£¨½ÚµãÖµ ·Çº¯ÊýÏî£©f(m)+¡­+g(m)
+	Ö÷¶¨ÀíMaster£ºT(n)=a*T(n/b)+f(n)
+	1.	Èôf(n)½×Ð¡£¨<O(n^(log b^a))£©£¬ÔòT£¨n£©=¦¨(n^(log b^a))
+	2.	ÈôÓëf(n)Í¬½×£¨=O(n^(log b^a))£©£¬ÔòT£¨n£©=¦¨(n^(log b^a) * logn)
+	3.	Èôf(n)½×´ó£¬ÇÒa*f(n/b)¡Üc*f(n)£¨c<1£©£¬ÔòT£¨n£©=¦¨(f(n))
+
+
 
 
 
