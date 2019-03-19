@@ -73,5 +73,19 @@ IO设备：控制器local buffer和外设交互的过程（I/O过程无需CPU干预，中断响应方式）
 	Bounded-Buffer：通过循环队列控制进程的内存数据读写
 	Message-passing：通信连接（物理介质+逻辑链接）
 		实时通信：实时建立链接，链接仅供一对进程使用，双/单向使用
+	Indirect communication间接通信：进程通过mailbox间接通信，仅当进程共享mailbox时才能建立链接
+	进程通信：Block同步传输（Synchronization），Non-block异步传输（asynchronous）
+		Buffering：zero（零容量，等待应答），bound（有限容量，滑动窗口），unbound（无限容量，Post）
+	CS通信方式：Socket（套接字，应用层访问网络层接口，IP& port，无结构字节流），Remote Procedure Calls（通过Stubs（解压消息，调用服务器上相应功能并返回结果）调用远端主机进程，函数ID与参数，高度结构化），Remote Method Invocation（远程方法调用，调用远程对象和方法，stub-skeleton）
+
+线程：
+	进程中的控制流，CPU执行的最小单位，多个线程共享进程地址空间
+	线程：线程ID，程序计数器，寄存器组，栈，属于同一进程的线程共享code，data，OS recourse（响应性，资源共享，创建和删除开销低，多处理器架构利用率提升）
+	User thread用户线程：由用户线程库管理，内核不知道线程存在（无需状态切换，可能出现线程阻塞导致进程阻塞）
+	Kernel thread内核线程：由内核管理，不会导致线程阻塞
+	Multithreading models多线程模型：Many-One（系统不支持线程，以多个用户线程对应一个内核线程，同时只能有一个线程访问内核），One-One（一个用户线程对应一个内核线程，线程同时访问内核 并发性），Many-Many（多个用户线程对应多个内核线程），Two level模型（多对多，一对一处理紧急线程）
+		Thread states线程状态：join（等待子线程先执行），cancel（取消线程 EN/DIS 立即/延迟 设置取消点），kill（杀死）
+	API 线程创建：属性，大小，线程函数，是否立即执行（程序中最后的线程退出，程序退出）
+
 
 
