@@ -86,6 +86,22 @@ IO设备：控制器local buffer和外设交互的过程（I/O过程无需CPU干预，中断响应方式）
 	Multithreading models多线程模型：Many-One（系统不支持线程，以多个用户线程对应一个内核线程，同时只能有一个线程访问内核），One-One（一个用户线程对应一个内核线程，线程同时访问内核 并发性），Many-Many（多个用户线程对应多个内核线程），Two level模型（多对多，一对一处理紧急线程）
 		Thread states线程状态：join（等待子线程先执行），cancel（取消线程 EN/DIS 立即/延迟 设置取消点），kill（杀死）
 	API 线程创建：属性，大小，线程函数，是否立即执行（程序中最后的线程退出，程序退出）
+	Suspend and Resuming：通过栈挂起/恢复线程
+	并发访问：读写冲突（本地存储，临界区（对共享变量操作的代码段）控制）
+	Java 线程：extend线程类或采用runnable接口（JVM控制）
+	fork()：代码复制，包含所有子线程	exec()：停止线程所属线程中所有控制流
+	Signal：由特定事件产生，通知进程进行挂起（无优先级 进程可选择忽略）
+	Thread Pools线程池：事先创建内核线程并放在线程池中，进程需要使用时分配（多对多 分配并新建线程效率高 对线程总数可控）
+	Upcalls：内核对线程表的提醒
+
+CPU Scheduling
+	CPU调度：顺序取决于CPU，IO Burst代码（进行CPU，IO Burst cycle替换）
+	CPU（进程少，周期长）/IO（进程多，周期短） bound进程
+	调度：Preemptive 抢占（控制策略）/Non- Preemptive  非抢占调度（进程可执行完）
+	Dispatcher分配器：CPU控制权调度
+	策略评价：CPU utilization（40%-90%合适负载），Throughput（吞吐量），Turnaround（周转时间 提交-任务完成的时间）（系统），Waiting time（就绪队列中等待时间），Response time（用户请求-第一个响应）（用户）
+
+
 
 
 
