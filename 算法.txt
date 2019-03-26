@@ -112,7 +112,19 @@ TSP：时间复杂度n! 最优化：min{∑d（Ck,Ck+1）+d（Ck,C1）} （d（Ck,Ck+1）存在）
 		Longest Common Subsequence：序列X，Y的最长的相同子序列
 		穷举：2^m个子序列，共〖O(n2〗^m)
 		DP：
-	若Xn=Yn， Zk-1为Xn-1与Yn-1的LCS
-	若Xn≠Yn，Zk=max{ C[i, j-1]，C[i-1, j] }
+			构造解O(m*n)，追踪解O(m+n)
+			空间复杂度O(m*n)
+			1.	i=0/j=0，C[i, j]=0(设置初值C[i, j]=0)
+			2.	若Xn=Yn， Zk为Xn-1与Yn-1的LCS+1
+			3.	若Xn≠Yn，Zk=max{ C[i, j-1]，C[i-1, j] }
+			标记函数B[i, j]，左上 ↖（LCS+1）/左 ← (C[i, j-1])/上↑(C[i-1, j])
+	背包问题KP：
+		填表O(n*b)（伪多项式时间算法b为常数：输入规模n, logb，O( n*2^k)）
+		约束条件∑wi*xi≤b（最大重量）
+		物品(vi, wi) 使∑vi*xi最大
+		线性规划：目标函数与约束条件为线性函数
+			F_k (y)=max?{F_(k-1) (y),F_k (y-w_k )+v_k}
+			K=1时，Fk(y)初值为y/w_k向下取整
 
+		
 
