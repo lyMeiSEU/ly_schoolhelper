@@ -99,15 +99,8 @@ CPU Scheduling
 	CPU（进程少，周期长）/IO（进程多，周期短） bound进程
 	调度：Preemptive 抢占（控制策略）/Non- Preemptive  非抢占调度（进程可执行完）
 	Dispatcher分配器：CPU控制权调度
-	策略评价：CPU utilization（CPU非空时间占比 40%-90%合适负载），Throughput（吞吐量 单位时间执行的进程数）（系统 提高利用率），Turnaround（周转时间 提交-任务完成的时间），Waiting time（就绪队列中等待时间），Response time（用户请求-第一个响应）（用户 提高响应速率）
-	吞吐量与CPU利用率无关
-	调度策略
-		First Come First Served先到先服务：按照就绪队列顺序依次执行（取队头 非抢占式	convey effect护航效率：所有进程将等待队头的费时进程执行，等待时间长，短进程与分时系统不适用）
-		Gantt Chart：用队列表示调度过程（进程等待时间等于其前队列中进程的所有执行时间之和）
-		Shortest Job First最短最优先：等待时间：终止-burst-arrival 周转时间：终止-arrival 按照剩余CPU数（burst length）进行排序（非抢占：不剥夺 抢占式Shortest Remaining Time First：若新进进程所需时间比执行中进程剩余时间短，原进程进入就绪状态新进程插队执行 每个进程等待时间最短，平均等待时间最短 难以预测CPU burst，实际作为标准 使用指数平均法利用历史情况预测预测Tn+1=atn+(1-a)Tn 等待时间：终止-burst-arrival）
-		Priority优先级：选择最高优先级执行，可按等待时间长短更改进程的优先级Aging（抢占 进程饥饿/非抢占）
-		Round Robin：响应时间快，适用于分时系统，设置进程最长时间片，进程执行完自动释放CPU（时间片长->FCFS 时间片短->切换次数多，并行）
-		Multilevel Queue多级队列：根据进程需求而分别采用不同调度策略，队列间按照优先级/时间片调度（队列调度策略，进程队列间移动 提高吞吐量，防止CPU占用）
+	策略评价：CPU utilization（40%-90%合适负载），Throughput（吞吐量），Turnaround（周转时间 提交-任务完成的时间）（系统），Waiting time（就绪队列中等待时间），Response time（用户请求-第一个响应）（用户）
+
 
 
 
