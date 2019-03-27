@@ -107,8 +107,20 @@ CPU Scheduling
 		Shortest Job First最短最优先：等待时间：终止-burst-arrival 周转时间：终止-arrival 按照剩余CPU数（burst length）进行排序（非抢占：不剥夺 抢占式Shortest Remaining Time First：若新进进程所需时间比执行中进程剩余时间短，原进程进入就绪状态新进程插队执行 每个进程等待时间最短，平均等待时间最短 难以预测CPU burst，实际作为标准 使用指数平均法利用历史情况预测预测Tn+1=atn+(1-a)Tn 等待时间：终止-burst-arrival）
 		Priority优先级：选择最高优先级执行，可按等待时间长短更改进程的优先级Aging（抢占 进程饥饿/非抢占）
 		Round Robin：响应时间快，适用于分时系统，设置进程最长时间片，进程执行完自动释放CPU（时间片长->FCFS 时间片短->切换次数多，并行）
-		Multilevel Queue多级队列：根据进程需求而分别采用不同调度策略，队列间按照优先级/时间片调度（队列调度策略，进程队列间移动 提高吞吐量，防止CPU占用）
+		Multilevel Queue多级队列：根据进程需求而分别采用不同调度策略，队列间按照优先级/时间片（轮询，不同队列设置不同时间片）调度（队列调度策略，进程队列间移动 提高吞吐量，防止CPU占用）
+		Multiple Processer多处理器调度：负载均衡（push/pull），
+非平衡（系统数据仅运行一个处理器访问，降低数据共享需求），SMP（避免处理器选择同一进程）
+软亲和（防止进程迁移策略），硬亲和（不允许执行中进程迁移）
+		Real Time实时调度：资源预留（resource reservations）确保进程按时完成（磁盘与虚拟内存无效），硬（确保执行完成）/软（优先级高）实时（无法使用老化来防止饥饿）
+		Priority Inversion：进程访问共享数据时，若有新进程则改变执行进程优先级，防止抢占
+		线程调度：进程级/系统级
+	策略评价：决定（人为设定），队列（人为模拟），模拟（模拟真实系统），实现
 
-
+进程同步Synchronization：
+	规定进程执行顺序，确保共享数据一致性
+	Race Condition竞争条件：多个进程同时访问同一共享数据时产生
+	Critical Section临界区问题：更改共享数据的进程代码段，设置互斥访问
+		临界区协议：entry（进入选择），critical（临界区），exit（退出）部分
+		互斥（Mutual Exclusion），空闲让进（Progress），有限等待（Bounded Waiting）
 
 
