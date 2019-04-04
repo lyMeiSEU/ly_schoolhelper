@@ -121,6 +121,24 @@ CPU Scheduling
 	Race Condition竞争条件：多个进程同时访问同一共享数据时产生
 	Critical Section临界区问题：更改共享数据的进程代码段，设置互斥访问
 		临界区协议：entry（进入选择），critical（临界区），exit（退出）部分
-		互斥（Mutual Exclusion），空闲让进（Progress），有限等待（Bounded Waiting）
+		临界区解决方法：忙则等待（Mutual Exclusion 互斥（临界区最多一个进程），了解阻塞进程），进展性（Progress 空闲让进），有限等待（Bounded Waiting 设置等待次数界限（其它进程执行次数），确保不会长期等待）（三个条件需同时满足，证明满足（反证））
+		让权等待：进程在等待进入临界区且区中进程执行IO时，不能占用CPU资源
+	临界区中进程不一定运行（可能执行IO），等待进入临界区进程不一定处于等待状态
+	Perterson‘s Solution： turn（权限控制），flag（进入预约）（双进程临界区问题）
+Flag[i]=true; turn=j;while(flag[j]&&turn==j); CS();Flag[i]=false;
+	
+Bakery Algorithm：想进入线程取号，(取号，线程号)先比较取得号大小再比较线程号
+	Bool Choosing[n]; //是否完取号 int number[n]; //取得号值
+	Choosing[i]=true;number[i]=max?(number[i_(1~n) ])+1;Choosing[i]=false; 
+		循环直到无人取号且进程序号最小，执行CS()，更改number[i]=0; 
+	硬件支持同步：禁止中断（单CPU适用，影响系统功能），
+	Test And Set：检测并更正lock为true，占用临界区（TAS需一次性执行，易产生饥饿）
+	Swap：本地变量key，全局锁lock，交换key与lock满足互斥访问（易产生饥饿）
+	满足临界区问题解决TAS：waiting[i]，lock，key 
+进入：waiting || key != true	（waiting[i]=false）
+退出：查找并使下一个进程跳出临界区（waiting[j]=false）
+	Semaphore信号量：仅允许被wait(S)（P() 减S），signal(S)（V() 加S唤醒）
+	Counting：奇数信号量，可用资源个数		Binary：0-1互斥信号量
+	Busy waiting：block()阻塞spinlock自旋锁，等待wakeup(P)唤醒进入等待队列（让权等待）
 
 
