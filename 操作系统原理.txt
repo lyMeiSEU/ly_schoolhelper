@@ -140,5 +140,28 @@ Bakery Algorithm：想进入线程取号，(取号，线程号)先比较取得号大小再比较线程号
 	Semaphore信号量：仅允许被wait(S)（P() 减S），signal(S)（V() 加S唤醒）
 	Counting：奇数信号量，可用资源个数		Binary：0-1互斥信号量
 	Busy waiting：block()阻塞spinlock自旋锁，等待wakeup(P)唤醒进入等待队列（让权等待）
+	信号量改进：获取资源失败，阻塞在信号量队列，资源空闲时取出队头执行
+	双Semaphore：P：wait(Q);wait(S) 	Q：wait(S);wait(Q)（相互等待，死锁）
+	Starvation饥饿：一个进程一直得不到使用权		Deadlock死锁：多个进程相互等待
+	经典同步问题：
+临界资源数（互斥信号量），同步关系（同步信号量）
+	Bound-Buffer：mutex=1（互斥信号量），empty/full（空/满数	同步信号量）
+		Producer：wait(empty);wait(mutex);	single(mutex);single(full);
+		Consumer：wait(full);wait(mutex);	single(mutex);single(empty);
+	Reader-Writer：读者（仅读取），写者（可读写）
+			Reader first读者优先：临界区有读者，写者等待读者进入
+	Dining-Philosophers哲学家就餐问题：5根筷子（5互斥信号量）
+	独木桥问题：mutex=1(独木桥信号量）,MA=1,MB=1;counterA=0,counterB=0;
+		Entry：获取更改counterA信号量(MA)，若counterA==1获取mutex，释放MA
+		Exit：获取更改counterA信号量(MA)，若counterA==0释放mutex，释放MA
+	Monitor管城：高级的同步数据结构(construct)，将分布的临界区集中管理，进程通过管城访问共享数据，确保访问互斥性
+	Condition Variable条件变量：进程进入管城等待，仅允许x. wait()（挂起x）与x. single()（唤醒 唤醒并等待（唤醒者等待）/唤醒并继续（被唤醒者等待）） 操作（不进行加减操作）
+	管程（解决共享资源的公用数据结构），进程（占有数据资源实现并发性的私有数据结构）
+	实现：mutex（进入控制），next（内部下一个进程）/（semaphore），next-count（内部排队进程数）/（int）
+		x. wait()：x-count++; if(next-count>0) single(next); else single(mutex); wait(x-sem); x-count--;
+		x. single()：next-count++; single(x-sem); wait(next); next-count--;
+	操作系统需确保进程按照管程规定调用管程操作
+
+
 
 
