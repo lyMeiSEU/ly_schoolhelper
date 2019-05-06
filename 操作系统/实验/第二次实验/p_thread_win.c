@@ -3,27 +3,27 @@
 #define N 100
 #define TRUE 1
 typedef int Semaphore;
-Semaphore full = 0, Empty = N;            //å…±äº«èµ„æºåŒºæ»¡æ§½æ•°ç›®å’Œç©ºæ§½æ•°ç›®
-int in = 0, out = 0;                      //ç¼“å†²åŒºç”Ÿäº§ï¼Œæ¶ˆè´¹æ•°æ®æŒ‡é’ˆ
+Semaphore full = 0, Empty = N;            //¹²Ïí×ÊÔ´ÇøÂú²ÛÊıÄ¿ºÍ¿Õ²ÛÊıÄ¿
+int in = 0, out = 0;                      //»º³åÇøÉú²ú£¬Ïû·ÑÊı¾İÖ¸Õë
 HANDLE mutex;
 int ProducerThread[5];
 int ConsumerThread[5];
-int Buffer[N+4];                          //ç¼“å†²åŒº
+int Buffer[N+4];                          //»º³åÇø
 
-int produce_item() {                      //ç”Ÿäº§(éšæœºæ•°)
+int produce_item() {                      //Éú²ú(Ëæ»úÊı)
     return (rand()%N + N)%N;
 }
 
-int insert_item(int item) {               //æ’å…¥èµ„æº
+int insert_item(int item) {               //²åÈë×ÊÔ´
     in %= N;
-    printf("ç”Ÿäº§åˆ°ç¼“å†²åŒºæ§½ï¼š %d\n",in);
+    printf("Éú²úµ½»º³åÇø²Û£º %d\n",in);
     Buffer[in] = item;
     return Buffer[in++];
 }
 
-int remove_item() {                        //ç§»å‡ºèµ„æº
+int remove_item() {                        //ÒÆ³ö×ÊÔ´
     out %= N;
-    printf("                       å–èµ°ç¼“å†²åŒºæ§½ %d çš„æ•°\n",out);
+    printf("                       È¡×ß»º³åÇø²Û %d µÄÊı\n",out);
     return Buffer[out++];
 }
 
@@ -83,7 +83,7 @@ int main()
 {
     DWORD Tid;
 
-    mutex = CreateSemaphore(             //åˆ›å»ºäº’æ–¥ä¿¡å·é‡mutex
+    mutex = CreateSemaphore(             //´´½¨»¥³âĞÅºÅÁ¿mutex
             NULL,
             1,
             1,
@@ -92,16 +92,16 @@ int main()
 
     for(int i=0;i<4;i++) {
         ProducerThread[i] = i+1;
-        CreateThread(                    //åˆ›å»ºç”Ÿäº§è€…çº¿ç¨‹
-            NULL,                        //ä¸èƒ½è¢«å­çº¿ç¨‹ç»§æ‰¿
-            0,                           //é»˜è®¤å †æ ˆå¤§å°
-            producer,                    //ç”Ÿäº§è€…å‡½æ•°
-            &ProducerThread[i],          //ä¼ å‚
-            0,                           //åˆ›å»ºåç«‹å³æ‰§è¡Œ
-            &Tid                         //çº¿ç¨‹ID
+        CreateThread(                    //´´½¨Éú²úÕßÏß³Ì
+            NULL,                        //²»ÄÜ±»×ÓÏß³Ì¼Ì³Ğ
+            0,                           //Ä¬ÈÏ¶ÑÕ»´óĞ¡
+            producer,                    //Éú²úÕßº¯Êı
+            &ProducerThread[i],          //´«²Î
+            0,                           //´´½¨ºóÁ¢¼´Ö´ĞĞ
+            &Tid                         //Ïß³ÌID
         );
         ConsumerThread[i] = i+1;
-        CreateThread(NULL,0,consumer,&ConsumerThread[i],0,&Tid);   //åˆ›å»ºæ¶ˆè´¹è€…çº¿ç¨‹
+        CreateThread(NULL,0,consumer,&ConsumerThread[i],0,&Tid);   //´´½¨Ïû·ÑÕßÏß³Ì
     }
 
     Sleep(20000);
