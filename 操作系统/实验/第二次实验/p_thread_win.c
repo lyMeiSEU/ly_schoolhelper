@@ -3,27 +3,27 @@
 #define N 100
 #define TRUE 1
 typedef int Semaphore;
-Semaphore full = 0, Empty = N;            //共享资源区满槽数目和空槽数目
-int in = 0, out = 0;                      //缓冲区生产，消费数据指针
+Semaphore full = 0, Empty = N;            //???????????????????????
+int in = 0, out = 0;                      //???????????????????????
 HANDLE mutex;
 int ProducerThread[5];
 int ConsumerThread[5];
-int Buffer[N+4];                          //缓冲区
+int Buffer[N+4];                          //??????
 
-int produce_item() {                      //生产(随机数)
+int produce_item() {                      //????(?????)
     return (rand()%N + N)%N;
 }
 
-int insert_item(int item) {               //插入资源
+int insert_item(int item) {               //???????
     in %= N;
-    printf("生产到缓冲区槽： %d\n",in);
+    printf("??????????????? %d\n",in);
     Buffer[in] = item;
     return Buffer[in++];
 }
 
-int remove_item() {                        //移出资源
+int remove_item() {                        //??????
     out %= N;
-    printf("                       取走缓冲区槽 %d 的数\n",out);
+    printf("                       ?????????? %d ????\n",out);
     return Buffer[out++];
 }
 
@@ -83,7 +83,7 @@ int main()
 {
     DWORD Tid;
 
-    mutex = CreateSemaphore(             //创建互斥信号量mutex
+    mutex = CreateSemaphore(             //?????????????mutex
             NULL,
             1,
             1,
@@ -92,16 +92,16 @@ int main()
 
     for(int i=0;i<4;i++) {
         ProducerThread[i] = i+1;
-        CreateThread(                    //创建生产者线程
-            NULL,                        //不能被子线程继承
-            0,                           //默认堆栈大小
-            producer,                    //生产者函数
-            &ProducerThread[i],          //传参
-            0,                           //创建后立即执行
-            &Tid                         //线程ID
+        CreateThread(                    //?????????????
+            NULL,                        //????????????
+            0,                           //???????С
+            producer,                    //?????????
+            &ProducerThread[i],          //????
+            0,                           //?????????????
+            &Tid                         //???ID
         );
         ConsumerThread[i] = i+1;
-        CreateThread(NULL,0,consumer,&ConsumerThread[i],0,&Tid);   //创建消费者线程
+        CreateThread(NULL,0,consumer,&ConsumerThread[i],0,&Tid);   //?????????????
     }
 
     Sleep(20000);
