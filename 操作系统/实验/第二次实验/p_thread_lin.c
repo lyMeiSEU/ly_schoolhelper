@@ -4,7 +4,7 @@
 
 #define BUFFER_SIZE 10//缓冲区大小为10
 char *buffer;
-sem_t mutex,empty,full;//三个信号量，互斥信号量mutex，技术信号量empty和full
+sem_t mutex,empty,full;//三个信号量，互斥信号量mutex，计数信号量empty和full
 int x,y;//生产者和消费者在buffer中下标
 void output()//输出buffer数组
 {
