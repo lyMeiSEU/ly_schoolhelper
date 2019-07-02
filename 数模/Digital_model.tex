@@ -1,0 +1,199 @@
+\documentclass[UTF8]{ctexart}
+\usepackage{mathtools,amsmath,graphicx,array}
+\begin{document}
+	\title{让标枪飞}
+	\author{凌泰炜, 梅洛瑜, 周于楷}
+	\date{\today}
+	\maketitle
+	\tableofcontents
+	\begin{abstract}
+		content...
+	\end{abstract}
+	\part{问题重述}
+	\part{问题假设}
+	\part{符号说明}
+	\part{问题分析}
+		\section{问题一的分析}
+		\section{问题二的分析}
+		\section{问题三的分析}
+		\section{问题四的分析}
+		\section{问题五的分析}
+	\part{问题模型建立与求解}
+		\section{问题一}由于枪头和枪身连接处存在函数突变，无法拟合出连续函数，故分段拟合。
+			\subsection{枪身拟合}先对枪身进行拟合，采用rational（5,4），polynomial（8），fourier（8），exponential（2）四种较为优越的拟合方式\\
+			\subsubsection{Rat54}
+					\begin{figure}[h]
+							\includegraphics[width=16cm,height=5cm]{picture/P5-1.jpg}
+							\caption{枪身直径随长轴位置变化}
+					\end{figure}
+					\begin{flushleft}
+						拟合函数为:
+					\end{flushleft}
+					\begin{center}
+						\[ f(x) =(p1*x^5 + p2*x^4 + p3*x^3 + p4*x^2 + p5*x + p6)/
+						(x^4 + q1*x^3 + q2*x^2 + q3*x + q4)
+						\]
+					\end{center}
+					\begin{center}
+					\begin{tabular}{|l|c|c|}
+						\hline
+						参数&值&置信区间\\
+						\hline
+						p1 & -0.0379 &  (-0.05703, -0.01876)\\
+						\hline
+						p2 & 135.7&  (-9.897e+06, 9.898e+06)\\
+						\hline
+						p3 & 2.15e+04&  (-3.543e+10, 3.543e+10)\\
+						\hline
+						p4 & 320.6&  (-5.636e+12, 5.636e+12)\\
+						\hline
+						p5 & -62.15&  (-3.344e+12, 3.344e+12)\\
+						\hline
+						p6 & -2.191&  (-3.825e+12, 3.825e+12)\\
+						\hline
+						q1 & 3077&  (-2.612e+08, 2.612e+08)\\
+						\hline
+						q2 & -600.5&  (-8.038e+11, 8.038e+11)\\
+						\hline
+						q3 & 598.6&  (-3.066e+11, 3.066e+11)\\
+						\hline
+						q4 & -0.3478&  (-6.072e+11, 6.072e+11)\\
+						\hline
+					\end{tabular}
+				\end{center}
+			\begin{flushleft}
+				拟合程度:
+			\end{flushleft}
+				\begin{center}
+					$$
+					\begin{matrix}
+						SSE:&9.728\\
+						R-square:&0.9968\\
+						Adjusted R-square:&0.9961\\
+						RMSE:&0.4649\\
+					\end{matrix}
+					$$
+				\end{center}
+			\subsubsection{Poly8}
+				\begin{figure}[h]
+						\includegraphics[width=16cm,height=5cm]{picture/P5-2.jpg}
+						\caption{枪身直径随长轴位置变化}
+				\end{figure}
+				\begin{flushleft}
+					拟合函数为:
+				\end{flushleft}
+				\begin{center}
+					\[  f(x) = p1*x^8 + p2*x^7 + p3*x^6 + p4*x^5 + p5*x^4 + p6*x^3 + p7*x^2 + p8*x + p9\]				
+				\begin{tabular}{|l|c|c|}
+					\hline
+					参数&值&置信区间\\
+					\hline
+					p1 & -1.026e-23 &  (-1.285e-23, -7.678e-24)\\
+					\hline
+					p2 & 1.049e-19&  (8.041e-20, 1.294e-19)\\
+					\hline
+					p3 & -4.373e-16&  (-5.323e-16, -3.424e-16)\\
+					\hline
+					p4 &  9.527e-13&  (7.59e-13, 1.146e-12)\\
+					\hline
+					p5 & -1.153e-09&  (-1.376e-09, -9.304e-10)\\
+					\hline
+					p6 & 7.628e-07&  (6.196e-07, 9.06e-07\\
+					\hline
+					p7 & -0.0002669&  (-0.0003144, -0.0002193)\\
+					\hline
+					p8 & 0.07042&  (0.06373, 0.07711)\\
+					\hline
+					p9 & 6.473&  (6.241, 6.706)\\
+					\hline
+				\end{tabular}
+			\end{center}
+			\begin{flushleft}
+				拟合程度:
+			\end{flushleft}
+				\begin{center}
+				$$
+				\begin{matrix}
+				SSE:&1.677\\
+				R-square:&0.9994\\
+				Adjusted R-square:&0.9993\\
+				RMSE:&0.191\\
+				\end{matrix}
+				$$
+			\end{center}
+			\subsubsection{Fourier8}
+			\begin{figure}[h]
+				\includegraphics[width=16cm,height=5cm]{picture/P5-3.jpg}
+				\caption{枪身直径随长轴位置变化}
+			\end{figure}
+			\begin{flushleft}
+				拟合函数为:
+			\end{flushleft}
+			\begin{center}
+				$$\[  f(x) = 
+				a0 + a1*cos(x*w) + b1*sin(x*w) + 
+				a2*cos(2*x*w) +\\ b2*sin(2*x*w) + a3*cos(3*x*w) +\\ b3*sin(3*x*w) + 
+				a4*cos(4*x*w) +\\ b4*sin(4*x*w) + a5*cos(5*x*w) +\\ b5*sin(5*x*w) + 
+				a6*cos(6*x*w) +\\ b6*sin(6*x*w) + a7*cos(7*x*w) +\\ b7*sin(7*x*w) + 
+				a8*cos(8*x*w) +\\ b8*sin(8*x*w)
+				\]$$			
+				\begin{tabular}{|l|c|c|}
+					\hline
+					参数&值&置信区间\\
+					\hline
+					a0 &      -877.7&  (-1.079e+04, 9039)\\
+					\hline
+					a1 &      -330.3&  (-2101, 1441)\\
+					\hline
+					b1 &        1650&  (-1.675e+04, 2.005e+04)\\
+					\hline
+					a2 &        1247&  (-1.342e+04, 1.591e+04)\\
+					\hline
+					b2 &       509.7&  (-2323, 3343)\\
+					\hline
+					a3 &       506.9&  (-2377, 3391)\\
+					\hline
+					b3 &      -784.1&  (-1.076e+04, 9188)\\
+					\hline
+					a4 &      -399.8&  (-6104, 5305)\\
+					\hline
+					b4 &      -376.5&  (-2563, 1810)\\
+					\hline
+					a5 &      -213.5&  (-1482, 1055)\\
+					\hline
+					b5 &       159.6&  (-2517, 2836)\\
+					\hline
+					a6 &       46.92&  (-940.4, 1034)\\
+					\hline
+					b6 &       91.17&  (-457.4, 639.8)\\
+					\hline
+					a7 &       27.24&  (-134.8, 189.3)\\
+					\hline
+					b7 &      -8.759&  (-270.6, 253.1)\\
+					\hline
+					a8 &     -0.5408&  (-38.89, 37.81)\\
+					\hline
+					b8 &      -4.373&  (-30.2, 21.45)\\
+					\hline
+					w &     0.00142&  (0.0006291, 0.002211)\\
+					\hline
+				\end{tabular}
+			\end{center}
+			\begin{flushleft}
+				拟合程度:
+			\end{flushleft}
+			\begin{center}
+				$$
+				\begin{matrix}
+				SSE:&1.677\\
+				R-square:&0.9994\\
+				Adjusted R-square:&0.9993\\
+				RMSE:&0.191\\
+				\end{matrix}
+				$$
+			\end{center}
+		\section{问题二}
+		\section{问题三}
+		\section{问题四}
+		\section{问题五}
+\end{document}
