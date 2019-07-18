@@ -21,10 +21,10 @@
 	\part{问题模型建立与求解}
 		\section{问题一}由于枪头和枪身连接处存在函数突变，无法拟合出连续函数，故分段拟合。
 			\subsection{枪身拟合}先对枪身进行拟合，采用rational（5,4），polynomial（8），fourier（8），exponential（2）四种较为优越的拟合方式\\
-			\subsubsection{Rat54}
+			\subsubsection{Ration 54}
 					\begin{figure}[h]
-							\includegraphics[width=16cm,height=5cm]{picture/P5-1.jpg}
-							\caption{枪身直径随长轴位置变化}
+							\includegraphics[width=16cm,height=5cm]{picture/P6-1-1.jpg}
+							\caption{使用多项式除法拟合枪身直径随长轴位置变化}
 					\end{figure}
 					\begin{flushleft}
 						拟合函数为:
@@ -37,7 +37,7 @@
 					\begin{center}
 					\begin{tabular}{|l|c|c|}
 						\hline
-						参数&值&置信区间\\
+						参数&值&置信区间(95\%)\\
 						\hline
 						p1 & -0.0379 &  (-0.05703, -0.01876)\\
 						\hline
@@ -74,10 +74,10 @@
 					\end{matrix}
 					$$
 				\end{center}
-			\subsubsection{Poly8}
+			\subsubsection{Polynomial 8}
 				\begin{figure}[h]
-						\includegraphics[width=16cm,height=5cm]{picture/P5-2.jpg}
-						\caption{枪身直径随长轴位置变化}
+						\includegraphics[width=16cm,height=5cm]{picture/P6-1-2.jpg}
+						\caption{使用八个多项式相加拟合枪身直径随长轴位置变化}
 				\end{figure}
 				\begin{flushleft}
 					拟合函数为:
@@ -121,25 +121,25 @@
 				\end{matrix}
 				$$
 			\end{center}
-			\subsubsection{Fourier8}
+			\subsubsection{Fourier 8}
 			\begin{figure}[h]
-				\includegraphics[width=16cm,height=5cm]{picture/P5-3.jpg}
-				\caption{枪身直径随长轴位置变化}
+				\includegraphics[width=16cm,height=5cm]{picture/P6-1-3.jpg}
+				\caption{使用三角函数拟合枪身直径随长轴位置变化}
 			\end{figure}
 			\begin{flushleft}
 				拟合函数为:
 			\end{flushleft}
 			\begin{center}
-				$$\[  f(x) = 
-				a0 + a1*cos(x*w) + b1*sin(x*w) + 
-				a2*cos(2*x*w) +\\ b2*sin(2*x*w) + a3*cos(3*x*w) +\\ b3*sin(3*x*w) + 
-				a4*cos(4*x*w) +\\ b4*sin(4*x*w) + a5*cos(5*x*w) +\\ b5*sin(5*x*w) + 
-				a6*cos(6*x*w) +\\ b6*sin(6*x*w) + a7*cos(7*x*w) +\\ b7*sin(7*x*w) + 
-				a8*cos(8*x*w) +\\ b8*sin(8*x*w)
-				\]$$			
+				$$  f(x) = 
+				a0 + a1*\cos(x*w) + b1*sin(x*w) + 
+				a2*\cos(2*x*w) +\\ b2*sin(2*x*w) + a3*\cos(3*x*w) +\\ b3*sin(3*x*w) + 
+				a4*\cos(4*x*w) +\\ b4*sin(4*x*w) + a5*\cos(5*x*w) +\\ b5*sin(5*x*w) + 
+				a6*\cos(6*x*w) +\\ b6*sin(6*x*w) + a7*\cos(7*x*w) +\\ b7*sin(7*x*w) + 
+				a8*\cos(8*x*w) +\\ b8*sin(8*x*w)
+				$$			
 				\begin{tabular}{|l|c|c|}
 					\hline
-					参数&值&置信区间\\
+					参数&值&置信区间(95\%)\\
 					\hline
 					a0 &      -877.7&  (-1.079e+04, 9039)\\
 					\hline
@@ -192,6 +192,316 @@
 				\end{matrix}
 				$$
 			\end{center}
+			\subsubsection{Exponent 2}
+			\begin{figure}[h]
+				\includegraphics[width=16cm,height=5cm]{picture/P6-1-4.jpg}
+				\caption{使用两个指数函数拟合枪身直径随长轴位置变化}
+			\end{figure}
+			\begin{flushleft}
+				拟合函数为:
+			\end{flushleft}
+			\begin{center}
+				$$  f(x) = a*\exp(b*x) + c*\exp(d*x)$$		
+				\begin{tabular}{|l|c|c|}
+					\hline
+					参数&值&置信区间(95\%)\\
+					\hline
+					a &   5.846e+05&  (-2.635e+13, 2.635e+13)\\
+					\hline
+					b &  -0.0006879&  (-1.995, 1.994)\\
+					\hline
+					c &  -5.846e+05&  (-2.635e+13, 2.635e+13)\\
+					\hline
+					d &   -0.000688&  (-1.996, 1.994)\\
+					\hline				
+				\end{tabular}
+			\end{center}
+			\begin{flushleft}
+				拟合程度:
+			\end{flushleft}
+			\begin{center}
+				$$
+				\begin{matrix}
+				SSE:&24.77\\
+				R-square:&0.9918\\
+				Adjusted R-square:&0.9913\\
+				RMSE:&0.697\\
+				\end{matrix}
+				$$
+			\end{center}
+			\subsection{枪头拟合}我们对枪头采用相同的处理方式，采用$Rational(4,4)$，$Polynomial(8)$，$Fourier(4)$，$Expon(2)$四种函数来拟合枪头曲线
+				\subsubsection{Rational 44}
+				\begin{figure}[h]
+					\includegraphics[width=16cm,height=10cm]{picture/P6-2-1.jpg}
+					\caption{使用两个多项式函数除法拟合枪身直径随长轴位置变化}
+				\end{figure}
+				\begin{flushleft}
+					拟合函数为:
+				\end{flushleft}
+				\begin{center}
+					$$   f(x) = (p1*x^4 + p2*x^3 + p3*x^2 + p4*x + p5) /
+					(x^4 + q1*x^3 + q2*x^2 + q3*x + q4)
+					$$		
+					\begin{tabular}{|l|c|c|}
+						\hline
+						参数&值&置信区间(95\%)\\
+						\hline
+						 p1 &        -691&  (-5.211e+12, 5.211e+12)\\
+						 \hline
+						p2 &   1.92e+06&  (-4.134e+22, 4.134e+22)\\
+						\hline
+						p3 &       -1221&  (-1.466e+26, 1.466e+26)\\
+						\hline
+						p4 &      -1.469&  (-1.261e+29, 1.261e+29)\\
+						\hline
+						p5 &      0.3843&  (-4.729e+27, 4.729e+27)\\
+						\hline
+						q1 &   1.675e+04&  (-5.983e+19, 5.983e+19)\\
+						\hline
+						q2 &   2.672e+05&  (-9.646e+23, 9.646e+23)\\
+						\hline
+						q3 &       224.3&  (-1.09e+27, 1.09e+27)\\
+						\hline
+						q4 &      0.4248&  (-1.757e+28, 1.757e+28)\\
+						\hline						
+					\end{tabular}
+				\end{center}
+				\begin{flushleft}
+					拟合程度:
+				\end{flushleft}
+				\begin{center}
+					$$
+					\begin{matrix}
+					SSE:&24.77\\
+					R-square:&0.9918\\
+					Adjusted R-square:&0.9913\\
+					RMSE:&0.697\\
+					\end{matrix}
+					$$
+				\end{center}
+				\subsubsection{Polynomial 8}
+				\begin{figure}[h]
+					\includegraphics[width=16cm,height=10cm]{picture/P6-2-2.jpg}
+					\caption{使用八个多项式相加拟合枪身直径随长轴位置变化}
+				\end{figure}
+				\begin{flushleft}
+					拟合函数为:
+				\end{flushleft}
+				\begin{center}
+					\[    f(x) = p1*x^8 + p2*x^7 + p3*x^6 + p4*x^5 + 
+					p5*x^4 + p6*x^3 + p7*x^2 + p8*x + p9
+					\]				
+					\begin{tabular}{|l|c|c|}
+						\hline
+						参数&值&置信区间(95\%)\\
+						\hline
+						 p1 &  -3.144e-16&  (-2.006e-15, 1.378e-15)\\
+						 \hline
+						p2 &   6.301e-12&  (-2.776e-11, 4.036e-11)\\
+						\hline
+						p3 &  -5.525e-08&  (-3.552e-07, 2.447e-07)\\
+						\hline
+						p4 &   0.0002768&  (-0.001232, 0.001785)\\
+						\hline
+						p5 &     -0.8664&  (-5.609, 3.876)\\
+						\hline
+						p6 &        1735&  (-7803, 1.127e+04)\\
+						\hline
+						p7 &  -2.172e+06&  (-1.416e+07, 9.815e+06)\\
+						\hline
+						p8 &   1.553e+09&  (-7.053e+09, 1.016e+10)\\
+						\hline
+						p9 &  -4.859e+11&  (-3.189e+12, 2.217e+12)\\
+						\hline
+										
+					\end{tabular}
+				\end{center}
+				\begin{flushleft}
+					拟合程度:
+				\end{flushleft}
+				\begin{center}
+					$$
+					\begin{matrix}
+					SSE:&0.001375\\
+					R-square:&1\\
+					Adjusted R-square:&0.9999\\
+					RMSE:&0.0378\\
+					\end{matrix}
+					$$
+				\end{center}
+				\subsubsection{Fourier 4}
+				\begin{figure}[h]
+					\includegraphics[width=16cm,height=10cm]{picture/P6-2-3.jpg}
+					\caption{使用三角函数拟合枪头直径随长轴位置变化}
+				\end{figure}
+				\begin{flushleft}
+					拟合函数为:
+				\end{flushleft}
+				\begin{center}
+					$$\[f(x) =  a0 + a1*\cos(x*w) + b1*\sin(x*w) + \\
+					a2*\cos(2*x*w) + b2*\sin(2*x*w) + a3*\cos(3*x*w) +\\ b3*\sin(3*x*w) + 
+					a4*\cos(4*x*w) +\\ b4*\sin(4*x*w)\]$$
+					\begin{tabular}{|l|c|c|}
+						\hline
+						参数&值\\
+						\hline
+						a0 &  -1.393e+08\\
+						\hline
+						a1 &   3.134e+06\\
+						\hline
+						b1 &   2.234e+08\\
+						\hline
+						a2 &   1.123e+08\\
+						\hline
+						b2 &  -3.162e+06\\
+						\hline
+						a3 &  -1.375e+06\\
+						\hline
+						b3 &  -3.241e+07\\
+						\hline
+						a4 &  -4.107e+06\\
+						\hline
+						b4 &    2.34e+05\\
+						\hline
+						w &  -0.001886\\
+						\hline	
+					\end{tabular}
+				\end{center}
+				\begin{flushleft}
+					拟合程度:
+				\end{flushleft}
+				\begin{center}
+					$$
+					\begin{matrix}
+					SSE:&0.0007453\\
+					R-square:&1\\
+					\end{matrix}
+					$$
+				\end{center}
+				\subsubsection{Exponent 2}
+				\begin{figure}[h]
+					\includegraphics[width=16cm,height=10cm]{picture/P6-2-4.jpg}
+					\caption{使用两个指数函数拟合枪头直径随长轴位置变化}
+				\end{figure}
+				\begin{flushleft}
+					拟合函数为:
+				\end{flushleft}
+				\begin{center}
+					$$  f(x) = a*exp(b*x) + c*exp(d*x)$$		
+					\begin{tabular}{|l|c|c|}
+						\hline
+						参数&值\\
+						\hline
+						a &     0.04108\\
+						\hline
+						b &    0.002057\\
+						\hline
+						c &           0\\
+						\hline
+						d &    0.002057\\
+						\hline								
+					\end{tabular}
+				\end{center}
+				\begin{flushleft}
+					拟合程度:
+				\end{flushleft}
+				\begin{center}
+					$$
+					\begin{matrix}
+					SSE:& 304.9\\
+					R-square:&-0.7891\\
+					Adjusted R-square:&-1.684\\
+					RMSE:&7.128\\
+					\end{matrix}
+					$$
+				\end{center}
+				\subsubsection{Sum Of Sine 2}
+				\begin{figure}[h]
+					\includegraphics[width=16cm,height=6cm]{picture/P6-2-5.jpg}
+					\caption{使用两个sin函数的和拟合枪头直径随长轴位置变化}
+				\end{figure}
+				\begin{flushleft}
+					拟合函数为:
+				\end{flushleft}
+				\begin{center}
+					$$  f(x) =  a1*\sin(b1*x+c1) + a2*\sin(b2*x+c2)$$		
+					\begin{tabular}{|l|c|c|}
+						\hline
+						参数&值&置信区间(95\%)\\
+						\hline
+						a1 &       187.5&  (-4.551e+05, 4.555e+05)\\
+						\hline
+						b1 &     0.01431&  (-0.7145, 0.7431)\\
+						\hline
+						c1 &      -8.623&  (-1815, 1798)\\
+						\hline
+						a2 &       175.8&  (-4.551e+05, 4.555e+05)\\
+						\hline
+						b2 &     0.01491&  (-0.7502, 0.78)\\
+						\hline
+						c2 &       18.18&  (-1878, 1914)\\
+						\hline													
+					\end{tabular}
+				\end{center}
+				\begin{flushleft}
+					拟合程度:
+				\end{flushleft}
+				\begin{center}
+					$$
+					\begin{matrix}
+					SSE:& 3.583\\
+					R-square:&0.979\\
+					Adjusted R-square:&0.9527\\
+					RMSE:&0.9464\\
+					\end{matrix}
+					$$
+				\end{center}
+			\subsection{剖面积计算}
+				\begin{flushleft}
+					已知直径函数:
+				\end{flushleft}
+				\begin{center}
+					$$
+					f(x)=
+					\begin{cases}
+					a0 + a1*cos(x*w) + b1*\sin(x*w) + \\
+					a2*\cos(2*x*w) + b2*\sin(2*x*w) + a3*\cos(3*x*w) + b3*\sin(3*x*w)+ \\
+					a4*\cos(4*x*w) + b4*\sin(4*x*w) + a5*\cos(5*x*w) + b5*\sin(5*x*w)+ \\
+					a6*\cos(6*x*w) + b6*\sin(6*x*w) + a7*\cos(7*x*w) + b7*\sin(7*x*w)+ \\
+					a8*\cos(8*x*w) + b8*\sin(8*x*w),\\\quad\qquad \text{(0$<$x$<$1435)} \\
+					\\
+					36.45,\text{(1435$<$x$<$1585)}\\
+					\\
+					a0 + a1*\cos(x*w) + b1*\sin(x*w) + \\
+					a2*\cos(2*x*w) + b2*\sin(2*x*w) + a3*\cos(3*x*w) +\\ b3*\sin(3*x*w)+ 
+					a4*\cos(4*x*w) + b4*\sin(4*x*w) +\\ a5*\cos(5*x*w) + b5*\sin(5*x*w)+ 
+					a6*\cos(6*x*w) +\\ b6*\sin(6*x*w) + a7*\cos(7*x*w) + b7*\sin(7*x*w)+ \\
+					a8*\cos(8*x*w) + b8*\sin(8*x*w),\\\quad\qquad\text{(1585$<$x$<$2352)}\\
+					\\
+					a1*\sin(b1*x+c1) + a2*\sin(b2*x+c2),\\\quad\qquad\text{(2362$<$x$<$2640)}\\
+					\end{cases}
+					$$
+				\end{center}
+				\begin{flushleft}
+					剖面面积:
+				\end{flushleft}
+				\begin{center}
+					$S_p=\ints f(x)=S_1+S_2+S_3+S_4$
+				\end{center}
+			\begin{flushleft}
+				计算可得:\quad$S_1=34593$,$S_2=5467$,$S_3=21703$,$S_4=3204$\qquad 则$S_p=64967$
+			\end{flushleft}
+			\subsection{表面积计算}
+				\begin{flushleft}
+					表面积计算公式为:
+				\end{flushleft}
+				\begin{center}
+					$S_b=\int \pi*D =\int \pi*f(x)=\pi*S_p\approx204099$
+				\end{center}
+			\subsection{形心计算}
+				\begin{flushleft}
+					形心计算公式为
+				\end{flushleft}
 		\section{问题二}
 		\section{问题三}
 		\section{问题四}
