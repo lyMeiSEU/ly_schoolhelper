@@ -39,7 +39,7 @@ class MyServer(BaseHTTPRequestHandler):
         except Exception as e:
             mysqlutil = MysqlUtil()
             self.wfile.write("json error".encode('utf-8'))
-            print("server error "+e)
+            print("server error "+str(e))
 
 if __name__ == '__main__':
     mysqlutil = MysqlUtil()
