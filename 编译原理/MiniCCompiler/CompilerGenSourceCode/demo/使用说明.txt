@@ -1,0 +1,11 @@
+SeuLex与SeuYacc使用说明
+Step 1: 使用cmd命令行进入CompilerGen.exe所在目录
+Step 2: 输入 CompilerGen RE.l Cminus.y 回车 
+（RE.l为词法描述文件，Cminus.y为文法描述文件）
+    目录下出现 tableLex.h tableYacc.h actionLex.h actionYacc.h lex.h yacc.cpp等文件，是编译器所使用到的用户定义的部分所生成的文件，结合目录下的所需文件夹里的文件，运行yacc.cpp即可生成编译器
+注：目录下已给出一个可用的编译器Compiler.exe
+
+Compiler使用说明
+Step 1: 使用cmd命令行进入CompilerGen.exe所在目录
+Step 2: 输入 Compiler test.cpp 回车 (test.cpp为所要编译的目标文件)
+    目录下出现 token_list.txt 分词序列，reduce_sequence.txt规约序列, symbol_table_file.txt符号表，middle_code.txt中间代码 目标代码code.asm文件
