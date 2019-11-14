@@ -90,7 +90,7 @@ class Token(object):
         self.lines = self.read_file(filepath)
     def analysis(self):
         self.__init__()
-        output=open("Test.l","w")
+        output=open("a.l","w")
         for line in self.lines:
             token.run(line,output, True)
             #写入指定文件中
