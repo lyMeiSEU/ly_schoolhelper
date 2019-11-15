@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from collections import defaultdict
 
 file_order = "../data_for_luoyu_tracking_detail_with_sku_201810"
-    
+
 table=xlrd.open_workbook(file_order+'.xlsx')
 sheet = table.sheets()[0]
 rows = sheet.nrows
@@ -27,10 +27,11 @@ for row in range(1, rows):
                             #  骑手ID       商家接单     骑手离开          差值
     ord_shLoLa_urLoLa_alltime=[rowvalue[1],time_shopac,time_rdarrive,time_delta, [rowvalue[13]]]
     order_value[str(rowvalue[2])].append(ord_shLoLa_urLoLa_alltime)
+
     
 csvF=open('sku.csv','w+',newline="")
 csvwriter=csv.writer(csvF)
 for key in order_value.keys():
-    csvwriter.writerow([key,order_value[key],order_value[key][0][3].seconds,len(order_value[key][0][4])])
+    csvwriter.writerow([key,order_value[key][0][0],order_value[key][0][1],order_value[key][0][2],order_value[key][0][3].seconds,order_value[key][0][4],len(order_value[key][0][4])])
 
 print(order_value)
