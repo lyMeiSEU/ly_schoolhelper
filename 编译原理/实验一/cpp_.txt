@@ -1,0 +1,29 @@
+=========line 1=========
+(int,basicWord,---)
+(x,identitier,0)
+(=,operator,---)
+(1,integer,5000)
+=========line 2=========
+=========line 3=========
+(int,basicWord,---)
+(monster,identitier,1)
+(=,operator,---)
+(1,integer,5000)
+=========line 4=========
+=========line 5=========
+(int,basicWord,---)
+(y,identitier,2)
+=========line 6=========
+=========line 7=========
+(double,basicWord,---)
+(m,identitier,3)
+(=,operator,---)
+(0.01,float,10000)
+=========line 8=========
+(m,identitier,3)
+(=,operator,---)
+(y,identitier,2)
+(+,operator,---)
+(x,identitier,0)
+(-,operator,---)
+(1,integer,5000)
