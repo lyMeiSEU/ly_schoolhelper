@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-input=["S->a","S->^","S->(T)","T->SU","U->,SU","U->ε"]
+input=["S->a","S->^","S->T)","T->SU","U->,SU","U->ε"]
 unTerminate=[]
 Terminate=[]
 for item in input:
@@ -66,20 +66,26 @@ def innerExtension(state):
                         #print(state[i][1][state[i][2]])
                         #未到末尾
                         if state[i][2]+1!=len(state[i][1]):
-                            if state[i][1][state[i][2]+1] in Terminate:
-                                predit=[state[i][1][state[i][2]+1]]
-                            else:
-                                wherenow=1
-                                predit=[]
-                                #一直出现ε
-                                while state[i][2]+wherenow!=len(state[i][1]):
-                                    if 'ε' in input[i in range(0,len(input))] and state[i][2]==input[i in range(0,len(input))][0]:
-                                        predit.append(calculateFirst(state[i][1][state[i][2]+wherenow])-'ε'+calculateFirst(state[i][1][state[i][2]+wherenow+1]))
-                                        wherenow=wherenow+1
-                                    else:
-                                        break
-                                if state[i][2]+wherenow==len(state[i][1]):
-                                    predit.append(calculateFollow(state[i][0]))
+                            predit=[]
+                            where=1
+                            while state[i][2]+where<len(state[i][1]):
+                                if state[i][state[i][2]+where] in unTerminate:
+                                    #是否含ε产生式
+                                    flag=False
+                                    for item in input:
+                                        if item[0]==state[i][state[i][2]+where] and item.find('ε')!=-1:
+                                            flag=True
+                                    if flag:
+                                        next=calculateFollow(state,state[i][state[i][2]+where])
+                                        now=calculateFirst(state[i][state[i][2]+where])
+                                        for nowindex in now:
+                                            if nowindex!='ε':
+                                                predit.append(nowindex)
+                                        for nextindex in next:
+                                            predit.append(nextindex)
+                                elif state[i][state[i][2]+where] in Terminate:
+                                    predit.append(state[i][state[i][2]+where])
+                                where=where+1
                         #到达末尾
                         else:
                             predit=calculateFollow(state,state[i][0])
@@ -96,8 +102,6 @@ def innerExtension(state):
 #删除空预测符
 def removeEmpty(state):
     for item in state:
-        if item[3]==[]:
-            item[3].append('$R')
         if [] in item[3]:
             item[3].remove([])
 
@@ -117,11 +121,10 @@ def betweenExtension(state):
         print(together[sameExtension])
         for value in together[sameExtension]:
             if value[2]+1<=len(value[1]):
-                value[2]=value[2]+1
+                stateNew.append([value[0],value[1],value[2]+1,value[3]])
+                innerExtension(stateNew)
             elif calculateFollow(stateNew,value[0]) not in value[3]:
-                value[3].append(calculateFollow(stateNew,value[0]))
-            stateNew.append(value)
-            innerExtension(stateNew)
+                stateNew.append([value[0],value[1],value[2]+1,value[3].append(calculateFollow(stateNew,value[0]))])
         innerExtension(stateNew)
         removeEmpty(stateNew)
         states.append([stateNew,sameExtension])
@@ -129,6 +132,7 @@ def betweenExtension(state):
 
 Statements=[]
 changeTable=defaultdict(list)
+statusTable=defaultdict(list)
 #state[[左,右,点位置,预测符]]
 state0=[['S\'',unTerminate[0],0,['$R']]]
 state=[]
@@ -136,7 +140,9 @@ innerExtension(state0)
 Statements.append(state0)
 i=0
 while(i<len(Statements)):
+    stateExt=Statements[i]
     state=betweenExtension(Statements[i])
+    Statements[i]=stateExt
     if state==[]:
         i=i+1
         continue
