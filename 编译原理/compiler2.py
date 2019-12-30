@@ -146,3 +146,17 @@ for i in range(0,len(Statements)):
                     if input[item].find(Statements[i][j][1])!=-1:
                         statusTable[i]=[[Statements[i][j][3],item]]
                         break
+print(statusTable)
+print(changeTable)
+AllTable=[]
+#构造表格每个状态一行
+for i in range(0,len(Statements)):
+    AllTable.append([])
+    if i in changeTable.keys():
+        for item in changeTable[i]:
+            AllTable[i].append(['s',item[0]])
+    if i in statusTable.keys():
+        for item in statusTable[i]:
+            AllTable[i].append(['r',item[1]])
+for i in range(0,len(Statements)):
+    print(str('state%s:'%(str(i))+str(AllTable[i])))
