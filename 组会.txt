@@ -1,0 +1,31 @@
+场景
+投入回报
+深度 考虑多干扰
+新场景	技术重要性
+商家 骑手特点
+不同优化目标
+趋势 设计理念
+一致性问题
+算法AI	数据IOT
+GPS漂移	
+白盒化：接单-大致轨迹 线上判断小区骑手配送模式
+accelerometer
+gravity
+userAcceleration
+Gyroscope
+Rotation Rate
+Orientation
+Motion Activity
+Pressure
+Magnetic
+NFC
+Screen
+Light
+Proximity
+Pedometer
+GPS
+Satellite
+小Scope
+问题>解决问题（Scope控制）
+路由：真实环境（不稳定性，能耗）
+GPS漂移区域识别：维度真实化，结合卫星分布确定漂移（定义问题）
