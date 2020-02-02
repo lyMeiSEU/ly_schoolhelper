@@ -11,15 +11,13 @@ from __future__ import print_function
 from ddqn_with_prioritized_replay import DQNPrioritizedReplay
 import numpy as np
 import matplotlib
-matplotlib.use('Agg')
+#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import os
 import sys
 import optparse
-import tensorflow as tf
-
-#import tensorflow.compat.v1 as tf
-#tf.disable_v2_behavior()
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 
 
 if 'SUMO_HOME' in os.environ:
@@ -293,6 +291,7 @@ if __name__ == "__main__":
     plt.xlabel('episodes')
     plt.ylabel('veh*h')
     plt.grid(True)
+    plt.show()
     plt.savefig('figure/output.png')
     plt.close()
 
