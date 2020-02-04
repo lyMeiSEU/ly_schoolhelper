@@ -8,6 +8,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 import numpy as np
 import matplotlib.pyplot as plt
+from multiprocessing import Process, Pool
 import os
 import sys
 import optparse
@@ -18,22 +19,23 @@ import traci
 import time
 import re
 import xml.dom.minidom
-import xml.etree.ElementTree as ET
-if 'SUMO_HOME' in os.environ:
-    tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
-    sys.path.append(tools)
-else:
-    sys.exit("please declare environment variable 'SUMO_HOME'")
-# we need to import python modules from the $SUMO_HOME/tools directory
-try:
-    sys.path.append(os.path.join(os.path.dirname(
-        __file__), '..', '..', '..', '..', "tools"))  # tutorial in tests
-    sys.path.append(os.path.join(os.environ.get("SUMO_HOME", os.path.join(
-        os.path.dirname(__file__), "..", "..", "..")), "tools"))  # tutorial in docs
-    from sumolib import checkBinary
-except ImportError:
-    sys.exit(
-        "please declare environment variable 'SUMO_HOME' as the root directory of your sumo installation (it should contain folders 'bin', 'tools' and 'docs')")
+# import xml.etree.ElementTree as ET
+# if 'SUMO_HOME' in os.environ:
+#     tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
+#     sys.path.append(tools)
+# else:
+#     sys.exit("please declare environment variable 'SUMO_HOME'")
+# # we need to import python modules from the $SUMO_HOME/tools directory
+# try:
+#     sys.path.append(os.path.join(os.path.dirname(
+#         __file__), '..', '..', '..', '..', "tools"))  # tutorial in tests
+#     sys.path.append(os.path.join(os.environ.get("SUMO_HOME", os.path.join(
+#         os.path.dirname(__file__), "..", "..", "..")), "tools"))  # tutorial in docs
+#     from sumolib import checkBinary
+# except ImportError:
+#     sys.exit(
+#         "please declare environment variable 'SUMO_HOME' as the root directory of your sumo installation (it should contain folders 'bin', 'tools' and 'docs')")
+
 def get_options():
     optParser = optparse.OptionParser()
     optParser.add_option("--nogui", action="store_true",
@@ -62,8 +64,8 @@ def time_print(time_begin):   #输出时间
     time_list.append('s')
     time_str = ''.join(time_list)
     print(time_str)
-time_begin = time.time()
-time_b = time_begin
+# time_begin = time.time()
+# time_b = time_begin
 #  min parameters
 def get_traveltime():
     TravelTime =(traci.edge.getLastStepVehicleNumber('1')+
@@ -263,226 +265,477 @@ def evaluate(t_ppp1, t_ppp2, t_ppp3, t_y12, t_y23, t_y31):
         iteration += 1
     traci.close()
     sys.stdout.flush()
-if __name__ == "__main__":
-    # 输入最小绿灯时间
-    min_greentimme = 15
-    # 输入最大绿灯时间
-    max_greentimme = 95
-    maxmum = max_greentimme - min_greentimme
-    # 输入迭代时间间隔
-    interval = 10
-    # 迭代次数
-    n = round(maxmum/interval)
-    # 输入最小周期时间（由最小流程等时间算得）
-    min_cycletime = min_greentimme*3 + 3*3
-    # 输入最大周期时间（由最大、最小绿灯时间算得）
-    max_cycletime = maxmum + min_greentimme*3 + 3*3
-    # 输入迭代时间间隔
-    interval = 10
-    options = get_options()    
-    # if options.nogui:
-    sumoBinary = checkBinary('sumo')
-    # else:
-    #     sumoBinary = checkBinary('sumo-gui')
-    # number of action sets and features
-    simulation_time = 0
-    Game_Name = "Cross"
-    RewardMatrix = []
-    EpisodeTotalTravelTime = 0
-    TravelTimeStep = []
-    TravelTimeMatrix = []
-    SystemTravelTime = []
-    SUMOTravelTime = []
-    P = []
-    # this is the normal way of using traci. sumo is started as a
-    # subprocess and then the pytho  n script connects and runs
-    for i in range(0,n):
-        for j in range(0,n-i):
-            k=0
-            while k < n-i-j:
+class SinglePointSimulation():
+    def _init_(self,min_greentimme,max_greentimme,interval):
+        self.min_greentimme=min_greentimme
+        self.max_greentimme=max_greentimme
+        self.interval=interval
+        P=Process(target=self.run)
+        P.start()
+    def run(self):
+        if 'SUMO_HOME' in os.environ:
+            tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
+            sys.path.append(tools)
+        else:
+            sys.exit("please declare environment variable 'SUMO_HOME'")
+        # we need to import python modules from the $SUMO_HOME/tools directory
+        try:
+            sys.path.append(os.path.join(os.path.dirname(
+                __file__), '..', '..', '..', '..', "tools"))  # tutorial in tests
+            sys.path.append(os.path.join(os.environ.get("SUMO_HOME", os.path.join(
+                os.path.dirname(__file__), "..", "..", "..")), "tools"))  # tutorial in docs
+            from sumolib import checkBinary
+        except ImportError:
+            sys.exit(
+                "please declare environment variable 'SUMO_HOME' as the root directory of your sumo installation (it should contain folders 'bin', 'tools' and 'docs')")
+        time_begin = time.time()
+        time_b = time_begin
+        # 输入最小绿灯时间
+        min_greentimme = self.min_greentimme
+        # 输入最大绿灯时间
+        max_greentimme = self.max_greentimme
+        maxmum = max_greentimme - min_greentimme
+        # 输入迭代时间间隔
+        interval = self.interval
+        # 迭代次数
+        n = round(maxmum/interval)
+        # 输入最小周期时间（由最小流程等时间算得）
+        min_cycletime = min_greentimme*3 + 3*3
+        # 输入最大周期时间（由最大、最小绿灯时间算得）
+        max_cycletime = maxmum + min_greentimme*3 + 3*3
+        # 输入迭代时间间隔
+        interval = 10
+        options = get_options()    
+        # if options.nogui:
+        sumoBinary = checkBinary('sumo')
+        # else:
+        #     sumoBinary = checkBinary('sumo-gui')
+        # number of action sets and features
+        simulation_time = 0
+        Game_Name = "Cross"
+        RewardMatrix = []
+        EpisodeTotalTravelTime = 0
+        TravelTimeStep = []
+        TravelTimeMatrix = []
+        SystemTravelTime = []
+        SUMOTravelTime = []
+        P = []
+        # this is the normal way of using traci. sumo is started as a
+        # subprocess and then the pytho  n script connects and runs
+        for i in range(0,n):
+            for j in range(0,n-i):
+                k=0
+                while k < n-i-j:
+                    traci.start([sumoBinary, "-c", str(os.path.dirname(os.path.realpath(__file__)))+"\simulation.sumocfg"])
+                    tp1 = i*interval + min_greentimme
+                    tp2 = j*interval + min_greentimme
+                    tp3 = k*interval + min_greentimme
+                    TravelTimeStep,EpisodeTotalTravelTime,Index = run(tp1,tp2,tp3,3,3,3)
+                    if Index == 0:
+                        simulation_time += 1
+                        TravelTimeMatrix.append(TravelTimeStep)
+                        SystemTravelTime.append(EpisodeTotalTravelTime)
+                        p = [tp1,tp2,tp3]
+                        P.append(p)
+                        # 输出每一次迭代的训练日志
+                        print("-----------------------------------------------------------------------------------------------------------------------------------------")
+                        print("第",simulation_time,"次仿真：")
+                        print("第一主相位时间："+str(tp1)+'s\n'+
+                            "第二主相位时间："+str(tp2)+'s\n'+
+                            "第三主相位时间："+str(tp3)+'s\n'+
+                            "第一黄灯时间："+str(3)+'s\n'+
+                            "第二黄灯时间："+str(3)+'s\n'+
+                            "第三黄灯时间："+str(3))
+                        print("本次仿真时间：")
+                        time_print(time_b)
+                        print("总仿真时间：")
+                        time_print(time_begin)
+                        print("单位时间通过车辆数：", int(EpisodeTotalTravelTime / 3600), "veh/s")
+                        print("-----------------------------------------------------------------------------------------------------------------------------------------")
+                        time_b = time.time()
+                        k += 1
+                    else:
+                        print("-----------------------------------------------------------------------------------------------------------------------------------------")
+                        print("本次损失时间")
+                        time_print(time_b)
+                        print("总运行时间：")
+                        time_print(time_begin)
+                        print("-----------------------------------------------------------------------------------------------------------------------------------------")
+                        time_b = time.time()
+                        k = k-1
+        # Travel time calculated by me
+        SysTimePlot = np.array(SystemTravelTime)
+        plt.plot(np.arange(len(SystemTravelTime)), SystemTravelTime)
+        plt.ylabel('System Travel Time')
+        plt.xlabel('Episodes')
+        plt.show()
+        plt.close()
+        # print the best tp we found
+        [ best_10s_1 , best_10s_2 , best_10s_3 ] = P[SystemTravelTime.index(np.min(SystemTravelTime))]
+        # 输出10s迭代的最终输出结果
+        print("以%ds为间隔迭代的初始最优结果为：" % interval)
+        print("第一主相位时间："+str(best_10s_1)+"第二主相位时间："+str(best_10s_2)+"第三主相位时间："+str(best_10s_3)+"第一黄灯时间："+str(3)+"第二黄灯时间："+str(3)+"第三黄灯时间："+str(3))
+        #------------------------------------------------------
+        # 开始以1s为间隔迭代，直到得到最终最优结果
+        simulation_time1 = 0
+        Game_Name1 = "Cross"
+        RewardMatrix1 = []
+        EpisodeTotalTravelTime1 = 0
+        TravelTimeStep1 = []
+        TravelTimeMatrix1 = []
+        SystemTravelTime1 = []
+        SUMOTravelTime1 = []
+        [best_5s_1, best_5s_2, best_5s_3] = [best_10s_1, best_10s_2, best_10s_3]
+        # P[SystemTravelTime.index(np.min(SystemTravelTime))]
+        P1 = []
+        # this is the normal way of using traci. sumo is started as a
+        # subprocess and then the python script connects and runs
+        for i in range(0, 10):
+            k = 0
+            while k < 10:
                 traci.start([sumoBinary, "-c", "simulation.sumocfg"])
-                tp1 = i*interval + min_greentimme
-                tp2 = j*interval + min_greentimme
-                tp3 = k*interval + min_greentimme
-                TravelTimeStep,EpisodeTotalTravelTime,Index = run(tp1,tp2,tp3,3,3,3)
+                tp1 = i + best_5s_1
+                tp2 = best_5s_2
+                tp3 = k + best_5s_3
+                TravelTimeStep, EpisodeTotalTravelTime, Index = run(tp1, tp2, tp3, 3, 3, 3)
                 if Index == 0:
-                    simulation_time += 1
-                    TravelTimeMatrix.append(TravelTimeStep)
-                    SystemTravelTime.append(EpisodeTotalTravelTime)
-                    p = [tp1,tp2,tp3]
-                    P.append(p)
-                    # 输出每一次迭代的训练日志
-                    print("-----------------------------------------------------------------------------------------------------------------------------------------")
-                    print("第",simulation_time,"次仿真：")
-                    print("第一主相位时间："+str(tp1)+'s\n'+
-                          "第二主相位时间："+str(tp2)+'s\n'+
-                          "第三主相位时间："+str(tp3)+'s\n'+
-                          "第一黄灯时间："+str(3)+'s\n'+
-                          "第二黄灯时间："+str(3)+'s\n'+
-                          "第三黄灯时间："+str(3))
+                    simulation_time1 += 1
+                    TravelTimeMatrix1.append(TravelTimeStep)
+                    SystemTravelTime1.append(EpisodeTotalTravelTime)
+                    p = [tp1, tp2, tp3]
+                    P1.append(p)
+                    print(
+                        "-----------------------------------------------------------------------------------------------------------------------------------------")
+                    print("第", simulation_time1, "次仿真：")
+                    print("第一主相位时间：" + str(tp1) + 's\n' +
+                        "第二主相位时间：" + str(tp2) + 's\n' +
+                        "第三主相位时间：" + str(tp3) + 's\n' +
+                        "第一黄灯时间：" + str(3) + 's\n' +
+                        "第二黄灯时间：" + str(3) + 's\n' +
+                        "第三黄灯时间：" + str(3))
                     print("本次仿真时间：")
                     time_print(time_b)
                     print("总仿真时间：")
                     time_print(time_begin)
                     print("单位时间通过车辆数：", int(EpisodeTotalTravelTime / 3600), "veh/s")
-                    print("-----------------------------------------------------------------------------------------------------------------------------------------")
+                    print(
+                        "-----------------------------------------------------------------------------------------------------------------------------------------")
                     time_b = time.time()
                     k += 1
                 else:
-                    print("-----------------------------------------------------------------------------------------------------------------------------------------")
+                    print(
+                        "-----------------------------------------------------------------------------------------------------------------------------------------")
                     print("本次损失时间")
                     time_print(time_b)
                     print("总运行时间：")
                     time_print(time_begin)
-                    print("-----------------------------------------------------------------------------------------------------------------------------------------")
+                    print(
+                        "-----------------------------------------------------------------------------------------------------------------------------------------")
                     time_b = time.time()
-                    k = k-1
-    # Travel time calculated by me
-    SysTimePlot = np.array(SystemTravelTime)
-    plt.plot(np.arange(len(SystemTravelTime)), SystemTravelTime)
-    plt.ylabel('System Travel Time')
-    plt.xlabel('Episodes')
-    plt.show()
-    plt.close()
-    # print the best tp we found
-    [ best_10s_1 , best_10s_2 , best_10s_3 ] = P[SystemTravelTime.index(np.min(SystemTravelTime))]
-    # 输出10s迭代的最终输出结果
-    print("以%ds为间隔迭代的初始最优结果为：" % interval)
-    print("第一主相位时间："+str(best_10s_1)+"第二主相位时间："+str(best_10s_2)+"第三主相位时间："+str(best_10s_3)+"第一黄灯时间："+str(3)+"第二黄灯时间："+str(3)+"第三黄灯时间："+str(3))
-    #------------------------------------------------------
-    # 开始以1s为间隔迭代，直到得到最终最优结果
-    simulation_time1 = 0
-    Game_Name1 = "Cross"
-    RewardMatrix1 = []
-    EpisodeTotalTravelTime1 = 0
-    TravelTimeStep1 = []
-    TravelTimeMatrix1 = []
-    SystemTravelTime1 = []
-    SUMOTravelTime1 = []
-    [best_5s_1, best_5s_2, best_5s_3] = [best_10s_1, best_10s_2, best_10s_3]
-    # P[SystemTravelTime.index(np.min(SystemTravelTime))]
-    P1 = []
-    # this is the normal way of using traci. sumo is started as a
-    # subprocess and then the python script connects and runs
-    for i in range(0, 10):
-        k = 0
-        while k < 10:
-            traci.start([sumoBinary, "-c", "simulation.sumocfg"])
-            tp1 = i + best_5s_1
-            tp2 = best_5s_2
-            tp3 = k + best_5s_3
-            TravelTimeStep, EpisodeTotalTravelTime, Index = run(tp1, tp2, tp3, 3, 3, 3)
-            if Index == 0:
-                simulation_time1 += 1
-                TravelTimeMatrix1.append(TravelTimeStep)
-                SystemTravelTime1.append(EpisodeTotalTravelTime)
-                p = [tp1, tp2, tp3]
-                P1.append(p)
-                print(
-                    "-----------------------------------------------------------------------------------------------------------------------------------------")
-                print("第", simulation_time1, "次仿真：")
-                print("第一主相位时间：" + str(tp1) + 's\n' +
-                      "第二主相位时间：" + str(tp2) + 's\n' +
-                      "第三主相位时间：" + str(tp3) + 's\n' +
-                      "第一黄灯时间：" + str(3) + 's\n' +
-                      "第二黄灯时间：" + str(3) + 's\n' +
-                      "第三黄灯时间：" + str(3))
-                print("本次仿真时间：")
-                time_print(time_b)
-                print("总仿真时间：")
-                time_print(time_begin)
-                print("单位时间通过车辆数：", int(EpisodeTotalTravelTime / 3600), "veh/s")
-                print(
-                    "-----------------------------------------------------------------------------------------------------------------------------------------")
-                time_b = time.time()
-                k += 1
-            else:
-                print(
-                    "-----------------------------------------------------------------------------------------------------------------------------------------")
-                print("本次损失时间")
-                time_print(time_b)
-                print("总运行时间：")
-                time_print(time_begin)
-                print(
-                    "-----------------------------------------------------------------------------------------------------------------------------------------")
-                time_b = time.time()
-                k = k - 1
-    # Travel time calculated by me
-    SysTimePlot = np.array(SystemTravelTime1)
-    plt.plot(np.arange(len(SystemTravelTime1)), SystemTravelTime1)
-    plt.ylabel('System Travel Time')
-    plt.xlabel('Episodes')
-    plt.show()
-    plt.savefig('output.png')
-    plt.close()
-    best_index = np.argpartition(SystemTravelTime1, 10)
-    for i in range(1, 11):
+                    k = k - 1
+        # Travel time calculated by me
+        SysTimePlot = np.array(SystemTravelTime1)
+        plt.plot(np.arange(len(SystemTravelTime1)), SystemTravelTime1)
+        plt.ylabel('System Travel Time')
+        plt.xlabel('Episodes')
+        plt.show()
+        plt.savefig('output.png')
+        plt.close()
+        best_index = np.argpartition(SystemTravelTime1, 10)
+        for i in range(1, 11):
+            [best_1s_1, best_1s_2, best_1s_3] = P1[SystemTravelTime1.index(np.min(SystemTravelTime1))]
         [best_1s_1, best_1s_2, best_1s_3] = P1[SystemTravelTime1.index(np.min(SystemTravelTime1))]
-    [best_1s_1, best_1s_2, best_1s_3] = P1[SystemTravelTime1.index(np.min(SystemTravelTime1))]
-    phasetime = [best_1s_1, best_1s_2, best_1s_3,3,3,3]
-    print("定时周期优化最优方案：")
-    print("总周期时间： " + str(sum(phasetime)) + 's')
-    print("第一主相位时间：" + str(best_1s_1) + 's\n' +
-          "第一黄灯时间：" + str(3) + 's\n' +
-          "第二主相位时间：" + str(best_1s_2) + 's\n' +
-          "第二黄灯时间：" + str(3) + 's\n' +
-          "第三主相位时间：" + str(best_1s_3) + 's\n' +
-          "第三黄灯时间：" + str(3))
-    #---------------------------------------
-    #运行最佳配时方案，得到评价结果
-    traci.start([sumoBinary, "-c", "simulation.sumocfg"])
-    evaluate(best_1s_1, best_1s_2, best_1s_3,3,3,3)
-    dom = xml.dom.minidom.parse('output-tripinfos.xml')
-    root = dom.documentElement
-    itemlist = root.getElementsByTagName('tripinfo')
-    n = len(itemlist)
-    timeloss = []
-    waitingcount = []
-    duration = []
-    speeds = []
-    waitingtime = []
-    for i in range(0, n):
-        item = itemlist[i]
-        # 延误
-        tL = item.getAttribute("timeLoss")
-        tL_tran = float(tL.replace(',', ''))
-        # 停车次数
-        wC = item.getAttribute("waitingCount")
-        wC_tran = float(wC.replace(',', ''))
-        # 通过时间
-        dura = item.getAttribute("duration")
-        dura_tran = float(dura.replace(',', ''))
-        # 速度
-        rL = item.getAttribute("routeLength")
-        rL_w = float(rL.replace(',', ''))
-        speed = rL_w/dura_tran
-        # 等待时间
-        wT = item.getAttribute("waitingTime")
-        wT_tran = float(wT.replace(',', ''))
-        timeloss.append(tL_tran)
-        waitingcount.append(wC_tran)
-        duration.append(dura_tran)
-        speeds.append(speed)
-        waitingtime.append(wT_tran)
-    # 最终方案输出
-    print("定时周期优化最优方案：")
-    print("总周期时间： " + str(sum(phasetime)) + 's')
-    print("-----------------------------------------------------------------------------------------------------------------------------------------")
-    print("第一主相位时间：" + str(best_1s_1) + 's\n' +
-          "第一黄灯时间：" + str(3) + 's\n' +
-          "第二主相位时间：" + str(best_1s_2) + 's\n' +
-          "第二黄灯时间：" + str(3) + 's\n' +
-          "第三主相位时间：" + str(best_1s_3) + 's\n' +
-          "第三黄灯时间：" + str(3))
-    print("-----------------------------------------------------------------------------------------------------------------------------------------")
-    # 最终方案评价结果输出
-    print("最终方案评价结果输出:")
-    print("单位时间通过车辆数(辆/s):", int(np.min(SystemTravelTime1)/3600))
-    print("-----------------------------------------------------------------------------------------------------------------------------------------")
-    print("总延误(s): " + str(round(sum(timeloss), 0)))
-    print("总停车次数(次): " + str(int(sum(waitingcount))))
-    print( "-----------------------------------------------------------------------------------------------------------------------------------------")
-    print("平均速度(m/s): " + str(round(np.mean(speeds), 2)))
-    print("平均延误(s/辆)：" + str(round(np.mean(timeloss), 2)))
-    print("平均通过时间(s): " + str(round(np.mean(duration), 2)))
-    print("平均等待时间(s): " + str(round(np.mean(waitingtime), 2)))
+        phasetime = [best_1s_1, best_1s_2, best_1s_3,3,3,3]
+        print("定时周期优化最优方案：")
+        print("总周期时间： " + str(sum(phasetime)) + 's')
+        print("第一主相位时间：" + str(best_1s_1) + 's\n' +
+            "第一黄灯时间：" + str(3) + 's\n' +
+            "第二主相位时间：" + str(best_1s_2) + 's\n' +
+            "第二黄灯时间：" + str(3) + 's\n' +
+            "第三主相位时间：" + str(best_1s_3) + 's\n' +
+            "第三黄灯时间：" + str(3))
+        #---------------------------------------
+        #运行最佳配时方案，得到评价结果
+        traci.start([sumoBinary, "-c", "simulation.sumocfg"])
+        evaluate(best_1s_1, best_1s_2, best_1s_3,3,3,3)
+        dom = xml.dom.minidom.parse('output-tripinfos.xml')
+        root = dom.documentElement
+        itemlist = root.getElementsByTagName('tripinfo')
+        n = len(itemlist)
+        timeloss = []
+        waitingcount = []
+        duration = []
+        speeds = []
+        waitingtime = []
+        for i in range(0, n):
+            item = itemlist[i]
+            # 延误
+            tL = item.getAttribute("timeLoss")
+            tL_tran = float(tL.replace(',', ''))
+            # 停车次数
+            wC = item.getAttribute("waitingCount")
+            wC_tran = float(wC.replace(',', ''))
+            # 通过时间
+            dura = item.getAttribute("duration")
+            dura_tran = float(dura.replace(',', ''))
+            # 速度
+            rL = item.getAttribute("routeLength")
+            rL_w = float(rL.replace(',', ''))
+            speed = rL_w/dura_tran
+            # 等待时间
+            wT = item.getAttribute("waitingTime")
+            wT_tran = float(wT.replace(',', ''))
+            timeloss.append(tL_tran)
+            waitingcount.append(wC_tran)
+            duration.append(dura_tran)
+            speeds.append(speed)
+            waitingtime.append(wT_tran)
+        # 最终方案输出
+        print("定时周期优化最优方案：")
+        print("总周期时间： " + str(sum(phasetime)) + 's')
+        print("-----------------------------------------------------------------------------------------------------------------------------------------")
+        print("第一主相位时间：" + str(best_1s_1) + 's\n' +
+            "第一黄灯时间：" + str(3) + 's\n' +
+            "第二主相位时间：" + str(best_1s_2) + 's\n' +
+            "第二黄灯时间：" + str(3) + 's\n' +
+            "第三主相位时间：" + str(best_1s_3) + 's\n' +
+            "第三黄灯时间：" + str(3))
+        print("-----------------------------------------------------------------------------------------------------------------------------------------")
+        # 最终方案评价结果输出
+        print("最终方案评价结果输出:")
+        print("单位时间通过车辆数(辆/s):", int(np.min(SystemTravelTime1)/3600))
+        print("-----------------------------------------------------------------------------------------------------------------------------------------")
+        print("总延误(s): " + str(round(sum(timeloss), 0)))
+        print("总停车次数(次): " + str(int(sum(waitingcount))))
+        print( "-----------------------------------------------------------------------------------------------------------------------------------------")
+        print("平均速度(m/s): " + str(round(np.mean(speeds), 2)))
+        print("平均延误(s/辆)：" + str(round(np.mean(timeloss), 2)))
+        print("平均通过时间(s): " + str(round(np.mean(duration), 2)))
+        print("平均等待时间(s): " + str(round(np.mean(waitingtime), 2)))
+        return 1
+
+if __name__ == "__main__":
+    simulation=SinglePointSimulation()
+    simulation._init_(15,95,10)
+    # # 输入最小绿灯时间
+    # min_greentimme = 15
+    # # 输入最大绿灯时间
+    # max_greentimme = 95
+    # maxmum = max_greentimme - min_greentimme
+    # # 输入迭代时间间隔
+    # interval = 10
+    # # 迭代次数
+    # n = round(maxmum/interval)
+    # # 输入最小周期时间（由最小流程等时间算得）
+    # min_cycletime = min_greentimme*3 + 3*3
+    # # 输入最大周期时间（由最大、最小绿灯时间算得）
+    # max_cycletime = maxmum + min_greentimme*3 + 3*3
+    # # 输入迭代时间间隔
+    # interval = 10
+    # options = get_options()    
+    # # if options.nogui:
+    # sumoBinary = checkBinary('sumo')
+    # # else:
+    # #     sumoBinary = checkBinary('sumo-gui')
+    # # number of action sets and features
+    # simulation_time = 0
+    # Game_Name = "Cross"
+    # RewardMatrix = []
+    # EpisodeTotalTravelTime = 0
+    # TravelTimeStep = []
+    # TravelTimeMatrix = []
+    # SystemTravelTime = []
+    # SUMOTravelTime = []
+    # P = []
+    # # this is the normal way of using traci. sumo is started as a
+    # # subprocess and then the pytho  n script connects and runs
+    # for i in range(0,n):
+    #     for j in range(0,n-i):
+    #         k=0
+    #         while k < n-i-j:
+    #             traci.start([sumoBinary, "-c", "simulation.sumocfg"])
+    #             tp1 = i*interval + min_greentimme
+    #             tp2 = j*interval + min_greentimme
+    #             tp3 = k*interval + min_greentimme
+    #             TravelTimeStep,EpisodeTotalTravelTime,Index = run(tp1,tp2,tp3,3,3,3)
+    #             if Index == 0:
+    #                 simulation_time += 1
+    #                 TravelTimeMatrix.append(TravelTimeStep)
+    #                 SystemTravelTime.append(EpisodeTotalTravelTime)
+    #                 p = [tp1,tp2,tp3]
+    #                 P.append(p)
+    #                 # 输出每一次迭代的训练日志
+    #                 print("-----------------------------------------------------------------------------------------------------------------------------------------")
+    #                 print("第",simulation_time,"次仿真：")
+    #                 print("第一主相位时间："+str(tp1)+'s\n'+
+    #                       "第二主相位时间："+str(tp2)+'s\n'+
+    #                       "第三主相位时间："+str(tp3)+'s\n'+
+    #                       "第一黄灯时间："+str(3)+'s\n'+
+    #                       "第二黄灯时间："+str(3)+'s\n'+
+    #                       "第三黄灯时间："+str(3))
+    #                 print("本次仿真时间：")
+    #                 time_print(time_b)
+    #                 print("总仿真时间：")
+    #                 time_print(time_begin)
+    #                 print("单位时间通过车辆数：", int(EpisodeTotalTravelTime / 3600), "veh/s")
+    #                 print("-----------------------------------------------------------------------------------------------------------------------------------------")
+    #                 time_b = time.time()
+    #                 k += 1
+    #             else:
+    #                 print("-----------------------------------------------------------------------------------------------------------------------------------------")
+    #                 print("本次损失时间")
+    #                 time_print(time_b)
+    #                 print("总运行时间：")
+    #                 time_print(time_begin)
+    #                 print("-----------------------------------------------------------------------------------------------------------------------------------------")
+    #                 time_b = time.time()
+    #                 k = k-1
+    # # Travel time calculated by me
+    # SysTimePlot = np.array(SystemTravelTime)
+    # plt.plot(np.arange(len(SystemTravelTime)), SystemTravelTime)
+    # plt.ylabel('System Travel Time')
+    # plt.xlabel('Episodes')
+    # plt.show()
+    # plt.close()
+    # # print the best tp we found
+    # [ best_10s_1 , best_10s_2 , best_10s_3 ] = P[SystemTravelTime.index(np.min(SystemTravelTime))]
+    # # 输出10s迭代的最终输出结果
+    # print("以%ds为间隔迭代的初始最优结果为：" % interval)
+    # print("第一主相位时间："+str(best_10s_1)+"第二主相位时间："+str(best_10s_2)+"第三主相位时间："+str(best_10s_3)+"第一黄灯时间："+str(3)+"第二黄灯时间："+str(3)+"第三黄灯时间："+str(3))
+    # #------------------------------------------------------
+    # # 开始以1s为间隔迭代，直到得到最终最优结果
+    # simulation_time1 = 0
+    # Game_Name1 = "Cross"
+    # RewardMatrix1 = []
+    # EpisodeTotalTravelTime1 = 0
+    # TravelTimeStep1 = []
+    # TravelTimeMatrix1 = []
+    # SystemTravelTime1 = []
+    # SUMOTravelTime1 = []
+    # [best_5s_1, best_5s_2, best_5s_3] = [best_10s_1, best_10s_2, best_10s_3]
+    # # P[SystemTravelTime.index(np.min(SystemTravelTime))]
+    # P1 = []
+    # # this is the normal way of using traci. sumo is started as a
+    # # subprocess and then the python script connects and runs
+    # for i in range(0, 10):
+    #     k = 0
+    #     while k < 10:
+    #         traci.start([sumoBinary, "-c", "simulation.sumocfg"])
+    #         tp1 = i + best_5s_1
+    #         tp2 = best_5s_2
+    #         tp3 = k + best_5s_3
+    #         TravelTimeStep, EpisodeTotalTravelTime, Index = run(tp1, tp2, tp3, 3, 3, 3)
+    #         if Index == 0:
+    #             simulation_time1 += 1
+    #             TravelTimeMatrix1.append(TravelTimeStep)
+    #             SystemTravelTime1.append(EpisodeTotalTravelTime)
+    #             p = [tp1, tp2, tp3]
+    #             P1.append(p)
+    #             print(
+    #                 "-----------------------------------------------------------------------------------------------------------------------------------------")
+    #             print("第", simulation_time1, "次仿真：")
+    #             print("第一主相位时间：" + str(tp1) + 's\n' +
+    #                   "第二主相位时间：" + str(tp2) + 's\n' +
+    #                   "第三主相位时间：" + str(tp3) + 's\n' +
+    #                   "第一黄灯时间：" + str(3) + 's\n' +
+    #                   "第二黄灯时间：" + str(3) + 's\n' +
+    #                   "第三黄灯时间：" + str(3))
+    #             print("本次仿真时间：")
+    #             time_print(time_b)
+    #             print("总仿真时间：")
+    #             time_print(time_begin)
+    #             print("单位时间通过车辆数：", int(EpisodeTotalTravelTime / 3600), "veh/s")
+    #             print(
+    #                 "-----------------------------------------------------------------------------------------------------------------------------------------")
+    #             time_b = time.time()
+    #             k += 1
+    #         else:
+    #             print(
+    #                 "-----------------------------------------------------------------------------------------------------------------------------------------")
+    #             print("本次损失时间")
+    #             time_print(time_b)
+    #             print("总运行时间：")
+    #             time_print(time_begin)
+    #             print(
+    #                 "-----------------------------------------------------------------------------------------------------------------------------------------")
+    #             time_b = time.time()
+    #             k = k - 1
+    # # Travel time calculated by me
+    # SysTimePlot = np.array(SystemTravelTime1)
+    # plt.plot(np.arange(len(SystemTravelTime1)), SystemTravelTime1)
+    # plt.ylabel('System Travel Time')
+    # plt.xlabel('Episodes')
+    # plt.show()
+    # plt.savefig('output.png')
+    # plt.close()
+    # best_index = np.argpartition(SystemTravelTime1, 10)
+    # for i in range(1, 11):
+    #     [best_1s_1, best_1s_2, best_1s_3] = P1[SystemTravelTime1.index(np.min(SystemTravelTime1))]
+    # [best_1s_1, best_1s_2, best_1s_3] = P1[SystemTravelTime1.index(np.min(SystemTravelTime1))]
+    # phasetime = [best_1s_1, best_1s_2, best_1s_3,3,3,3]
+    # print("定时周期优化最优方案：")
+    # print("总周期时间： " + str(sum(phasetime)) + 's')
+    # print("第一主相位时间：" + str(best_1s_1) + 's\n' +
+    #       "第一黄灯时间：" + str(3) + 's\n' +
+    #       "第二主相位时间：" + str(best_1s_2) + 's\n' +
+    #       "第二黄灯时间：" + str(3) + 's\n' +
+    #       "第三主相位时间：" + str(best_1s_3) + 's\n' +
+    #       "第三黄灯时间：" + str(3))
+    # #---------------------------------------
+    # #运行最佳配时方案，得到评价结果
+    # traci.start([sumoBinary, "-c", "simulation.sumocfg"])
+    # evaluate(best_1s_1, best_1s_2, best_1s_3,3,3,3)
+    # dom = xml.dom.minidom.parse('output-tripinfos.xml')
+    # root = dom.documentElement
+    # itemlist = root.getElementsByTagName('tripinfo')
+    # n = len(itemlist)
+    # timeloss = []
+    # waitingcount = []
+    # duration = []
+    # speeds = []
+    # waitingtime = []
+    # for i in range(0, n):
+    #     item = itemlist[i]
+    #     # 延误
+    #     tL = item.getAttribute("timeLoss")
+    #     tL_tran = float(tL.replace(',', ''))
+    #     # 停车次数
+    #     wC = item.getAttribute("waitingCount")
+    #     wC_tran = float(wC.replace(',', ''))
+    #     # 通过时间
+    #     dura = item.getAttribute("duration")
+    #     dura_tran = float(dura.replace(',', ''))
+    #     # 速度
+    #     rL = item.getAttribute("routeLength")
+    #     rL_w = float(rL.replace(',', ''))
+    #     speed = rL_w/dura_tran
+    #     # 等待时间
+    #     wT = item.getAttribute("waitingTime")
+    #     wT_tran = float(wT.replace(',', ''))
+    #     timeloss.append(tL_tran)
+    #     waitingcount.append(wC_tran)
+    #     duration.append(dura_tran)
+    #     speeds.append(speed)
+    #     waitingtime.append(wT_tran)
+    # # 最终方案输出
+    # print("定时周期优化最优方案：")
+    # print("总周期时间： " + str(sum(phasetime)) + 's')
+    # print("-----------------------------------------------------------------------------------------------------------------------------------------")
+    # print("第一主相位时间：" + str(best_1s_1) + 's\n' +
+    #       "第一黄灯时间：" + str(3) + 's\n' +
+    #       "第二主相位时间：" + str(best_1s_2) + 's\n' +
+    #       "第二黄灯时间：" + str(3) + 's\n' +
+    #       "第三主相位时间：" + str(best_1s_3) + 's\n' +
+    #       "第三黄灯时间：" + str(3))
+    # print("-----------------------------------------------------------------------------------------------------------------------------------------")
+    # # 最终方案评价结果输出
+    # print("最终方案评价结果输出:")
+    # print("单位时间通过车辆数(辆/s):", int(np.min(SystemTravelTime1)/3600))
+    # print("-----------------------------------------------------------------------------------------------------------------------------------------")
+    # print("总延误(s): " + str(round(sum(timeloss), 0)))
+    # print("总停车次数(次): " + str(int(sum(waitingcount))))
+    # print( "-----------------------------------------------------------------------------------------------------------------------------------------")
+    # print("平均速度(m/s): " + str(round(np.mean(speeds), 2)))
+    # print("平均延误(s/辆)：" + str(round(np.mean(timeloss), 2)))
+    # print("平均通过时间(s): " + str(round(np.mean(duration), 2)))
+    # print("平均等待时间(s): " + str(round(np.mean(waitingtime), 2)))

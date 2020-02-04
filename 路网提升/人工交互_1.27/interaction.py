@@ -237,7 +237,7 @@ if __name__ == "__main__":
     phase2_green = 15
     # 输入相位2黄灯时间
     phase2_yellow = 3
-    # 输入相位3绿灯时间
+    # 输入相位3绿灯时间s
     phase3_green = 15
     # 输入相位3黄灯时间
     phase3_yellow = 3
