@@ -7,6 +7,8 @@ Created on Wed May  8 19:40:41 2019
 from __future__ import absolute_import
 from __future__ import print_function
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from multiprocessing import Process, Pool
 import os
@@ -63,7 +65,7 @@ def time_print(time_begin):   #输出时间
     time_list.append(str(time_s))
     time_list.append('s')
     time_str = ''.join(time_list)
-    print(time_str)
+    return time_str
 # time_begin = time.time()
 # time_b = time_begin
 #  min parameters
@@ -271,7 +273,7 @@ class SinglePointSimulation():
         self.max_greentimme=max_greentimme
         self.interval=interval
         P=Process(target=self.run)
-        P.start()
+        return P.start()
     def run(self):
         if 'SUMO_HOME' in os.environ:
             tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
@@ -325,8 +327,9 @@ class SinglePointSimulation():
         for i in range(0,n):
             for j in range(0,n-i):
                 k=0
+                string='10s迭代'
                 while k < n-i-j:
-                    traci.start([sumoBinary, "-c", str(os.path.dirname(os.path.realpath(__file__)))+"\simulation.sumocfg"])
+                    traci.start([sumoBinary, "-c", os.path.dirname(os.path.abspath(__file__))+"/simulation.sumocfg"])
                     tp1 = i*interval + min_greentimme
                     tp2 = j*interval + min_greentimme
                     tp3 = k*interval + min_greentimme
@@ -338,8 +341,25 @@ class SinglePointSimulation():
                         p = [tp1,tp2,tp3]
                         P.append(p)
                         # 输出每一次迭代的训练日志
+                        file=open(string+"第"+str(simulation_time)+"次仿真："+'日志.txt','w')
+                        file.writelines("-----------------------------------------------------------------------------------------------------------------------------------------"+'\n')
+                        file.writelines(str("第"+str(simulation_time)+"次仿真："))
+                        file.writelines("第一主相位时间："+str(tp1)+'s\n'+
+                            "第二主相位时间："+str(tp2)+'s\n'+
+                            "第三主相位时间："+str(tp3)+'s\n'+
+                            "第一黄灯时间："+str(3)+'s\n'+
+                            "第二黄灯时间："+str(3)+'s\n'+
+                            "第三黄灯时间："+str(3))
+                        
+                        file.writelines("本次仿真时间：")
+                        file.writelines(str(time_print(time_b)))
+                        file.writelines("总仿真时间：")
+                        file.writelines(str(time_print(time_begin)))
+                        file.writelines(str("单位时间通过车辆数："+str(int(EpisodeTotalTravelTime / 3600))+"veh/s")+'\n')
+                        file.writelines("-----------------------------------------------------------------------------------------------------------------------------------------"+'\n')
+
                         print("-----------------------------------------------------------------------------------------------------------------------------------------")
-                        print("第",simulation_time,"次仿真：")
+                        print("第"+str(simulation_time)+"次仿真：")
                         print("第一主相位时间："+str(tp1)+'s\n'+
                             "第二主相位时间："+str(tp2)+'s\n'+
                             "第三主相位时间："+str(tp3)+'s\n'+
@@ -347,19 +367,26 @@ class SinglePointSimulation():
                             "第二黄灯时间："+str(3)+'s\n'+
                             "第三黄灯时间："+str(3))
                         print("本次仿真时间：")
-                        time_print(time_b)
+                        print(time_print(time_b))
                         print("总仿真时间：")
-                        time_print(time_begin)
+                        print(time_print(time_begin))
                         print("单位时间通过车辆数：", int(EpisodeTotalTravelTime / 3600), "veh/s")
                         print("-----------------------------------------------------------------------------------------------------------------------------------------")
                         time_b = time.time()
                         k += 1
                     else:
+                        file.writelines("-----------------------------------------------------------------------------------------------------------------------------------------"+'\n')
+                        file.writelines("本次损失时间")
+                        file.writelines(time_print(time_b))
+                        file.writelines("总运行时间：")
+                        file.writelines(time_print(time_begin))
+                        file.writelines("-----------------------------------------------------------------------------------------------------------------------------------------"+'\n')
+                        
                         print("-----------------------------------------------------------------------------------------------------------------------------------------")
                         print("本次损失时间")
-                        time_print(time_b)
+                        print(time_print(time_b))
                         print("总运行时间：")
-                        time_print(time_begin)
+                        print(time_print(time_begin))
                         print("-----------------------------------------------------------------------------------------------------------------------------------------")
                         time_b = time.time()
                         k = k-1
@@ -368,11 +395,16 @@ class SinglePointSimulation():
         plt.plot(np.arange(len(SystemTravelTime)), SystemTravelTime)
         plt.ylabel('System Travel Time')
         plt.xlabel('Episodes')
-        plt.show()
+        plt.savefig('1.png')
+        
         plt.close()
         # print the best tp we found
         [ best_10s_1 , best_10s_2 , best_10s_3 ] = P[SystemTravelTime.index(np.min(SystemTravelTime))]
+
+        file=open("10s迭代的最终输出结果.txt",'w')
         # 输出10s迭代的最终输出结果
+        file.writelines("以%ds为间隔迭代的初始最优结果为：" % interval)
+        file.writelines("第一主相位时间："+str(best_10s_1)+"第二主相位时间："+str(best_10s_2)+"第三主相位时间："+str(best_10s_3)+"第一黄灯时间："+str(3)+"第二黄灯时间："+str(3)+"第三黄灯时间："+str(3))
         print("以%ds为间隔迭代的初始最优结果为：" % interval)
         print("第一主相位时间："+str(best_10s_1)+"第二主相位时间："+str(best_10s_2)+"第三主相位时间："+str(best_10s_3)+"第一黄灯时间："+str(3)+"第二黄灯时间："+str(3)+"第三黄灯时间："+str(3))
         #------------------------------------------------------
@@ -392,8 +424,9 @@ class SinglePointSimulation():
         # subprocess and then the python script connects and runs
         for i in range(0, 10):
             k = 0
+            string='1s迭代'
             while k < 10:
-                traci.start([sumoBinary, "-c", "simulation.sumocfg"])
+                traci.start([sumoBinary, "-c", os.path.dirname(os.path.abspath(__file__))+"/simulation.sumocfg"])
                 tp1 = i + best_5s_1
                 tp2 = best_5s_2
                 tp3 = k + best_5s_3
@@ -404,6 +437,25 @@ class SinglePointSimulation():
                     SystemTravelTime1.append(EpisodeTotalTravelTime)
                     p = [tp1, tp2, tp3]
                     P1.append(p)
+                    
+                    file=open(string+"第"+str(simulation_time)+"次仿真："+'日志.txt','w')
+                    file.writelines(
+                        "-----------------------------------------------------------------------------------------------------------------------------------------")
+                    file.writelines(str("第"+str(simulation_time1)+"次仿真："))
+                    file.writelines("第一主相位时间：" + str(tp1) + 's\n' +
+                        "第二主相位时间：" + str(tp2) + 's\n' +
+                        "第三主相位时间：" + str(tp3) + 's\n' +
+                        "第一黄灯时间：" + str(3) + 's\n' +
+                        "第二黄灯时间：" + str(3) + 's\n' +
+                        "第三黄灯时间：" + str(3))
+                    file.writelines("本次仿真时间：")
+                    file.writelines(time_print(time_b))
+                    file.writelines("总仿真时间：")
+                    file.writelines(time_print(time_begin))
+                    file.writelines(str("单位时间通过车辆数："+str(int(EpisodeTotalTravelTime / 3600))+"veh/s")+'\n')
+                    file.writelines(
+                        "-----------------------------------------------------------------------------------------------------------------------------------------")
+                   
                     print(
                         "-----------------------------------------------------------------------------------------------------------------------------------------")
                     print("第", simulation_time1, "次仿真：")
@@ -414,21 +466,28 @@ class SinglePointSimulation():
                         "第二黄灯时间：" + str(3) + 's\n' +
                         "第三黄灯时间：" + str(3))
                     print("本次仿真时间：")
-                    time_print(time_b)
+                    print(time_print(time_b))
                     print("总仿真时间：")
-                    time_print(time_begin)
+                    print(time_print(time_begin))
                     print("单位时间通过车辆数：", int(EpisodeTotalTravelTime / 3600), "veh/s")
                     print(
                         "-----------------------------------------------------------------------------------------------------------------------------------------")
                     time_b = time.time()
                     k += 1
                 else:
+                    file.writelines("-----------------------------------------------------------------------------------------------------------------------------------------"+'\n')
+                    file.writelines("本次损失时间")
+                    file.writelines(time_print(time_b))
+                    file.writelines("总运行时间：")
+                    file.writelines(time_print(time_begin))
+                    file.writelines("-----------------------------------------------------------------------------------------------------------------------------------------"+'\n')
+                        
                     print(
                         "-----------------------------------------------------------------------------------------------------------------------------------------")
                     print("本次损失时间")
-                    time_print(time_b)
+                    print(time_print(time_b))
                     print("总运行时间：")
-                    time_print(time_begin)
+                    print(time_print(time_begin))
                     print(
                         "-----------------------------------------------------------------------------------------------------------------------------------------")
                     time_b = time.time()
@@ -438,14 +497,24 @@ class SinglePointSimulation():
         plt.plot(np.arange(len(SystemTravelTime1)), SystemTravelTime1)
         plt.ylabel('System Travel Time')
         plt.xlabel('Episodes')
-        plt.show()
-        plt.savefig('output.png')
+        
+        plt.savefig('2.png')
         plt.close()
         best_index = np.argpartition(SystemTravelTime1, 10)
         for i in range(1, 11):
             [best_1s_1, best_1s_2, best_1s_3] = P1[SystemTravelTime1.index(np.min(SystemTravelTime1))]
         [best_1s_1, best_1s_2, best_1s_3] = P1[SystemTravelTime1.index(np.min(SystemTravelTime1))]
         phasetime = [best_1s_1, best_1s_2, best_1s_3,3,3,3]
+        file=open("optimisticDuring.txt",'w')
+        file.writelines("定时周期优化最优方案：")
+        file.writelines("总周期时间： " + str(sum(phasetime)) + 's')
+        file.writelines(str("第一主相位时间：" + str(best_1s_1) + 's\n' +
+            "第一黄灯时间：" + str(3) + 's\n' +
+            "第二主相位时间：" + str(best_1s_2) + 's\n' +
+            "第二黄灯时间：" + str(3) + 's\n' +
+            "第三主相位时间：" + str(best_1s_3) + 's\n' +
+            "第三黄灯时间：" + str(3)))
+
         print("定时周期优化最优方案：")
         print("总周期时间： " + str(sum(phasetime)) + 's')
         print("第一主相位时间：" + str(best_1s_1) + 's\n' +
@@ -456,7 +525,7 @@ class SinglePointSimulation():
             "第三黄灯时间：" + str(3))
         #---------------------------------------
         #运行最佳配时方案，得到评价结果
-        traci.start([sumoBinary, "-c", "simulation.sumocfg"])
+        traci.start([sumoBinary, "-c", os.path.dirname(os.path.abspath(__file__))+"/simulation.sumocfg"])
         evaluate(best_1s_1, best_1s_2, best_1s_3,3,3,3)
         dom = xml.dom.minidom.parse('output-tripinfos.xml')
         root = dom.documentElement
@@ -490,7 +559,19 @@ class SinglePointSimulation():
             duration.append(dura_tran)
             speeds.append(speed)
             waitingtime.append(wT_tran)
+        file=open("最终方案输出.txt",'w')
         # 最终方案输出
+        file.writelines("定时周期优化最优方案：")
+        file.writelines("总周期时间： " + str(sum(phasetime)) + 's')
+        file.writelines("-----------------------------------------------------------------------------------------------------------------------------------------"+'\n')
+        file.writelines("第一主相位时间：" + str(best_1s_1) + 's\n' +
+            "第一黄灯时间：" + str(3) + 's\n' +
+            "第二主相位时间：" + str(best_1s_2) + 's\n' +
+            "第二黄灯时间：" + str(3) + 's\n' +
+            "第三主相位时间：" + str(best_1s_3) + 's\n' +
+            "第三黄灯时间：" + str(3))
+        file.writelines("-----------------------------------------------------------------------------------------------------------------------------------------"+'\n')
+        
         print("定时周期优化最优方案：")
         print("总周期时间： " + str(sum(phasetime)) + 's')
         print("-----------------------------------------------------------------------------------------------------------------------------------------")
@@ -501,7 +582,18 @@ class SinglePointSimulation():
             "第三主相位时间：" + str(best_1s_3) + 's\n' +
             "第三黄灯时间：" + str(3))
         print("-----------------------------------------------------------------------------------------------------------------------------------------")
+        file=open("最终方案评价结果输出.txt",'w')
         # 最终方案评价结果输出
+        file.writelines("最终方案评价结果输出:")
+        file.writelines("单位时间通过车辆数(辆/s):"+ str(int(np.min(SystemTravelTime1)/3600)))
+        file.writelines("-----------------------------------------------------------------------------------------------------------------------------------------"+'\n')
+        file.writelines("总延误(s): " + str(round(sum(timeloss)+ str(0))))
+        file.writelines("总停车次数(次): " + str(int(sum(waitingcount))))
+        file.writelines( "-----------------------------------------------------------------------------------------------------------------------------------------")
+        file.writelines("平均速度(m/s): " + str(round(np.mean(speeds)+ str(2))))
+        file.writelines("平均延误(s/辆)：" + str(round(np.mean(timeloss)+ str(2))))
+        file.writelines("平均通过时间(s): " + str(round(np.mean(duration)+ str(2))))
+
         print("最终方案评价结果输出:")
         print("单位时间通过车辆数(辆/s):", int(np.min(SystemTravelTime1)/3600))
         print("-----------------------------------------------------------------------------------------------------------------------------------------")
@@ -553,7 +645,7 @@ if __name__ == "__main__":
     #     for j in range(0,n-i):
     #         k=0
     #         while k < n-i-j:
-    #             traci.start([sumoBinary, "-c", "simulation.sumocfg"])
+    #             traci.start([sumoBinary, "-c", os.path.dirname(os.path.abspath(__file__))+"/simulation.sumocfg"])
     #             tp1 = i*interval + min_greentimme
     #             tp2 = j*interval + min_greentimme
     #             tp3 = k*interval + min_greentimme
@@ -595,7 +687,7 @@ if __name__ == "__main__":
     # plt.plot(np.arange(len(SystemTravelTime)), SystemTravelTime)
     # plt.ylabel('System Travel Time')
     # plt.xlabel('Episodes')
-    # plt.show()
+    # 
     # plt.close()
     # # print the best tp we found
     # [ best_10s_1 , best_10s_2 , best_10s_3 ] = P[SystemTravelTime.index(np.min(SystemTravelTime))]
@@ -620,7 +712,7 @@ if __name__ == "__main__":
     # for i in range(0, 10):
     #     k = 0
     #     while k < 10:
-    #         traci.start([sumoBinary, "-c", "simulation.sumocfg"])
+    #         traci.start([sumoBinary, "-c", os.path.dirname(os.path.abspath(__file__))+"/simulation.sumocfg"])
     #         tp1 = i + best_5s_1
     #         tp2 = best_5s_2
     #         tp3 = k + best_5s_3
@@ -665,7 +757,7 @@ if __name__ == "__main__":
     # plt.plot(np.arange(len(SystemTravelTime1)), SystemTravelTime1)
     # plt.ylabel('System Travel Time')
     # plt.xlabel('Episodes')
-    # plt.show()
+    # 
     # plt.savefig('output.png')
     # plt.close()
     # best_index = np.argpartition(SystemTravelTime1, 10)
@@ -683,7 +775,7 @@ if __name__ == "__main__":
     #       "第三黄灯时间：" + str(3))
     # #---------------------------------------
     # #运行最佳配时方案，得到评价结果
-    # traci.start([sumoBinary, "-c", "simulation.sumocfg"])
+    # traci.start([sumoBinary, "-c", os.path.dirname(os.path.abspath(__file__))+"/simulation.sumocfg"])
     # evaluate(best_1s_1, best_1s_2, best_1s_3,3,3,3)
     # dom = xml.dom.minidom.parse('output-tripinfos.xml')
     # root = dom.documentElement

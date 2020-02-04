@@ -10,6 +10,8 @@ from __future__ import print_function
 # from Q_table import QLearningTable
 from DDQN_with_Prioritized_Replay import DQNPrioritizedReplay
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import os
 import sys

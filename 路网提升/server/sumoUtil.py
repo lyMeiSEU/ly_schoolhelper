@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from __future__ import print_function
 from multiprocessing import Process, Pool
@@ -29,7 +28,7 @@ from simulation import SinglePointSimulation
 
 
 class MysumoUtil():
-    def mysumoAll(self, js):
+    def mysumoAll(self,js):
         try:
             try:
                 Js = json.loads(js)
@@ -47,7 +46,7 @@ class MysumoUtil():
     def SingleRoadSUMO(self):
         try:
             simulation=SinglePointSimulation()
-            simulation._init_(15,95,10)
+            return simulation._init_(15,95,10)
         except Exception as e:
             mysumoutil = MysumoUtil()
             return str(e)

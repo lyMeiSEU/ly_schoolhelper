@@ -1,25 +1,28 @@
 # -*- coding: utf-8 -*-
 from sumoUtil import MysumoUtil
-from multiprocessing import Process, Pool
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from collections import defaultdict
 from threading import Thread
-from collections import defaultdict
 import multiprocessing
 import os
 import json
 import string
-import pymysql
+
 import threading
 import sys
 import random
 import time
+import sys
 sys.path.append('./*')
 
 # 服务端
 mysumoutil = MysumoUtil() 
 
+
 class MyServer(BaseHTTPRequestHandler):
+    # 从a-zA-Z0-9生成指定数量的随机字符做为cookie
+    # 处理get请求
+
     def do_GET(self):
         global mysumoutil
         self.send_response(200)
@@ -53,11 +56,10 @@ class MyServer(BaseHTTPRequestHandler):
         except Exception as e:
             self.wfile.write("json error ".encode('utf-8'))
             print("json error "+str(e))
-        mysumoutil = MysumoUtil()        
-    
+        mysumoutil = MysumoUtil()
 
 
 if __name__ == '__main__':
     # 多线程的TCP服务端，可以同时开启多个任务等着客户端来连，来一个请求就处理一个
-    s = HTTPServer(("", 8089), MyServer)
+    s = HTTPServer(("", 8099), MyServer)
     s.serve_forever()
