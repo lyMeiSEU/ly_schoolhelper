@@ -458,7 +458,7 @@ class SinglePointSimulation():
                    
                     print(
                         "-----------------------------------------------------------------------------------------------------------------------------------------")
-                    print("第", simulation_time1, "次仿真：")
+                    print(string+"第", simulation_time1, "次仿真：")
                     print("第一主相位时间：" + str(tp1) + 's\n' +
                         "第二主相位时间：" + str(tp2) + 's\n' +
                         "第三主相位时间：" + str(tp3) + 's\n' +
@@ -506,7 +506,7 @@ class SinglePointSimulation():
         [best_1s_1, best_1s_2, best_1s_3] = P1[SystemTravelTime1.index(np.min(SystemTravelTime1))]
         phasetime = [best_1s_1, best_1s_2, best_1s_3,3,3,3]
         file=open("optimisticDuring.txt",'w')
-        file.writelines("定时周期优化最优方案：")
+        file.writelines("定时周期优化最优方案："+'\n')
         file.writelines("总周期时间： " + str(sum(phasetime)) + 's')
         file.writelines(str("第一主相位时间：" + str(best_1s_1) + 's\n' +
             "第一黄灯时间：" + str(3) + 's\n' +
@@ -527,7 +527,7 @@ class SinglePointSimulation():
         #运行最佳配时方案，得到评价结果
         traci.start([sumoBinary, "-c", os.path.dirname(os.path.abspath(__file__))+"/simulation.sumocfg"])
         evaluate(best_1s_1, best_1s_2, best_1s_3,3,3,3)
-        dom = xml.dom.minidom.parse('output-tripinfos.xml')
+        dom = xml.dom.minidom.parse(os.path.dirname(os.path.abspath(__file__))+'/output-tripinfos.xml')
         root = dom.documentElement
         itemlist = root.getElementsByTagName('tripinfo')
         n = len(itemlist)
@@ -562,7 +562,7 @@ class SinglePointSimulation():
         file=open("最终方案输出.txt",'w')
         # 最终方案输出
         file.writelines("定时周期优化最优方案：")
-        file.writelines("总周期时间： " + str(sum(phasetime)) + 's')
+        file.writelines("总周期时间： " + str(sum(phasetime)) + 's\n')
         file.writelines("-----------------------------------------------------------------------------------------------------------------------------------------"+'\n')
         file.writelines("第一主相位时间：" + str(best_1s_1) + 's\n' +
             "第一黄灯时间：" + str(3) + 's\n' +
@@ -584,15 +584,15 @@ class SinglePointSimulation():
         print("-----------------------------------------------------------------------------------------------------------------------------------------")
         file=open("最终方案评价结果输出.txt",'w')
         # 最终方案评价结果输出
-        file.writelines("最终方案评价结果输出:")
-        file.writelines("单位时间通过车辆数(辆/s):"+ str(int(np.min(SystemTravelTime1)/3600)))
+        file.writelines("最终方案评价结果输出:"+'\n')
+        file.writelines("单位时间通过车辆数(辆/s):"+ str(int(np.min(SystemTravelTime1)/3600))+'\n')
         file.writelines("-----------------------------------------------------------------------------------------------------------------------------------------"+'\n')
-        file.writelines("总延误(s): " + str(round(sum(timeloss)+ str(0))))
-        file.writelines("总停车次数(次): " + str(int(sum(waitingcount))))
-        file.writelines( "-----------------------------------------------------------------------------------------------------------------------------------------")
-        file.writelines("平均速度(m/s): " + str(round(np.mean(speeds)+ str(2))))
-        file.writelines("平均延误(s/辆)：" + str(round(np.mean(timeloss)+ str(2))))
-        file.writelines("平均通过时间(s): " + str(round(np.mean(duration)+ str(2))))
+        file.writelines("总延误(s): " + str(round(sum(timeloss), 0))+'\n')
+        file.writelines("总停车次数(次): " + str(int(sum(waitingcount)))+'\n')
+        file.writelines( "-----------------------------------------------------------------------------------------------------------------------------------------"+'\n')
+        file.writelines("平均速度(m/s): " + str(round(np.mean(speeds),2))+'\n')
+        file.writelines("平均延误(s/辆)：" + str(round(np.mean(timeloss),2))+'\n')
+        file.writelines("平均通过时间(s): " + str(round(np.mean(duration),2))+'\n')
 
         print("最终方案评价结果输出:")
         print("单位时间通过车辆数(辆/s):", int(np.min(SystemTravelTime1)/3600))
