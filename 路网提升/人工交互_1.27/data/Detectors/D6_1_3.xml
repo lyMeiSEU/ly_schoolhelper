@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 01/27/20 08:48:22 by Eclipse SUMO Version 1.3.1
+<!-- generated on 02/08/20 13:32:13 by Eclipse SUMO Version 1.4.0
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
-        <net-file value="gnet.net.xml"/>
-        <route-files value="grou.rou.xml"/>
-        <additional-files value="gadd.additional.xml"/>
+        <net-file value="d:\GitHub\ly_schoolhelper\路网提升\人工交互_1.27/gnet.net.xml"/>
+        <route-files value="d:\GitHub\ly_schoolhelper\路网提升\人工交互_1.27/grou.rou.xml"/>
+        <additional-files value="d:\GitHub\ly_schoolhelper\路网提升\人工交互_1.27/gadd.additional.xml"/>
     </input>
 
     <output>
-        <queue-output value="Queue.xml"/>
-        <summary-output value="Summary.xml"/>
-        <tripinfo-output value="output-tripinfos.xml"/>
+        <queue-output value="d:\GitHub\ly_schoolhelper\路网提升\人工交互_1.27/Queue.xml"/>
+        <summary-output value="d:\GitHub\ly_schoolhelper\路网提升\人工交互_1.27/Summary.xml"/>
+        <tripinfo-output value="d:\GitHub\ly_schoolhelper\路网提升\人工交互_1.27/output-tripinfos.xml"/>
     </output>
 
     <time>
@@ -25,11 +25,11 @@
     </processing>
 
     <traci_server>
-        <remote-port value="12790"/>
+        <remote-port value="50397"/>
     </traci_server>
 
     <gui_only>
-        <gui-settings-file value="gview.view.xml"/>
+        <gui-settings-file value="d:\GitHub\ly_schoolhelper\路网提升\人工交互_1.27/gview.view.xml"/>
         <quit-on-end value="true"/>
         <start value="true"/>
     </gui_only>

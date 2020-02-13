@@ -1,5 +1,4 @@
 """
-
 @author: zemian
 """
 
@@ -16,28 +15,12 @@ import matplotlib.pyplot as plt
 import os
 import sys
 import optparse
+from multiprocessing import Process, pool
 #import tensorflow as tf
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
 
 import traci
-
-if 'SUMO_HOME' in os.environ:
-    tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
-    sys.path.append(tools)
-else:
-    sys.exit("please declare environment variable 'SUMO_HOME'")
-
-
-try:
-    sys.path.append(os.path.join(os.path.dirname(
-        __file__), '..', '..', '..', '..', "tools"))  # tutorial in tests
-    sys.path.append(os.path.join(os.environ.get("SUMO_HOME", os.path.join(
-        os.path.dirname(__file__), "..", "..", "..")), "tools"))  # tutorial in docs
-    from sumolib import checkBinary  # noqa
-except ImportError:
-    sys.exit(
-        "please declare environment variable 'SUMO_HOME' as the root directory of your sumo installation (it should contain folders 'bin', 'tools' and 'docs')")
 
 def get_options():
     optParser = optparse.OptionParser()
@@ -158,6 +141,23 @@ def CalcState():
     return state
 
 def run(RL, number_of_simulation, ep_steps):
+    if 'SUMO_HOME' in os.environ:
+            tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
+            sys.path.append(tools)
+    else:
+        sys.exit("please declare environment variable 'SUMO_HOME'")
+
+    try:
+        sys.path.append(os.path.join(os.path.dirname(
+            __file__), '..', '..', '..', '..', "tools"))  # tutorial in tests
+        sys.path.append(os.path.join(os.environ.get("SUMO_HOME", os.path.join(
+            os.path.dirname(__file__), "..", "..", "..")), "tools"))  # tutorial in docs
+        from sumolib import checkBinary  # noqa
+    except ImportError:
+        sys.exit(
+            "please declare environment variable 'SUMO_HOME' as the root directory of your sumo installation (it should contain folders 'bin', 'tools' and 'docs')")
+
+
     phasetime_in = []
     phasenum_in = []
 
@@ -169,7 +169,7 @@ def run(RL, number_of_simulation, ep_steps):
             sumoBinary = checkBinary('sumo')
         else:
             sumoBinary = checkBinary('sumo')
-        traci.start([sumoBinary, "-c", "simulation.sumocfg"])
+        traci.start([sumoBinary, "-c", os.path.dirname(os.path.abspath(__file__))+"/simulation.sumocfg"])
 
         time_step = 0
         traveltime = 0
@@ -273,42 +273,52 @@ def run(RL, number_of_simulation, ep_steps):
         reward_list.append(ep_reward)
         traveltime = traveltime/3600
         traveltimeList.append(traveltime)
+        file=open("../result/单点智能/"+"run结果.txt","w")
+        file.write(str(ep)+"th ep_reward:"+str(ep_reward)+";travel time:"+str(traveltime))
         print(str(ep)+"th ep_reward:"+str(ep_reward)+";travel time:"+str(traveltime))
 
     return reward_list, traveltimeList
 
+class Runner():
+    def _init_(self,EpSteps,EpNum):
+        self.EpSteps=EpSteps
+        self.EpNum=EpNum
+        P=Process(target=self.run)
+        return P.start()
+    def run(self):        
+        EpSteps = self.EpSteps  #in each episode, there are 150~750 steps
+        EpNum = self.EpNum
 
+        sess = tf.Session()
+        with tf.variable_scope('Double_DQN'):
+            double_DQN = DQNPrioritizedReplay(
+                n_actions=3, n_features=7, memory_size=3000,
+                e_greedy_increment=0.0002, prioritized=True, double_q=True, sess=sess)  #annealing steps: 0.98/e_increment
+        sess.run(tf.global_variables_initializer())
+
+        reward_list , traveltime_list= run(double_DQN, EpSteps, EpNum)
+
+
+        # print(reward_list)
+        # print(traveltime_list)
+        plt.subplot(2, 1, 1)
+        plt.plot(reward_list, '-', lw=2)
+        plt.xlabel('episodes')
+        plt.ylabel('reward')
+        plt.grid(True)
+
+        plt.subplot(2, 1, 2)
+        plt.plot(traveltime_list, '-', lw=2)
+        plt.xlabel('episodes')
+        plt.ylabel('veh*h')
+        plt.grid(True)
+        #plt.show()
+        plt.savefig('../result/单点智能/output.png')
+        plt.close()
 
 if __name__ == "__main__":
-    EpSteps = 3600  #in each episode, there are 150~750 steps
-    EpNum = 20
-
-    sess = tf.Session()
-    with tf.variable_scope('Double_DQN'):
-        double_DQN = DQNPrioritizedReplay(
-            n_actions=3, n_features=7, memory_size=3000,
-            e_greedy_increment=0.0002, prioritized=True, double_q=True, sess=sess)  #annealing steps: 0.98/e_increment
-    sess.run(tf.global_variables_initializer())
-
-    reward_list , traveltime_list= run(double_DQN, EpSteps, EpNum)
-
-
-    # print(reward_list)
-    # print(traveltime_list)
-    plt.subplot(2, 1, 1)
-    plt.plot(reward_list, '-', lw=2)
-    plt.xlabel('episodes')
-    plt.ylabel('reward')
-    plt.grid(True)
-
-    plt.subplot(2, 1, 2)
-    plt.plot(traveltime_list, '-', lw=2)
-    plt.xlabel('episodes')
-    plt.ylabel('veh*h')
-    plt.grid(True)
-    #plt.show()
-    plt.savefig('output.png')
-    plt.close()
+    runner=Runner()
+    runner._init_(1,1)
 
 
 

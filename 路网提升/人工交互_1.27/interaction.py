@@ -8,6 +8,7 @@ Created on Wed May  8 19:40:41 2019
 # coding=utf-8
 from __future__ import absolute_import
 from __future__ import print_function
+from multiprocessing import Process, pool
 
 import numpy as np
 import matplotlib
@@ -30,18 +31,6 @@ if 'SUMO_HOME' in os.environ:
     sys.path.append(tools)
 else:
     sys.exit("please declare environment variable 'SUMO_HOME'")
-
-
-# we need to import python modules from the $SUMO_HOME/tools directory
-try:
-    sys.path.append(os.path.join(os.path.dirname(
-        __file__), '..', '..', '..', '..', "tools"))  # tutorial in tests
-    sys.path.append(os.path.join(os.environ.get("SUMO_HOME", os.path.join(
-        os.path.dirname(__file__), "..", "..", "..")), "tools"))  # tutorial in docs
-    from sumolib import checkBinary
-except ImportError:
-    sys.exit(
-        "please declare environment variable 'SUMO_HOME' as the root directory of your sumo installation (it should contain folders 'bin', 'tools' and 'docs')")
 
 def get_options():
     optParser = optparse.OptionParser()
@@ -97,10 +86,6 @@ def get_traveltime():
                  traci.edge.getLastStepVehicleNumber('11')+
                  traci.edge.getLastStepVehicleNumber('15'))
     return TravelTime
-
-
-
-
 
 def evaluate(t_ppp1, t_ppp2, t_ppp3, t_y12, t_y23, t_y31):
 
@@ -219,95 +204,146 @@ def evaluate(t_ppp1, t_ppp2, t_ppp3, t_y12, t_y23, t_y31):
     sys.stdout.flush()
     return np.sum(TravelTimeArray)
 
+class Interaction():
+    def _init_(self,phase1_green,phase1_yellow,phase2_green,phase2_yellow,phase3_green,phase3_yellow):
+        self.phase1_green=phase1_green
+        self.phase1_yellow=phase1_yellow
+        self.phase2_green=phase2_green
+        self.phase2_yellow=phase2_yellow
+        self.phase2_green=phase2_green
+        self.phase2_yellow=phase2_yellow
+        self.phase3_green=phase3_green
+        self.phase3_yellow=phase3_yellow
+        P=Process(target=self.run)
+        return P.start()       
+    
+    def run(self):
+        # we need to import python modules from the $SUMO_HOME/tools directory
+        try:
+            sys.path.append(os.path.join(os.path.dirname(
+                __file__), '..', '..', '..', '..', "tools"))  # tutorial in tests
+            sys.path.append(os.path.join(os.environ.get("SUMO_HOME", os.path.join(
+                os.path.dirname(__file__), "..", "..", "..")), "tools"))  # tutorial in docs
+            from sumolib import checkBinary
+        except ImportError:
+            sys.exit(
+                "please declare environment variable 'SUMO_HOME' as the root directory of your sumo installation (it should contain folders 'bin', 'tools' and 'docs')")
 
+        
+        options = get_options()    
+
+        if options.nogui:
+            sumoBinary = checkBinary('sumo')
+        else:
+            sumoBinary = checkBinary('sumo')
+
+        #---------------------------------------
+        #输入人工交互配时方案，得到评价结果
+
+        #输入相位1绿灯时间
+        phase1_green = self.phase1_green
+        # 输入相位1黄灯时间
+        phase1_yellow = self.phase1_yellow
+        # 输入相位2绿灯时间
+        phase2_green = self.phase2_green
+        # 输入相位2黄灯时间
+        phase2_yellow = self.phase2_yellow
+        # 输入相位3绿灯时间s
+        phase3_green = self.phase3_green
+        # 输入相位3黄灯时间
+        phase3_yellow = self.phase3_yellow
+
+        phase = [phase1_green, phase2_green, phase3_green,
+                phase1_yellow, phase2_yellow, phase3_yellow]
+
+        traci.start([sumoBinary, "-c", os.path.dirname(os.path.abspath(__file__))+"/simulation.sumocfg"])
+
+        traveltime = evaluate(phase1_green, phase2_green, phase3_green,
+                phase1_yellow, phase2_yellow, phase3_yellow)
+
+        dom = xml.dom.minidom.parse(os.path.dirname(os.path.abspath(__file__))+'/output-tripinfos.xml')
+        root = dom.documentElement
+        itemlist = root.getElementsByTagName('tripinfo')
+        n = len(itemlist)
+        timeloss = []
+        waitingcount = []
+        duration = []
+        speeds = []
+        waitingtime = []
+
+        for i in range(0, n):
+            item = itemlist[i]
+            # 延误
+            tL = item.getAttribute("timeLoss")
+            tL_tran = float(tL.replace(',', ''))
+            # 停车次数
+            wC = item.getAttribute("waitingCount")
+            wC_tran = float(wC.replace(',', ''))
+            # 通过时间
+            dura = item.getAttribute("duration")
+            dura_tran = float(dura.replace(',', ''))
+            # 速度
+            rL = item.getAttribute("routeLength")
+            rL_w = float(rL.replace(',', ''))
+            speed = rL_w/dura_tran
+            # 等待时间
+            wT = item.getAttribute("waitingTime")
+            wT_tran = float(wT.replace(',', ''))
+
+            timeloss.append(tL_tran)
+            waitingcount.append(wC_tran)
+            duration.append(dura_tran)
+            speeds.append(speed)
+            waitingtime.append(wT_tran)
+
+        file=open("../result/人工交互/"+"最终方案输出.txt","w")
+        file.write("人工交互方案："+'\n')
+        file.write("总周期时间： " + str(sum(phase)) + 's'+'\n')
+        file.write("-----------------------------------------------------------------------------------------------------------------------------------------"+'\n')
+        file.write("第一主相位时间：" + str(phase1_green) + 's\n' +
+            "第一黄灯时间：" + str(phase1_yellow) + 's\n' +
+            "第二主相位时间：" + str(phase2_green) + 's\n' +
+            "第二黄灯时间：" + str(phase2_yellow) + 's\n' +
+            "第三主相位时间：" + str(phase3_green) + 's\n' +
+            "第三黄灯时间：" + str(phase3_yellow)+'\n')
+        file.write("-----------------------------------------------------------------------------------------------------------------------------------------"+'\n')
+
+        # 最终方案输出
+        print("人工交互方案：")
+        print("总周期时间： " + str(sum(phase)) + 's')
+        print("-----------------------------------------------------------------------------------------------------------------------------------------")
+        print("第一主相位时间：" + str(phase1_green) + 's\n' +
+            "第一黄灯时间：" + str(phase1_yellow) + 's\n' +
+            "第二主相位时间：" + str(phase2_green) + 's\n' +
+            "第二黄灯时间：" + str(phase2_yellow) + 's\n' +
+            "第三主相位时间：" + str(phase3_green) + 's\n' +
+            "第三黄灯时间：" + str(phase3_yellow))
+        print("-----------------------------------------------------------------------------------------------------------------------------------------")
+
+        file=open("../result/人工交互/"+"人工交互优化方案评价结果输出.txt","w")
+        file.write("人工交互优化方案评价结果输出:"+'\n')
+        file.write("单位时间通过车辆数(辆/s):"+str(int(np.min(traveltime)/3600))+'\n')
+        file.write("-----------------------------------------------------------------------------------------------------------------------------------------"+'\n')
+        file.write("总延误(s): " + str(round(sum(timeloss), 0))+'\n')
+        file.write("总停车次数(次): " + str(int(sum(waitingcount)))+'\n')
+        file.write( "-----------------------------------------------------------------------------------------------------------------------------------------"+'\n')
+        file.write("平均速度(m/s): " + str(round(np.mean(speeds), 2))+'\n')
+        file.write("平均延误(s/辆)：" + str(round(np.mean(timeloss), 2))+'\n')
+        file.write("平均通过时间(s): " + str(round(np.mean(duration), 2))+'\n')
+        file.write("平均等待时间(s): " + str(round(np.mean(waitingtime), 2))+'\n')
+
+        # 人工交互优化方案评价结果输出
+        print("人工交互优化方案评价结果输出:")
+        print("单位时间通过车辆数(辆/s):", int(np.min(traveltime)/3600))
+        print("-----------------------------------------------------------------------------------------------------------------------------------------")
+        print("总延误(s): " + str(round(sum(timeloss), 0)))
+        print("总停车次数(次): " + str(int(sum(waitingcount))))
+        print( "-----------------------------------------------------------------------------------------------------------------------------------------")
+        print("平均速度(m/s): " + str(round(np.mean(speeds), 2)))
+        print("平均延误(s/辆)：" + str(round(np.mean(timeloss), 2)))
+        print("平均通过时间(s): " + str(round(np.mean(duration), 2)))
+        print("平均等待时间(s): " + str(round(np.mean(waitingtime), 2)))
+        
 if __name__ == "__main__":
-    options = get_options()    
-
-    if options.nogui:
-        sumoBinary = checkBinary('sumo')
-    else:
-        sumoBinary = checkBinary('sumo')
-
-    #---------------------------------------
-    #输入人工交互配时方案，得到评价结果
-
-    #输入相位1绿灯时间
-    phase1_green = 15
-    # 输入相位1黄灯时间
-    phase1_yellow = 3
-    # 输入相位2绿灯时间
-    phase2_green = 15
-    # 输入相位2黄灯时间
-    phase2_yellow = 3
-    # 输入相位3绿灯时间s
-    phase3_green = 15
-    # 输入相位3黄灯时间
-    phase3_yellow = 3
-
-    phase = [phase1_green, phase2_green, phase3_green,
-             phase1_yellow, phase2_yellow, phase3_yellow]
-
-    traci.start([sumoBinary, "-c", "simulation.sumocfg"])
-
-    traveltime = evaluate(phase1_green, phase2_green, phase3_green,
-             phase1_yellow, phase2_yellow, phase3_yellow)
-
-    dom = xml.dom.minidom.parse('output-tripinfos.xml')
-    root = dom.documentElement
-    itemlist = root.getElementsByTagName('tripinfo')
-    n = len(itemlist)
-    timeloss = []
-    waitingcount = []
-    duration = []
-    speeds = []
-    waitingtime = []
-
-    for i in range(0, n):
-        item = itemlist[i]
-        # 延误
-        tL = item.getAttribute("timeLoss")
-        tL_tran = float(tL.replace(',', ''))
-        # 停车次数
-        wC = item.getAttribute("waitingCount")
-        wC_tran = float(wC.replace(',', ''))
-        # 通过时间
-        dura = item.getAttribute("duration")
-        dura_tran = float(dura.replace(',', ''))
-        # 速度
-        rL = item.getAttribute("routeLength")
-        rL_w = float(rL.replace(',', ''))
-        speed = rL_w/dura_tran
-        # 等待时间
-        wT = item.getAttribute("waitingTime")
-        wT_tran = float(wT.replace(',', ''))
-
-        timeloss.append(tL_tran)
-        waitingcount.append(wC_tran)
-        duration.append(dura_tran)
-        speeds.append(speed)
-        waitingtime.append(wT_tran)
-
-    # 最终方案输出
-    print("人工交互方案：")
-    print("总周期时间： " + str(sum(phase)) + 's')
-    print("-----------------------------------------------------------------------------------------------------------------------------------------")
-    print("第一主相位时间：" + str(phase1_green) + 's\n' +
-          "第一黄灯时间：" + str(phase1_yellow) + 's\n' +
-          "第二主相位时间：" + str(phase2_green) + 's\n' +
-          "第二黄灯时间：" + str(phase2_yellow) + 's\n' +
-          "第三主相位时间：" + str(phase3_green) + 's\n' +
-          "第三黄灯时间：" + str(phase3_yellow))
-    print("-----------------------------------------------------------------------------------------------------------------------------------------")
-
-    # 人工交互优化方案评价结果输出
-    print("人工交互优化方案评价结果输出:")
-    print("单位时间通过车辆数(辆/s):", int(np.min(traveltime)/3600))
-    print("-----------------------------------------------------------------------------------------------------------------------------------------")
-    print("总延误(s): " + str(round(sum(timeloss), 0)))
-    print("总停车次数(次): " + str(int(sum(waitingcount))))
-    print( "-----------------------------------------------------------------------------------------------------------------------------------------")
-    print("平均速度(m/s): " + str(round(np.mean(speeds), 2)))
-    print("平均延误(s/辆)：" + str(round(np.mean(timeloss), 2)))
-    print("平均通过时间(s): " + str(round(np.mean(duration), 2)))
-    print("平均等待时间(s): " + str(round(np.mean(waitingtime), 2)))
-
+    interaction=Interaction()
+    interaction._init_(15,3,15,3,15,3)

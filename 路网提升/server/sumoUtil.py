@@ -23,8 +23,12 @@ import threading
 import sys
 import random
 sys.path.append('../单点枚举_1.27/')
+sys.path.append('../单点智能DQN1/')
+sys.path.append('../人工交互_1.27/')
 
 from simulation import SinglePointSimulation
+from runner import Runner
+from interaction import Interaction
 
 
 class MysumoUtil():
@@ -37,6 +41,11 @@ class MysumoUtil():
             # 解析客户端请求并执行相应操作 
             if Js["method"]=="SingleRoadSimulation":
                 return str(self.SingleRoadSUMO())
+            if Js["method"]=="RunnerSumo":
+                return str(self.RunnerSumo())
+            if Js["method"]=="InteractionSumo":
+                return str(self.InteractionSumo())
+            
         except Exception as e:
             mysumoutil = MysumoUtil()
             return str(e)
@@ -50,7 +59,22 @@ class MysumoUtil():
         except Exception as e:
             mysumoutil = MysumoUtil()
             return str(e)
-
+    
+    def RunnerSumo(self):
+        try:
+            runner=Runner()
+            return runner._init_(3600,20)
+        except Exception as e:
+            mysumoutil = MysumoUtil()
+            return str(e)
+    
+    def InteractionSumo(self):
+        try:
+            runner=Runner()
+            return runner._init_(3600,20)
+        except Exception as e:
+            mysumoutil = MysumoUtil()
+            return str(e)
     
 if __name__ == '__main__':
     mysumoutil = MysumoUtil()
