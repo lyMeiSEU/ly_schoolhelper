@@ -1,0 +1,79 @@
+<flows> 
+<vType accel="3.0" decel="6.0" id="Car1" length="5.0" tau="12.1" maxSpeed="40.0" sigma="0.5" />
+<vType accel="3.0" decel="6.0" id="Car2" length="5.0" tau="12.1" maxSpeed="40.0" sigma="0.5" />
+<vType accel="3.0" decel="6.0" id="Car3" length="5.0" tau="24.12" maxSpeed="40.0" sigma="0.5" />
+<vType accel="3.0" decel="6.0" id="Car4" length="5.0" tau="5.43" maxSpeed="70.0" sigma="0.5" />
+<vType accel="3.0" decel="6.0" id="Car5" length="5.0" tau="5.77" maxSpeed="70.0" sigma="0.5" />
+<vType accel="3.0" decel="6.0" id="Car6" length="5.0" tau="13.43" maxSpeed="70.0" sigma="0.5" />
+<vType accel="3.0" decel="6.0" id="Car7" length="5.0" tau="7.43" maxSpeed="70.0" sigma="0.5" />
+<vType accel="3.0" decel="6.0" id="Car8" length="5.0" tau="7.26" maxSpeed="70.0" sigma="0.5" />
+<vType accel="3.0" decel="6.0" id="Car9" length="5.0" tau="50.97" maxSpeed="70.0" sigma="0.5" />
+<vType accel="3.0" decel="6.0" id="Car10" length="5.0" tau="5.3" maxSpeed="40.0" sigma="0.5" />
+<vType accel="3.0" decel="6.0" id="Car11" length="5.0" tau="5.3" maxSpeed="40.0" sigma="0.5" />
+<vType accel="3.0" decel="6.0" id="Car12" length="5.0" tau="5.3" maxSpeed="40.0" sigma="0.5" />
+
+<vType accel="2.0" decel="6.0" id="Car13" length="7.5" tau="12.1" maxSpeed="40.0" sigma="0.5" />
+<vType accel="2.0" decel="6.0" id="Car14" length="7.5" tau="12.1" maxSpeed="40.0" sigma="0.5" />
+<vType accel="2.0" decel="6.0" id="Car15" length="7.5" tau="24.12" maxSpeed="40.0" sigma="0.5" />
+<vType accel="2.0" decel="6.0" id="Car16" length="7.5" tau="5.43" maxSpeed="70.0" sigma="0.5" />
+<vType accel="2.0" decel="6.0" id="Car17" length="7.5" tau="5.77" maxSpeed="70.0" sigma="0.5" />
+<vType accel="2.0" decel="6.0" id="Car18" length="7.5" tau="13.43" maxSpeed="70.0" sigma="0.5" />
+<vType accel="2.0" decel="6.0" id="Car19" length="7.5" tau="7.43" maxSpeed="70.0" sigma="0.5" />
+<vType accel="2.0" decel="6.0" id="Car20" length="7.5" tau="7.26" maxSpeed="70.0" sigma="0.5" />
+<vType accel="2.0" decel="6.0" id="Car21" length="7.5" tau="50.97" maxSpeed="70.0" sigma="0.5" />
+<vType accel="2.0" decel="6.0" id="Car22" length="7.5" tau="5.3" maxSpeed="40.0" sigma="0.5" />
+<vType accel="2.0" decel="6.0" id="Car23" length="7.5" tau="5.3" maxSpeed="40.0" sigma="0.5" />
+<vType accel="2.0" decel="6.0" id="Car24" length="7.5" tau="5.3" maxSpeed="40.0" sigma="0.5" />
+
+<flow id="flow1" from="4" to="2" begin="0" end="3600" type="Car1" number="22" /> 
+<flow id="flow2" from="4" to="5" begin="0" end="3600" type="Car2" number="51" /> 
+<flow id="flow3" from="4" to="9" begin="0" end="3600" type="Car3" number="40" /> 
+<flow id="flow4" from="10" to="5" begin="0" end="3600" type="Car4" number="240" /> 
+<flow id="flow5" from="10" to="3" begin="0" end="3600" type="Car5" number="41" /> 
+<flow id="flow6" from="10" to="2" begin="0" end="3600" type="Car6" number="51" /> 
+<flow id="flow7" from="15" to="9" begin="0" end="3600" type="Car7" number="332" /> 
+<flow id="flow8" from="15" to="2" begin="0" end="3600" type="Car8" number="25" /> 
+<flow id="flow9" from="15" to="3" begin="0" end="3600" type="Car9" number="15" /> 
+<flow id="flow10" from="1" to="5" begin="0" end="3600" type="Car10" number="80" /> 
+<flow id="flow11" from="1" to="3" begin="0" end="3600" type="Car11" number="16" /> 
+<flow id="flow12" from="1" to="9" begin="0" end="3600" type="Car12" number="64" />
+
+<flow id="flow13" from="4" to="2" begin="3601" end="14400" type="Car1" number="88" /> 
+<flow id="flow14" from="4" to="5" begin="3601" end="14400" type="Car2" number="204" /> 
+<flow id="flow15" from="4" to="9" begin="3601" end="14400" type="Car3" number="159" /> 
+<flow id="flow16" from="10" to="5" begin="3601" end="14400" type="Car4" number="966" /> 
+<flow id="flow17" from="10" to="3" begin="3601" end="14400" type="Car5" number="165" /> 
+<flow id="flow18" from="10" to="2" begin="3601" end="14400" type="Car6" number="202" /> 
+<flow id="flow19" from="15" to="9" begin="3601" end="14400" type="Car7" number="1329" /> 
+<flow id="flow20" from="15" to="2" begin="3601" end="14400" type="Car8" number="102" /> 
+<flow id="flow21" from="15" to="3" begin="3601" end="14400" type="Car9" number="63" /> 
+<flow id="flow22" from="1" to="5" begin="3601" end="14400" type="Car10" number="319" /> 
+<flow id="flow23" from="1" to="3" begin="3601" end="14400" type="Car11" number="64" /> 
+<flow id="flow24" from="1" to="9" begin="3601" end="14400" type="Car12" number="256" />
+
+<flow id="flow25" from="4" to="2" begin="0" end="3600" type="Car13" number="1" /> 
+<flow id="flow26" from="4" to="5" begin="0" end="3600" type="Car14" number="1" /> 
+<flow id="flow27" from="4" to="9" begin="0" end="3600" type="Car15" number="0" /> 
+<flow id="flow28" from="10" to="5" begin="0" end="3600" type="Car16" number="5" /> 
+<flow id="flow29" from="10" to="3" begin="0" end="3600" type="Car17" number="1" /> 
+<flow id="flow30" from="10" to="2" begin="0" end="3600" type="Car18" number="1" /> 
+<flow id="flow31" from="15" to="9" begin="0" end="3600" type="Car19" number="5" /> 
+<flow id="flow32" from="15" to="2" begin="0" end="3600" type="Car20" number="1" /> 
+<flow id="flow33" from="15" to="3" begin="0" end="3600" type="Car21" number="1" /> 
+<flow id="flow34" from="1" to="5" begin="0" end="3600" type="Car22" number="1" /> 
+<flow id="flow35" from="1" to="3" begin="0" end="3600" type="Car23" number="1" /> 
+<flow id="flow36" from="1" to="9" begin="0" end="3600" type="Car24" number="1" />
+
+<flow id="flow37" from="4" to="2" begin="3601" end="14400" type="Car13" number="1" /> 
+<flow id="flow38" from="4" to="5" begin="3601" end="14400" type="Car14" number="1" /> 
+<flow id="flow39" from="4" to="9" begin="3601" end="14400" type="Car15" number="0" /> 
+<flow id="flow40" from="10" to="5" begin="3601" end="14400" type="Car16" number="11" /> 
+<flow id="flow41" from="10" to="3" begin="3601" end="14400" type="Car17" number="2" /> 
+<flow id="flow42" from="10" to="2" begin="3601" end="14400" type="Car18" number="3" /> 
+<flow id="flow43" from="15" to="9" begin="3601" end="14400" type="Car19" number="10" /> 
+<flow id="flow44" from="15" to="2" begin="3601" end="14400" type="Car20" number="1" /> 
+<flow id="flow45" from="15" to="3" begin="3601" end="14400" type="Car21" number="1" /> 
+<flow id="flow46" from="1" to="5" begin="3601" end="14400" type="Car22" number="1" /> 
+<flow id="flow47" from="1" to="3" begin="3601" end="14400" type="Car23" number="1" /> 
+<flow id="flow48" from="1" to="9" begin="3601" end="14400" type="Car24" number="1" />
+</flows> 

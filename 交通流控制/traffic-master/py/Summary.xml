@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 07/05/19 16:17:26 by Eclipse SUMO GUI Version 1.0.1
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="D:\Program%20Files%20(x86)\sumo-win64-1.0.1\bin\new\gnet.net.xml"/>
+        <route-files value="D:\Program%20Files%20(x86)\sumo-win64-1.0.1\bin\new\grou.rou.xml"/>
+        <additional-files value="D:\Program%20Files%20(x86)\sumo-win64-1.0.1\bin\new\gadd.additional.xml"/>
+    </input>
+
+    <output>
+        <queue-output value="D:\Program%20Files%20(x86)\sumo-win64-1.0.1\bin\new\Queue.xml"/>
+        <summary-output value="D:\Program%20Files%20(x86)\sumo-win64-1.0.1\bin\new\Summary.xml"/>
+    </output>
+
+    <time>
+        <begin value="0"/>
+        <end value="11000"/>
+    </time>
+
+    <processing>
+        <time-to-teleport value="11000"/>
+    </processing>
+
+</configuration>
+-->
+
+<summary xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/summary_file.xsd">
+</summary>

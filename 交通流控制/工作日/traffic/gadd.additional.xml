@@ -1,0 +1,48 @@
+<additionals>
+
+    <e1Detector id="D1_1_0" lane="1_0" pos="219.5" freq="30.00" friendlyPos="0" file="data\Detectors\D1_1_0.xml"/>
+    <e1Detector id="D1_2_0" lane="1_0" pos="164.2" freq="30.00" friendlyPos="0" file="data\Detectors\D1_2_0.xml"/>
+    <e1Detector id="D1_3_0" lane="1_0" pos="146.2" freq="30.00" friendlyPos="0" file="data\Detectors\D1_3_0.xml"/>
+
+    <e1Detector id="D2_1_0" lane="2_0" pos="80" freq="30.00" friendlyPos="0" file="data\Detectors\D2_1_0.xml"/>
+
+    <e1Detector id="D3_1_0" lane="3_0" pos="80" freq="30.00" friendlyPos="0" file="data\Detectors\D3_1_0.xml"/>
+
+    <e1Detector id="D4_1_0" lane="4_0" pos="238.8" freq="30.00" friendlyPos="0" file="data\Detectors\D4_1_0.xml"/>
+    <e1Detector id="D4_1_1" lane="4_1" pos="238.8" freq="30.00" friendlyPos="0" file="data\Detectors\D4_1_1.xml"/>
+    <e1Detector id="D4_2_0" lane="4_0" pos="178.8" freq="30.00" friendlyPos="0" file="data\Detectors\D4_2_0.xml"/>
+    <e1Detector id="D4_2_1" lane="4_1" pos="178.8" freq="30.00" friendlyPos="0" file="data\Detectors\D4_2_1.xml"/>
+    <e1Detector id="D4_3_0" lane="4_0" pos="163.8" freq="30.00" friendlyPos="0" file="data\Detectors\D4_3_0.xml"/>
+    <e1Detector id="D4_3_1" lane="4_1" pos="163.8" freq="30.00" friendlyPos="0" file="data\Detectors\D4_3_1.xml"/>
+
+    <e1Detector id="D5_1_0" lane="5_0" pos="80" freq="30.00" friendlyPos="0" file="data\Detectors\D5_1_0.xml"/>
+    <e1Detector id="D5_1_1" lane="5_1" pos="80" freq="30.00" friendlyPos="0" file="data\Detectors\D5_1_1.xml"/>
+
+    <e1Detector id="D6_1_0" lane="6_0" pos="35" freq="30.00" friendlyPos="0" file="data\Detectors\D6_1_0.xml"/>
+    <e1Detector id="D6_1_1" lane="6_2" pos="35" freq="30.00" friendlyPos="0" file="data\Detectors\D6_1_1.xml"/>
+    <e1Detector id="D6_1_2" lane="6_4" pos="35" freq="30.00" friendlyPos="0" file="data\Detectors\D6_1_2.xml"/>
+    <e1Detector id="D6_1_3" lane="6_6" pos="35" freq="30.00" friendlyPos="0" file="data\Detectors\D6_1_3.xml"/>
+    <e1Detector id="D6_2_0" lane="15_0" pos="105.99" freq="30.00" friendlyPos="0" file="data\Detectors\D6_2_0.xml"/>
+    <e1Detector id="D6_2_1" lane="15_1" pos="105.99" freq="30.00" friendlyPos="0" file="data\Detectors\D6_2_1.xml"/>
+    <e1Detector id="D6_2_2" lane="15_2" pos="105.99" freq="30.00" friendlyPos="0" file="data\Detectors\D6_2_2.xml"/>
+    <e1Detector id="D6_3_0" lane="15_0" pos="40.99" freq="30.00" friendlyPos="0" file="data\Detectors\D6_3_0.xml"/>
+    <e1Detector id="D6_3_1" lane="15_1" pos="40.99" freq="30.00" friendlyPos="0" file="data\Detectors\D6_3_1.xml"/>
+    <e1Detector id="D6_3_2" lane="15_2" pos="40.99" freq="30.00" friendlyPos="0" file="data\Detectors\D6_3_2.xml"/>
+
+    <e1Detector id="D7_1_0" lane="7_0" pos="80" freq="30.00" friendlyPos="0" file="data\Detectors\D7_1_0.xml"/>
+    <e1Detector id="D7_1_1" lane="7_1" pos="80" freq="30.00" friendlyPos="0" file="data\Detectors\D7_1_1.xml"/>
+
+    <e1Detector id="D8_1_0" lane="8_0" pos="150" freq="30.00" friendlyPos="0" file="data\Detectors\D8_1_0.xml"/>
+    <e1Detector id="D8_1_1" lane="8_2" pos="150" freq="30.00" friendlyPos="0" file="data\Detectors\D8_1_1.xml"/>
+    <e1Detector id="D8_1_2" lane="8_4" pos="150" freq="30.00" friendlyPos="0" file="data\Detectors\D8_1_2.xml"/>
+    <e1Detector id="D8_2_0" lane="8_0" pos="75" freq="30.00" friendlyPos="0" file="data\Detectors\D8_2_0.xml"/>
+    <e1Detector id="D8_2_1" lane="8_2" pos="75" freq="30.00" friendlyPos="0" file="data\Detectors\D8_2_1.xml"/>
+    <e1Detector id="D8_2_2" lane="8_4" pos="75" freq="30.00" friendlyPos="0" file="data\Detectors\D8_2_2.xml"/>
+    <e1Detector id="D8_3_0" lane="8_0" pos="0" freq="30.00" friendlyPos="0" file="data\Detectors\D8_3_0.xml"/>
+    <e1Detector id="D8_3_1" lane="8_2" pos="0" freq="30.00" friendlyPos="0" file="data\Detectors\D8_3_1.xml"/>
+    <e1Detector id="D8_3_2" lane="8_4" pos="0" freq="30.00" friendlyPos="0" file="data\Detectors\D8_3_2.xml"/>
+
+    <edgeData id="EdgeData" file="data\Edge\Edge.xml" freq="30.00"/>
+    <laneData id="LaneData" file="data\Lane\Lane.xml" freq="30.00"/>
+    
+</additionals>

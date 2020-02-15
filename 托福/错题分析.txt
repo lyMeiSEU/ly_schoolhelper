@@ -31,3 +31,15 @@ the later Roman period.
 TPO46 1-5
 解题句：but its land did provide good clay, and as a consequence the clay tablet became the standard material.
 翻译：但那片土地确实提供了质量很好的黏土，因此，黏土片成为了标准材料
+
+TPO52 
+3-30
+A：As the Sahara dried up after 5000 B.C
+B：By 3000 B.C., just as ancient Egyptian civilization was coming into being along the Nile
+D：pastoral peoples (cattle herders) moved southward along major watercourses into the savanna belt of West Africa and the Sudan..., they had settled in the heart of the East African highlands far to the south. 
+
+C：未提及，后文为下一题线索：, when the first cattle herders appeared. These cattle people may have moved between fixed settlements during the wet and dry seasons, living off hunting in the dry months and their own livestock and agriculture during the rains
+
+3-36
+解题句： Shifting agriculture, often called slash-and-burn, was highly adaptive for savanna farmers without plows, for it allowed cereal farming with the minimal expenditure of energy.
+翻译：Shifting 农业，通常有叫做“刀耕火种”，非常适合没有犁的草原农民使用，因为它时农民付出的能量最少
