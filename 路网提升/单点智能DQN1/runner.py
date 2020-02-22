@@ -273,7 +273,7 @@ def run(RL, number_of_simulation, ep_steps):
         reward_list.append(ep_reward)
         traveltime = traveltime/3600
         traveltimeList.append(traveltime)
-        file=open("../result/单点智能/"+"run结果.txt","w")
+        file=open("../result/实时在线/"+"run结果.txt","w",encoding='utf-8')
         file.write(str(ep)+"th ep_reward:"+str(ep_reward)+";travel time:"+str(traveltime))
         print(str(ep)+"th ep_reward:"+str(ep_reward)+";travel time:"+str(traveltime))
 
@@ -313,7 +313,7 @@ class Runner():
         plt.ylabel('veh*h')
         plt.grid(True)
         #plt.show()
-        plt.savefig('../result/单点智能/output.png')
+        plt.savefig('../result/实时在线/output.png')
         plt.close()
 
 if __name__ == "__main__":

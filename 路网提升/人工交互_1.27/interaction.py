@@ -32,6 +32,18 @@ if 'SUMO_HOME' in os.environ:
 else:
     sys.exit("please declare environment variable 'SUMO_HOME'")
 
+
+# we need to import python modules from the $SUMO_HOME/tools directory
+try:
+    sys.path.append(os.path.join(os.path.dirname(
+        __file__), '..', '..', '..', '..', "tools"))  # tutorial in tests
+    sys.path.append(os.path.join(os.environ.get("SUMO_HOME", os.path.join(
+        os.path.dirname(__file__), "..", "..", "..")), "tools"))  # tutorial in docs
+    from sumolib import checkBinary
+except ImportError:
+    sys.exit(
+        "please declare environment variable 'SUMO_HOME' as the root directory of your sumo installation (it should contain folders 'bin', 'tools' and 'docs')")
+
 def get_options():
     optParser = optparse.OptionParser()
     optParser.add_option("--nogui", action="store_true",
@@ -86,6 +98,10 @@ def get_traveltime():
                  traci.edge.getLastStepVehicleNumber('11')+
                  traci.edge.getLastStepVehicleNumber('15'))
     return TravelTime
+
+
+
+
 
 def evaluate(t_ppp1, t_ppp2, t_ppp3, t_y12, t_y23, t_y31):
 
@@ -204,6 +220,7 @@ def evaluate(t_ppp1, t_ppp2, t_ppp3, t_y12, t_y23, t_y31):
     sys.stdout.flush()
     return np.sum(TravelTimeArray)
 
+
 class Interaction():
     def _init_(self,phase1_green,phase1_yellow,phase2_green,phase2_yellow,phase3_green,phase3_yellow):
         self.phase1_green=phase1_green
@@ -218,18 +235,10 @@ class Interaction():
         return P.start()       
     
     def run(self):
-        # we need to import python modules from the $SUMO_HOME/tools directory
-        try:
-            sys.path.append(os.path.join(os.path.dirname(
-                __file__), '..', '..', '..', '..', "tools"))  # tutorial in tests
-            sys.path.append(os.path.join(os.environ.get("SUMO_HOME", os.path.join(
-                os.path.dirname(__file__), "..", "..", "..")), "tools"))  # tutorial in docs
-            from sumolib import checkBinary
-        except ImportError:
-            sys.exit(
-                "please declare environment variable 'SUMO_HOME' as the root directory of your sumo installation (it should contain folders 'bin', 'tools' and 'docs')")
+        print('cp '+os.path.dirname(os.path.abspath(__file__))+'/output-tripinfos.xml '+os.path.dirname(os.path.abspath(__file__))+'/output-tripinfos.xml1')
+        os.system('cp '+os.path.dirname(os.path.abspath(__file__))+'/output-tripinfos.xml '+os.path.dirname(os.path.abspath(__file__))+'/output-tripinfos.xml1')
 
-        
+        dom = xml.dom.minidom.parse(os.path.dirname(os.path.abspath(__file__))+'/output-tripinfos.xml')
         options = get_options()    
 
         if options.nogui:
@@ -261,7 +270,6 @@ class Interaction():
         traveltime = evaluate(phase1_green, phase2_green, phase3_green,
                 phase1_yellow, phase2_yellow, phase3_yellow)
 
-        dom = xml.dom.minidom.parse(os.path.dirname(os.path.abspath(__file__))+'/output-tripinfos.xml')
         root = dom.documentElement
         itemlist = root.getElementsByTagName('tripinfo')
         n = len(itemlist)
@@ -296,17 +304,17 @@ class Interaction():
             speeds.append(speed)
             waitingtime.append(wT_tran)
 
-        file=open("../result/人工交互/"+"最终方案输出.txt","w")
+        file=open("../result/人工交互/"+"最终方案输出.txt","w",encoding='utf-8')
         file.write("人工交互方案："+'\n')
         file.write("总周期时间： " + str(sum(phase)) + 's'+'\n')
-        file.write("-----------------------------------------------------------------------------------------------------------------------------------------"+'\n')
+        
         file.write("第一主相位时间：" + str(phase1_green) + 's\n' +
             "第一黄灯时间：" + str(phase1_yellow) + 's\n' +
             "第二主相位时间：" + str(phase2_green) + 's\n' +
             "第二黄灯时间：" + str(phase2_yellow) + 's\n' +
             "第三主相位时间：" + str(phase3_green) + 's\n' +
             "第三黄灯时间：" + str(phase3_yellow)+'\n')
-        file.write("-----------------------------------------------------------------------------------------------------------------------------------------"+'\n')
+        
 
         # 最终方案输出
         print("人工交互方案：")
@@ -320,13 +328,13 @@ class Interaction():
             "第三黄灯时间：" + str(phase3_yellow))
         print("-----------------------------------------------------------------------------------------------------------------------------------------")
 
-        file=open("../result/人工交互/"+"人工交互优化方案评价结果输出.txt","w")
+        file=open("../result/人工交互/"+"人工交互优化方案评价结果输出.txt","w",encoding='utf-8')
         file.write("人工交互优化方案评价结果输出:"+'\n')
         file.write("单位时间通过车辆数(辆/s):"+str(int(np.min(traveltime)/3600))+'\n')
-        file.write("-----------------------------------------------------------------------------------------------------------------------------------------"+'\n')
+        
         file.write("总延误(s): " + str(round(sum(timeloss), 0))+'\n')
         file.write("总停车次数(次): " + str(int(sum(waitingcount)))+'\n')
-        file.write( "-----------------------------------------------------------------------------------------------------------------------------------------"+'\n')
+        
         file.write("平均速度(m/s): " + str(round(np.mean(speeds), 2))+'\n')
         file.write("平均延误(s/辆)：" + str(round(np.mean(timeloss), 2))+'\n')
         file.write("平均通过时间(s): " + str(round(np.mean(duration), 2))+'\n')
@@ -343,6 +351,9 @@ class Interaction():
         print("平均延误(s/辆)：" + str(round(np.mean(timeloss), 2)))
         print("平均通过时间(s): " + str(round(np.mean(duration), 2)))
         print("平均等待时间(s): " + str(round(np.mean(waitingtime), 2)))
+
+        print('cp '+os.path.dirname(os.path.abspath(__file__))+'/output-tripinfos.xml1 '+os.path.dirname(os.path.abspath(__file__))+'/output-tripinfos.xml')
+        os.system('cp '+os.path.dirname(os.path.abspath(__file__))+'/output-tripinfos.xml1 '+os.path.dirname(os.path.abspath(__file__))+'/output-tripinfos.xml')
         
 if __name__ == "__main__":
     interaction=Interaction()

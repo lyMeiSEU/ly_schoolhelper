@@ -43,3 +43,18 @@ C：未提及，后文为下一题线索：, when the first cattle herders appea
 3-36
 解题句： Shifting agriculture, often called slash-and-burn, was highly adaptive for savanna farmers without plows, for it allowed cereal farming with the minimal expenditure of energy.
 翻译：Shifting 农业，通常有叫做“刀耕火种”，非常适合没有犁的草原农民使用，因为它时农民付出的能量最少
+
+TPO 49
+1-8	remnants==remain剩余
+1-12
+解题句：, the sea was three to five meters higher in relation to the contemporary landmass of Japan than at present.
+	..., indicating a higher water temperature.
+翻译：与日本的陆地相比，当时的海平面比现在高出三到五米。...这意味着更高的水温
+2-16	contract 收缩==shorten
+2-23
+解题句：Presses sprang up in several German cities, and by 1470, Nuremberg, Germany had established itself as the center of the international publishing trade, printing books from 24 presses and distributing them at trade fairs all over western and central Europe. 
+翻译：印刷业像雨后春笋般出现在德国的几个城市，到了1470年，纽伦堡，德国已经成为世界国际出版贸易中心，从24台印刷机中打印出书籍并将他们运输到西欧和中欧的展览会上
+3-33	conducive to==have advantage on==
+3-32
+解题句：Another advantage was Britain’s large population of rural, agricultural wage earners, as well as cottage workers, who had the potential of being more mobile than peasants of some other countries.
+翻译：另一个优势是英国有着大量的农村，工薪阶级以及家庭工人，这些人对比于其他国家的人口来说具有更高的流动性

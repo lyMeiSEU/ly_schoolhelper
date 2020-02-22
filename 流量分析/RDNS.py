@@ -1,4 +1,3 @@
-
 from dns import resolver
 
  
