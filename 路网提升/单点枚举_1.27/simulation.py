@@ -275,6 +275,8 @@ class SinglePointSimulation():
         P=Process(target=self.run)
         return P.start()
     def run(self):
+        os.system('rm /home/ubuntu/路网提升/result/定时周期/最终*.txt')
+        os.system('rm /home/ubuntu/路网提升/result/定时周期/定时周期优化最优方案.txt')
         if 'SUMO_HOME' in os.environ:
             tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
             sys.path.append(tools)
@@ -325,7 +327,6 @@ class SinglePointSimulation():
         for i in range(0,n):
             for j in range(0,n-i):
                 k=0
-                string='10s迭代'
                 while k < n-i-j:
                     traci.start([sumoBinary, "-c", os.path.dirname(os.path.abspath(__file__))+"/simulation.sumocfg"])
                     tp1 = i*interval + min_greentimme
