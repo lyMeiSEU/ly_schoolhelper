@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.seu.alumni_server.dao.mapper.PostMapper">
+    <resultMap id="BaseResultMap" type="cn.edu.seu.alumni_server.dao.entity.Post">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="post_id" jdbcType="BIGINT" property="postId"/>
+        <result column="account_id" jdbcType="BIGINT" property="accountId"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="job_name" jdbcType="VARCHAR" property="jobName"/>
+        <result column="industry" jdbcType="VARCHAR" property="industry"/>
+        <result column="company_name" jdbcType="VARCHAR" property="companyName"/>
+        <result column="province" jdbcType="VARCHAR" property="province"/>
+        <result column="city" jdbcType="INTEGER" property="city"/>
+        <result column="salary_range" jdbcType="INTEGER" property="salaryRange"/>
+        <result column="job_detail" jdbcType="VARCHAR" property="jobDetail"/>
+        <result column="img1" jdbcType="VARCHAR" property="img1"/>
+        <result column="img2" jdbcType="VARCHAR" property="img2"/>
+        <result column="img3" jdbcType="VARCHAR" property="img3"/>
+        <result column="img4" jdbcType="VARCHAR" property="img4"/>
+        <result column="img5" jdbcType="VARCHAR" property="img5"/>
+        <result column="img6" jdbcType="VARCHAR" property="img6"/>
+        <result column="c_time" jdbcType="TIMESTAMP" property="cTime"/>
+        <result column="u_time" jdbcType="TIMESTAMP" property="uTime"/>
+        <result column="valid_status" jdbcType="BIT" property="validStatus"/>
+    </resultMap>
+
+    <select id="getPostList" resultType="cn.edu.seu.alumni_server.controller.dto.internalRecommend.PostDTO4Return">
+        select a.*, b.avatar, b.name, j1.company, j1.position
+        from post a
+                 left join account b on a.account_id = b.account_id
+                 left join (
+            select *
+            from job j
+            group by account_id
+            order by j.end_time desc
+        ) j1 on a.account_id = j1.account_id
+    </select>
+
+    <select id="getPost" resultType="cn.edu.seu.alumni_server.controller.dto.internalRecommend.PostDTO4Return">
+        select a.*, b.name, j1.company, j1.position
+        from post a
+                 left join account b on a.account_id = b.account_id
+                 left join (
+            select *
+            from job j
+            group by account_id
+            order by j.end_time desc
+        ) j1 on a.account_id = j1.account_id
+        where a.post_id = #{postId}
+    </select>
+
+    <!--    private Long postId;-->
+    <!--    private Integer type;-->
+    <!--    private String jobName;-->
+    <!--    private String industry;-->
+    <!--    private String companyName;-->
+    <!--    private String province;-->
+    <!--    private Integer city;-->
+    <!--    private Integer salaryRange;-->
+    <!--    private String jobDetail;-->
+    <!--    private Long cTime;-->
+    <!--    private String img1;-->
+    <!--    private String img2;-->
+    <!--    private String img3;-->
+    <!--    private String img4;-->
+    <!--    private String img5;-->
+    <!--    private String img6;-->
+
+    <!--    private String viewCount;-->
+    <!--    private String commentCount;-->
+
+    <!--    private String poster_name;-->
+    <!--    private String poster_avatar;-->
+    <!--    private String poster_compony;-->
+    <!--    private String poster_position;-->
+</mapper>

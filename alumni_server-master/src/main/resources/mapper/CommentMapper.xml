@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.seu.alumni_server.dao.mapper.CommentMapper">
+    <resultMap id="BaseResultMap" type="cn.edu.seu.alumni_server.dao.entity.Comment">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="comment_id" jdbcType="BIGINT" property="commentId"/>
+        <result column="top_comment_id" jdbcType="BIGINT" property="topCommentId"/>
+        <result column="father_comment_id" jdbcType="BIGINT" property="fatherCommentId"/>
+        <result column="account_id" jdbcType="BIGINT" property="accountId"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="c_time" jdbcType="TIMESTAMP" property="cTime"/>
+        <result column="valid_status" jdbcType="BIT" property="validStatus"/>
+    </resultMap>
+
+    <select id="getCommentList" resultType="cn.edu.seu.alumni_server.controller.dto.internalRecommend.CommentDTO">
+        select t1.comment_id        as commentId,
+               t1.post_id           as postId,
+               t1.top_comment_id    as topCommentId,
+               t1.father_comment_id as fatherCommentId,
+               t1.content           as content
+                ,
+               t1.account_id        as accountId,
+               t1.name              as name,
+               t2.account_id        as fatherCommentAccountId,
+               t2.name              as fatherCommentAccountName,
+               t1.c_time            as cTime
+        FROM (SELECT a.comment_id        as comment_id,
+                     a.post_id           as post_id,
+                     a.top_comment_id    as top_comment_id,
+                     a.father_comment_id as father_comment_id,
+                     a.account_id        as account_id,
+                     b.name              as name,
+                     a.content           as content,
+                     a.c_time            as c_time
+              FROM comment a
+                       LEFT JOIN account b ON a.account_id = b.account_id
+              WHERE a.post_id = #{postId}
+                AND a.valid_status = 1) t1
+                 LEFT JOIN
+             (SELECT d.comment_id as comment_id, d.account_id as account_id, e.name as name
+              FROM comment d
+                       LEFT JOIN account e ON d.account_id = e.account_id
+              WHERE d.post_id = #{postId}) t2
+             ON t1.father_comment_id = t2.comment_id
+        ORDER BY t1.c_time ASC
+    </select>
+</mapper>

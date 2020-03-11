@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.seu.alumni_server.dao.mapper.FriendMapper">
+    <resultMap id="BaseResultMap" type="cn.edu.seu.alumni_server.dao.entity.Friend">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="account_id" jdbcType="BIGINT" property="accountId"/>
+        <result column="friend_account_id" jdbcType="BIGINT" property="friendAccountId"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="c_time" jdbcType="TIMESTAMP" property="cTime"/>
+        <result column="u_time" jdbcType="TIMESTAMP" property="uTime"/>
+        <result column="valid_status" jdbcType="BIT" property="validStatus"/>
+    </resultMap>
+
+    <insert id="insertOnDuplicateKeyUpdate"
+            parameterType="cn.edu.seu.alumni_server.dao.entity.Friend">
+        insert into friend
+            (account_id, friend_account_id, status)
+        values (#{accountId}, #{friendAccountId}, #{status})
+        ON DUPLICATE KEY UPDATE status= #{status}
+    </insert>
+
+    <!--    TODO 这边的逻辑有问题 accountId=3245009831936 返回会有null-->
+    <select id="getFriends"
+            resultType="cn.edu.seu.alumni_server.controller.dto.FriendDTO">
+        select b.account_id as friendAccountId,
+               b.name,
+               c.company,
+               c.position,
+               b.avatar,
+               b.city,
+               a.status,
+               t1.school,
+               t1.college,
+               t1.start_time
+        from friend a
+                 left join account b on a.friend_account_id = b.account_id
+                 left join (select max(account_id) as account_id_t, company, position
+                            from job
+                            group by account_id) c on b.account_id = c.account_id_t
+                 left join (select max(account_id) as account_id_t1, school, college, start_time
+                            from education e
+                            group by account_id) as t1 on b.account_id = t1.account_id_t1
+        where a.account_id = #{accountId}
+          and a.status = 2
+        UNION
+        DISTINCT
+        select b.account_id as friendAccountId,
+               b.name,
+               c.company,
+               c.position,
+               b.avatar,
+               b.city,
+               (CASE a.status
+                    WHEN 0 THEN 0
+                    WHEN 1 THEN 3
+                    WHEN 2 THEN 2
+                   END)     as status,
+               t1.school,
+               t1.college,
+               t1.start_time
+        from friend a
+                 left join account b on a.friend_account_id = b.account_id
+                 left join (select max(account_id) as account_id_t, company, position
+                            from job
+                            group by account_id) c on b.account_id = c.account_id_t
+                 left join (select max(account_id) as account_id_t1, school, college, start_time
+                            from education e
+                            group by account_id) as t1 on b.account_id = t1.account_id_t1
+        where a.friend_account_id = #{accountId}
+          and a.status = 2
+    </select>
+
+    <select id="getRelationShip" resultType="cn.edu.seu.alumni_server.dao.entity.Friend">
+        select a.account_id as accountId, a.friend_account_id, a.status, a.valid_status
+        from friend a
+        where a.account_id = #{myAccountId}
+          and a.friend_account_id = #{accountId}
+    </select>
+
+
+    <!--    <select id="getRelationShip" resultType="cn.edu.seu.alumni_server.dao.entity.Friend">-->
+    <!--        select a.account_id as accountId, a.friend_account_id, a.status, a.valid_status-->
+    <!--        from friend a-->
+    <!--        where a.account_id = #{myAccountId}-->
+    <!--          and a.friend_account_id = #{accountId}-->
+    <!--        union-->
+    <!--        select a.account_id,-->
+    <!--               a.friend_account_id,-->
+    <!--               (CASE a.status-->
+    <!--                    WHEN 0 THEN 0-->
+    <!--                    WHEN 1 THEN 3-->
+    <!--                    WHEN 2 THEN 2-->
+    <!--                    WHEN 3 THEN 1-->
+    <!--                    else 0-->
+    <!--                   END) as status,-->
+    <!--               a.valid_status-->
+    <!--        from friend a-->
+    <!--        where a.account_id = #{accountId}-->
+    <!--          and a.friend_account_id = #{myAccountId}-->
+    <!--    </select>-->
+</mapper>

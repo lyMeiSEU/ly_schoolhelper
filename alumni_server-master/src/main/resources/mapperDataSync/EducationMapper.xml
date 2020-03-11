@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.seu.alumni_server.dataSync.mapper.EducationMapper">
+  <resultMap id="BaseResultMap" type="cn.edu.seu.alumni_server.dataSync.entity.Education">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="num" jdbcType="VARCHAR" property="num" />
+    <result column="openid" jdbcType="VARCHAR" property="openid" />
+    <result column="school" jdbcType="VARCHAR" property="school" />
+    <result column="background" jdbcType="VARCHAR" property="background" />
+    <result column="department" jdbcType="VARCHAR" property="department" />
+    <result column="profession" jdbcType="VARCHAR" property="profession" />
+    <result column="start_year" jdbcType="VARCHAR" property="startYear" />
+    <result column="end_year" jdbcType="VARCHAR" property="endYear" />
+  </resultMap>
+</mapper>

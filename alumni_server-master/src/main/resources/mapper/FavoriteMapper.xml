@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.seu.alumni_server.dao.mapper.FavoriteMapper">
+    <resultMap id="BaseResultMap" type="cn.edu.seu.alumni_server.dao.entity.Favorite">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="account_id" jdbcType="BIGINT" property="accountId"/>
+        <result column="favorite_account_id" jdbcType="BIGINT" property="favoriteAccountId"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="c_time" jdbcType="TIMESTAMP" property="cTime"/>
+        <result column="u_time" jdbcType="TIMESTAMP" property="uTime"/>
+    </resultMap>
+
+    <select id="getFavoriteList"
+            resultType="cn.edu.seu.alumni_server.controller.dto.FavoriteDTO">
+        select a.account_id          as accountId,
+               a.favorite_account_id as favoriteAccountId,
+               a.status,
+               b.avatar,
+               b.name,
+               b.city,
+               t1.school,
+               t1.college,
+               t1.start_time,
+               t2.company,
+               t2.position
+        from favorite a
+                 left join account b on a.favorite_account_id = b.account_id
+                 left join (select max(account_id) as account_id_t1, school, college, start_time
+                            from education e
+                            group by account_id) as t1 on a.favorite_account_id = t1.account_id_t1
+                 left join (select max(account_id) as account_id_t1, company, position
+                            from job j
+                            group by account_id) as t2 on a.favorite_account_id = t2.account_id_t1
+        where a.account_id = #{accountId}
+          and a.status = 1;
+
+    </select>
+
+    <!--    private Long accountId;-->
+    <!--    private Long favoriteAccountId;-->
+    <!--    private Integer status;-->
+    <!--    private String name;-->
+    <!--    private String city;-->
+    <!--    private String school;-->
+    <!--    private String college;-->
+    <!--    private String company;-->
+    <!--    private String position;-->
+</mapper>

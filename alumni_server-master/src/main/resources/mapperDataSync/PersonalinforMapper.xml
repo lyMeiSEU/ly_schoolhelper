@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.seu.alumni_server.dataSync.mapper.PersonalinforMapper">
+  <resultMap id="BaseResultMap" type="cn.edu.seu.alumni_server.dataSync.entity.Personalinfor">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="gender" jdbcType="VARCHAR" property="gender" />
+    <result column="descr" jdbcType="VARCHAR" property="descr" />
+    <result column="vocation" jdbcType="VARCHAR" property="vocation" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="openid" jdbcType="VARCHAR" property="openid" />
+    <result column="head_url" jdbcType="VARCHAR" property="headUrl" />
+    <result column="id" jdbcType="VARCHAR" property="id" />
+    <result column="birth" jdbcType="VARCHAR" property="birth" />
+  </resultMap>
+</mapper>

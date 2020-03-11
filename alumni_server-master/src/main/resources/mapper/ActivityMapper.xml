@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.seu.alumni_server.dao.mapper.ActivityMapper">
+    <resultMap id="BaseResultMap" type="cn.edu.seu.alumni_server.dao.entity.Activity">
+        <result column="activity_id" jdbcType="BIGINT" property="activityId"/>
+        <result column="alumni_circle_id" jdbcType="BIGINT" property="alumniCircleId"/>
+        <result column="account_id" jdbcType="BIGINT" property="accountId"/>
+        <result column="activity_name" jdbcType="VARCHAR" property="activityName"/>
+        <result column="activity_desc" jdbcType="VARCHAR" property="activityDesc"/>
+        <result column="activity_time" jdbcType="DATE" property="activityTime"/>
+        <result column="expiration_time" jdbcType="DATE" property="expirationTime"/>
+        <result column="img1" jdbcType="VARCHAR" property="img1"/>
+        <result column="img2" jdbcType="VARCHAR" property="img2"/>
+        <result column="img3" jdbcType="VARCHAR" property="img3"/>
+        <result column="img4" jdbcType="VARCHAR" property="img4"/>
+        <result column="img5" jdbcType="VARCHAR" property="img5"/>
+        <result column="img6" jdbcType="VARCHAR" property="img6"/>
+        <result column="visible_status" jdbcType="TINYINT" property="visibleStatus"/>
+        <result column="valid_status" jdbcType="TINYINT" property="validStatus"/>
+        <result column="c_time" jdbcType="TIMESTAMP" property="cTime"/>
+        <result column="u_time" jdbcType="TIMESTAMP" property="uTime"/>
+    </resultMap>
+    <select id="getBasicInfosByActivityId"
+            resultType="cn.edu.seu.alumni_server.controller.dto.ActivityBasicInfoDTO">
+        SELECT ACT.activity_id,
+               ACT.activity_name,
+               ACT.activity_desc,
+               ACT.expiration_time       AS expiration_date_time,
+               ACT.activity_time         AS activity_date_time,
+               ACT.c_time                AS activity_created_date_time,
+               ACT.img1,
+               ACT.img2,
+               ACT.img3,
+               ACT.img4,
+               ACT.img5,
+               ACT.img6,
+               COUNT(ACT_MEM.account_id) AS enrolled_number,
+               ALU.alumni_circle_id,
+               ALU.avatar                AS alumni_circle_avatar,
+               ACC.account_id            AS starter_id,
+               ACC.name                  AS starter_name,
+               ACC.avatar                AS starter_avatar,
+               EDU.education_id          AS starter_education_id,
+               EDU.education             AS starter_education_level,
+               EDU.school                AS starter_education_school,
+               EDU.college               AS starter_education_college,
+               EDU.start_time            AS starter_start_education_year
+        FROM activity AS ACT
+                 LEFT JOIN
+             account AS ACC ON ACT.account_id = ACC.account_id
+                 LEFT JOIN
+             alumni_circle AS ALU ON ACT.alumni_circle_id = ALU.alumni_circle_id
+                 LEFT JOIN
+             education AS EDU ON ACC.account_id = EDU.account_id,
+             activity_member AS ACT_MEM
+        WHERE ACT.is_available = 1
+          AND ACC.valid_status = 1
+          AND ALU.is_available = 1
+          AND (ISNULL(EDU.education_id) OR EDU.valid_status = 1)
+          AND ACT_MEM.is_available = 1
+          AND ACT_MEM.activity_id = ACT.activity_id
+          AND ACT.activity_id = #{activityId}
+            GROUP BY EDU.education_id
+            ORDER BY EDU.end_time DESC
+            , EDU.u_time DESC
+            LIMIT 1
+    </select>
+    <select id="getBasicInfosByStartedAccountId"
+            resultType="cn.edu.seu.alumni_server.controller.dto.StartedOrEnrolledActivityInfoDTO">
+        SELECT ACT.activity_id,
+               ACT.activity_name,
+               ACT.expiration_time       AS expiration_date_time,
+               ACT.activity_time         AS activity_date_time,
+               ACT.c_time                AS activity_created_date_time,
+               COUNT(ACT_MEM.account_id) AS enrolled_number
+        FROM activity AS ACT,
+             activity_member AS ACT_MEM
+        WHERE ACT.is_available = 1
+          AND ACT_MEM.is_available = 1
+          AND ACT.activity_id = ACT_MEM.activity_id
+          AND ACT.activity_id IN (
+            SELECT ACT1.activity_id
+            FROM activity AS ACT1
+            WHERE ACT1.account_id = #{accountId}
+              AND ACT1.is_available = 1
+        )
+            GROUP BY ACT.activity_id
+    </select>
+    <select id="getBasicInfosByEnrolledAccountId"
+            resultType="cn.edu.seu.alumni_server.controller.dto.StartedOrEnrolledActivityInfoDTO">
+        SELECT ACT.activity_id,
+               ACT.activity_name,
+               ACT.expiration_time       AS expiration_date_time,
+               ACT.activity_time         AS activity_date_time,
+               ACT.c_time                AS activity_created_date_time,
+               COUNT(ACT_MEM.account_id) AS enrolled_number
+        FROM activity AS ACT,
+             activity_member AS ACT_MEM
+        WHERE ACT.is_available = 1
+          AND ACT_MEM.is_available = 1
+          AND ACT.activity_id = ACT_MEM.activity_id
+          AND ACT.activity_id IN (
+            SELECT AM1.activity_id
+            FROM activity_member AS AM1
+            WHERE AM1.account_id = #{accountId}
+              AND AM1.is_available = 1
+        )
+            GROUP BY ACT.activity_id
+    </select>
+    <select id="getActivitiesFuzzilyByActivityNameKeyWord"
+            resultType="cn.edu.seu.alumni_server.controller.dto.SearchedActivityInfoDTO">
+        SELECT ACT.activity_id,
+               ACT.activity_name,
+               ACT.expiration_time       AS expiration_date_time,
+               ACT.activity_time         AS activity_date_time,
+               ACT.c_time                AS activity_created_date_time,
+               COUNT(ACT_MEM.account_id) AS enrolled_number,
+               ALU.alumni_circle_id,
+               ALU.avatar                AS alumni_circle_avatar
+        FROM activity AS ACT,
+             activity_member AS ACT_MEM,
+             alumni_circle AS ALU
+        WHERE ACT.is_available = 1
+          AND ACT_MEM.is_available = 1
+          AND ALU.is_available = 1
+          AND ACT.activity_id = ACT_MEM.activity_id
+          AND ACT.alumni_circle_id = ALU.alumni_circle_id
+          AND INSTR(ACT.activity_name, #{nameKeyWord}) > 0
+            GROUP BY ACT.activity_id
+    </select>
+    <select id="getActivitiesByActivityNameKeyWord"
+            resultType="cn.edu.seu.alumni_server.controller.dto.SearchedActivityInfoDTO">
+        SELECT ACT.activity_id,
+               ACT.activity_name,
+               ACT.expiration_time       AS expiration_date_time,
+               ACT.activity_time         AS activity_date_time,
+               ACT.c_time                AS activity_created_date_time,
+               COUNT(ACT_MEM.account_id) AS enrolled_number,
+               ALU.alumni_circle_id,
+               ALU.avatar                AS alumni_circle_avatar
+        FROM activity AS ACT,
+             activity_member AS ACT_MEM,
+             alumni_circle AS ALU
+        WHERE ACT.is_available = 1
+          AND ACT_MEM.is_available = 1
+          AND ALU.is_available = 1
+          AND ACT.activity_id = ACT_MEM.activity_id
+          AND ACT.alumni_circle_id = ALU.alumni_circle_id
+          AND ACT.activity_name = #{activityName}
+            GROUP BY ACT.activity_id
+    </select>
+    <select id="hasAvailableActivity" resultType="java.lang.Long">
+        SELECT ACT.activity_id
+        FROM activity AS ACT
+        WHERE ACT.activity_id = #{activityId}
+          AND ACT.is_available = 1
+    </select>
+    <select id="getActivitiesOfOneAlumniCircle"
+            resultType="cn.edu.seu.alumni_server.controller.dto.StartedOrEnrolledActivityInfoDTO">
+        SELECT ACT.activity_id,
+               ACT.activity_name,
+               ACT.expiration_time       AS expiration_date_time,
+               ACT.activity_time         AS activity_date_time,
+               ACT.c_time                AS activity_created_date_time,
+               COUNT(ACT_MEM.account_id) AS enrolled_number
+        FROM activity AS ACT,
+             activity_member AS ACT_MEM
+        WHERE ACT.is_available = 1
+          AND ACT_MEM.is_available = 1
+          AND ACT.activity_id = ACT_MEM.activity_id
+          AND ACT.activity_id IN (
+            SELECT ACT2.activity_id
+            FROM activity AS ACT2
+            WHERE ACT2.is_available = 1
+              AND ACT2.alumni_circle_id = #{alumniCircleId}
+        )
+            GROUP BY ACT.activity_id
+    </select>
+    <update id="deleteActivityLogically">
+        UPDATE activity AS ACT
+        SET ACT.is_available = 0
+        WHERE ACT.activity_id = #{activityId}
+    </update>
+    <select id="recommend"
+            resultType="cn.edu.seu.alumni_server.controller.dto.ActivityBasicInfoDTO">
+
+        SELECT ACT.activity_id,
+               ACT.activity_name,
+               ACT.activity_desc,
+               ACT.expiration_time       AS expiration_date_time,
+               ACT.activity_time         AS activity_date_time,
+               ACT.c_time                AS activity_created_date_time,
+               ACT.img1,
+               ACT.img2,
+               ACT.img3,
+               ACT.img4,
+               ACT.img5,
+               ACT.img6,
+               COUNT(ACT_MEM.account_id) AS enrolled_number,
+               ALU.alumni_circle_id,
+               ALU.avatar                AS alumni_circle_avatar,
+               ACC.account_id            AS starter_id,
+               ACC.name                  AS starter_name,
+               ACC.avatar                AS starter_avatar,
+               EDU.education_id          AS starter_education_id,
+               EDU.education             AS starter_education_level,
+               EDU.school                AS starter_education_school,
+               EDU.college               AS starter_education_college,
+               EDU.start_time            AS starter_start_education_year
+        FROM activity AS ACT
+                 LEFT JOIN
+             account AS ACC ON ACT.account_id = ACC.account_id
+                 LEFT JOIN
+             alumni_circle AS ALU ON ACT.alumni_circle_id = ALU.alumni_circle_id
+                 LEFT JOIN (select *, max(account_id) from education group by account_id) EDU
+                           ON ACC.account_id = EDU.account_id,
+             activity_member AS ACT_MEM
+        WHERE ACT.is_available = 1
+          AND ACC.valid_status = 1
+          AND ALU.is_available = 1
+          AND (ISNULL(EDU.education_id) OR EDU.valid_status = 1)
+          AND ACT_MEM.is_available = 1
+          AND ACT_MEM.activity_id = ACT.activity_id
+          AND ACT.activity_id in
+              (select activity_id
+               from activity_member AM2
+               where AM2.account_id = #{accountId}
+                 and AM2.is_available = true)
+    </select>
+
+</mapper>

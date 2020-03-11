@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.seu.alumni_server.dao.mapper.AlumniCircleMapper">
+    <resultMap id="BaseResultMap" type="cn.edu.seu.alumni_server.dao.entity.AlumniCircle">
+    </resultMap>
+    <select id="queryEnrolledAlumniCircleInfosByAccountId"
+            resultType="cn.edu.seu.alumni_server.controller.dto.alumnicircle.AlumniCircleBasicInfoDTO">
+        SELECT ALC.alumni_circle_id,
+               ALC.alumni_circle_type,
+               ALC.alumni_circle_name,
+               ALC.alumni_circle_desc,
+               ALC.avatar,
+               ALC.authorization_status
+        FROM alumni_circle AS ALC,
+             alumni_circle_member AS ALCM
+        WHERE ALC.is_available = 1
+          AND ALCM.valid_status = 1
+          AND ALC.alumni_circle_id = ALCM.alumni_circle_id
+          AND ALCM.account_id = #{accountId}
+    </select>
+    <select id="queryAlumniCircleInfosFuzzilyByAluCirName"
+            resultType="cn.edu.seu.alumni_server.controller.dto.alumnicircle.AlumniCircleBasicInfoDTO">
+        SELECT ALC.*
+        FROM alumni_circle AS ALC
+        WHERE ALC.is_available = 1
+          AND INSTR(ALC.alumni_circle_name, #{name}) > 0
+    </select>
+    <select id="queryAlumniCircleInfosByAluCirName"
+            resultType="cn.edu.seu.alumni_server.controller.dto.alumnicircle.AlumniCircleBasicInfoDTO">
+        SELECT ALC.*
+        FROM alumni_circle AS ALC
+        WHERE ALC.is_available = 1
+          AND ALC.alumni_circle_name = #{name}
+    </select>
+
+    <!--    TODO -->
+    <select id="alumniCirclesRecommend"
+            resultType="cn.edu.seu.alumni_server.controller.dto.alumnicircle.AlumniCircleBasicInfoDTO">
+        SELECT ALC.*
+        FROM alumni_circle AS ALC
+    </select>
+
+    <select id="getAlumniCircleMembers"
+            resultType="cn.edu.seu.alumni_server.controller.dto.alumnicircle.AlumniCircleMemberDTO">
+        SELECT ACM.account_id as accountId,
+               A.name         as name,
+               A.avatar       as avatar,
+               JOB.company    as company,
+               JOB.position   as position,
+               EDU.school     as school,
+               EDU.college    as college,
+               EDU.start_time as startTime
+        FROM alumni_circle AC
+                 left join alumni_circle_member ACM on AC.alumni_circle_id = ACM.alumni_circle_id
+                 left join account A
+                           on ACM.account_id = A.account_id
+                 left join (select *, max(account_id) from job group by account_id) JOB
+                           on ACM.account_id = JOB.account_id
+                 left join (select *, max(account_id) from education group by account_id) EDU
+                           on ACM.account_id = EDU.account_id
+        where AC.alumni_circle_id = #{alumniCircleId}
+          and ACM.valid_status = true
+          and (
+                A.name like CONCAT('%', #{query}, '%')
+                or JOB.company like CONCAT('%', #{query}, '%')
+                or EDU.school like CONCAT('%', #{query}, '%')
+            )
+
+    </select>
+
+    <!--    private Long accountId;-->
+    <!--    private String name;-->
+    <!--    private String avatar;-->
+    <!--    private String company;-->
+    <!--    private String position;-->
+    <!--    private String college;-->
+    <!--    private String school;-->
+    <!--    private Long startTime;-->
+</mapper>

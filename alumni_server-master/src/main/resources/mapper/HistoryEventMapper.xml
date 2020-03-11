@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.seu.alumni_server.dao.mapper.HistoryEventMapper">
+    <resultMap id="BaseResultMap" type="cn.edu.seu.alumni_server.dao.entity.HistoryEvent">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="event_id" jdbcType="BIGINT" property="eventId"/>
+        <result column="account_id" jdbcType="BIGINT" property="accountId"/>
+        <result column="timestamp" jdbcType="TIMESTAMP" property="timestamp"/>
+        <result column="event_type" jdbcType="VARCHAR" property="eventType"/>
+        <result column="post_id" jdbcType="BIGINT" property="postId"/>
+    </resultMap>
+</mapper>

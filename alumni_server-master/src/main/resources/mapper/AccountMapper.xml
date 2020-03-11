@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.seu.alumni_server.dao.mapper.AccountMapper">
+    <resultMap id="BaseResultMap" type="cn.edu.seu.alumni_server.dao.entity.Account">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="account_id" jdbcType="BIGINT" property="accountId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="gender" jdbcType="BIT" property="gender"/>
+        <result column="birthday" jdbcType="DATE" property="birthday"/>
+        <result column="self_desc" jdbcType="VARCHAR" property="selfDesc"/>
+        <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
+        <result column="city" jdbcType="VARCHAR" property="city"/>
+        <result column="openid" jdbcType="VARCHAR" property="openid"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="wechat" jdbcType="VARCHAR" property="wechat"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="industry" jdbcType="VARCHAR" property="industry"/>
+        <result column="type" jdbcType="BIT" property="type"/>
+        <result column="registered" jdbcType="BIT" property="registered"/>
+        <result column="c_time" jdbcType="TIMESTAMP" property="cTime"/>
+        <result column="u_time" jdbcType="TIMESTAMP" property="uTime"/>
+        <result column="valid_status" jdbcType="BIT" property="validStatus"/>
+    </resultMap>
+
+    <update id="dataSync">
+        update account a
+        set registered = 1
+        where a.name != ''
+          and a.name is not null
+          and a.gender != ''
+          and a.gender is not null
+          and a.openid != ''
+          and a.openid is not null
+          and a.phone != ''
+          and a.phone is not null
+          and a.wechat != ''
+          and a.wechat is not null
+    </update>
+</mapper>

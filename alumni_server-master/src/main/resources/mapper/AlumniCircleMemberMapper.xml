@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.seu.alumni_server.dao.mapper.AlumniCircleMemberMapper">
+    <resultMap id="BaseResultMap" type="cn.edu.seu.alumni_server.dao.entity.AlumniCircleMember">
+    </resultMap>
+
+    <update id="leave">
+        update alumni_circle_member a
+        set a.valid_status = false
+        where account_id = #{accountId}
+          and alumni_circle_id = #{alumniCircleId}
+    </update>
+
+    <update id="joinUpdate">
+        update alumni_circle_member a
+        set a.valid_status = true
+        where account_id = #{accountId}
+          and alumni_circle_id = #{alumniCircleId}
+    </update>
+
+    <select id="isJoined" resultType="java.lang.Boolean">
+        select (case
+                    when count(1) = 0 then false
+                    else true end)
+        from alumni_circle_member
+        where account_id = #{accountId}
+          and alumni_circle_id = #{alumniCircleId}
+          and valid_status = true
+    </select>
+
+</mapper>

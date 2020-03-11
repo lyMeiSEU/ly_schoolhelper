@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.seu.alumni_server.dao.mapper.V2ApiMapper">
+
+    <select id="searchByName"
+            resultType="cn.edu.seu.alumni_server.controller.dto.BriefInfo">
+        select a.account_id as accountId,
+               a.openid,
+               a.avatar,
+               a.name,
+               a.city,
+               a.self_desc  as selfDesc,
+               b.school,
+               b.college,
+               c.company,
+               c.position
+        from (
+              (account a left join (select max(account_id) as account_id, school, college
+                                    from education
+                                    group by account_id) b on a.account_id = b.account_id)
+                 left join
+             (select max(account_id) as account_id, company, position
+              from job
+              group by account_id) c on a.account_id = c.account_id
+                 )
+        where a.account_id in (
+            select distinct d.account_id
+            from account d
+            where name like
+                  CONCAT('%', #{content}, '%'))
+    </select>
+    <select id="searchBySchool"
+            resultType="cn.edu.seu.alumni_server.controller.dto.BriefInfo">
+        select a.account_id as accountId,
+               a.openid,
+               a.avatar,
+               a.name,
+               a.city,
+               a.self_desc  as selfDesc,
+               b.school,
+               b.college,
+               c.company,
+               c.position
+        from (
+              (account a left join (select max(account_id) as account_id, school, college
+                                    from education
+                                    group by account_id) b on a.account_id = b.account_id)
+                 left join
+             (select max(account_id) as account_id, company, position
+              from job
+              group by account_id) c on a.account_id = c.account_id
+                 )
+        where a.account_id in (
+            select distinct d.account_id
+            from education d
+            where d.school like
+                  CONCAT('%', #{content}, '%'))
+
+    </select>
+    <select id="searchByCollege"
+            resultType="cn.edu.seu.alumni_server.controller.dto.BriefInfo">
+        select a.account_id as accountId,
+               a.openid,
+               a.avatar,
+               a.name,
+               a.city,
+               a.self_desc  as selfDesc,
+               b.school,
+               b.college,
+               c.company,
+               c.position
+        from (
+              (account a left join (select max(account_id) as account_id, school, college
+                                    from education
+                                    group by account_id) b on a.account_id = b.account_id)
+                 left join
+             (select max(account_id) as account_id, company, position
+              from job
+              group by account_id) c on a.account_id = c.account_id
+                 )
+        where a.account_id in (
+            select distinct d.account_id
+            from education d
+            where d.college like
+                  CONCAT('%', #{content}, '%'))
+    </select>
+    <select id="searchByCity"
+            resultType="cn.edu.seu.alumni_server.controller.dto.BriefInfo">
+        select a.account_id as accountId,
+               a.openid,
+               a.avatar,
+               a.name,
+               a.city,
+               a.self_desc  as selfDesc,
+               b.school,
+               b.college,
+               c.company,
+               c.position
+        from (
+              (account a left join (select max(account_id) as account_id, school, college
+                                    from education
+                                    group by account_id) b on a.account_id = b.account_id)
+                 left join
+             (select max(account_id) as account_id, company, position
+              from job
+              group by account_id) c on a.account_id = c.account_id
+                 )
+        where a.account_id in (
+            select distinct d.account_id
+            from account d
+            where d.city like
+                  CONCAT('%', #{content}, '%'))
+    </select>
+    <select id="searchByCompany"
+            resultType="cn.edu.seu.alumni_server.controller.dto.BriefInfo">
+        select a.account_id as accountId,
+               a.openid,
+               a.avatar,
+               a.name,
+               a.city,
+               a.self_desc  as selfDesc,
+               b.school,
+               b.college,
+               c.company,
+               c.position
+        from (
+              (account a left join (select max(account_id) as account_id, school, college
+                                    from education
+                                    group by account_id) b on a.account_id = b.account_id)
+                 left join
+             (select max(account_id) as account_id, company, position
+              from job
+              group by account_id) c on a.account_id = c.account_id
+                 )
+        where a.account_id in (
+            select distinct d.account_id
+            from job d
+            where d.company like
+                  CONCAT('%', #{content}, '%'))
+    </select>
+    <select id="searchByPosition"
+            resultType="cn.edu.seu.alumni_server.controller.dto.BriefInfo">
+        select a.account_id as accountId,
+               a.openid,
+               a.avatar,
+               a.name,
+               a.city,
+               a.self_desc  as selfDesc,
+               b.school,
+               b.college,
+               c.company,
+               c.position
+        from (
+              (account a left join (select max(account_id) as account_id, school, college
+                                    from education
+                                    group by account_id) b on a.account_id = b.account_id)
+                 left join
+             (select max(account_id) as account_id, company, position
+              from job
+              group by account_id) c on a.account_id = c.account_id
+                 )
+        where a.account_id in (
+            select distinct d.account_id
+            from job d
+            where d.position like
+                  CONCAT('%', #{content}, '%'))
+    </select>
+    <select id="searchBySelfDesc"
+            resultType="cn.edu.seu.alumni_server.controller.dto.BriefInfo">
+        select a.account_id as accountId,
+               a.openid,
+               a.avatar,
+               a.name,
+               a.city,
+               a.self_desc  as selfDesc,
+               b.school,
+               b.college,
+               c.company,
+               c.position
+        from (
+              (account a left join (select max(account_id) as account_id, school, college
+                                    from education
+                                    group by account_id) b on a.account_id = b.account_id)
+                 left join
+             (select max(account_id) as account_id, company, position
+              from job
+              group by account_id) c on a.account_id = c.account_id
+                 )
+        where a.account_id in (
+            select distinct d.account_id
+            from account d
+            where d.self_desc like
+                  CONCAT('%', #{content}, '%'))
+    </select>
+
+
+    <!--    <select id="getFriends"-->
+    <!--            resultType="cn.edu.seu.alumni_server.controller.dto.FriendDTO">-->
+    <!--        select b.account_id as friendAccountId, b.name, c.company, c.position, b.avatar, b.city, a.status-->
+    <!--        from ((friend a left join account b on a.friend_account_id = b.account_id)-->
+    <!--                 left join (-->
+    <!--            select max(account_id) as account_id_t, company, position-->
+    <!--            from job-->
+    <!--            group by account_id-->
+    <!--        ) c on b.account_id = c.account_id_t)-->
+    <!--        where a.account_id = #{accountId}-->
+    <!--          and a.status = 2-->
+    <!--        UNION-->
+    <!--        DISTINCT-->
+    <!--        select b.account_id as friendAccountId,-->
+    <!--               b.name,-->
+    <!--               c.company,-->
+    <!--               c.position,-->
+    <!--               b.avatar,-->
+    <!--               b.city,-->
+    <!--               (CASE a.status-->
+    <!--                    WHEN 0 THEN 0-->
+    <!--                    WHEN 1 THEN 3-->
+    <!--                    WHEN 2 THEN 2-->
+    <!--                   END)     as status-->
+    <!--        from ((friend a left join account b on a.account_id = b.account_id)-->
+    <!--                 left join (-->
+    <!--            select max(account_id) as account_id, company, position from job group by account_id-->
+    <!--        ) c on b.account_id = c.account_id)-->
+    <!--        where a.friend_account_id = #{accountId}-->
+    <!--          and a.status = 2-->
+    <!--    </select>-->
+
+    <select id="test" resultType="cn.edu.seu.alumni_server.dao.entity.Account">
+        select *
+        from account a
+        where a.account_id = #{accountId}
+
+    </select>
+
+    <select id="recommand"
+            parameterType="cn.edu.seu.alumni_server.controller.dto.BriefInfo"
+            resultType="cn.edu.seu.alumni_server.controller.dto.BriefInfo">
+        select a.account_id as accountId,
+               a.openid,
+               a.avatar,
+               a.name,
+               a.city,
+               a.self_desc  as selfDesc,
+               b.school,
+               b.college,
+               b.start_time,
+               c.company,
+               c.position,
+               (CASE
+                    WHEN a.city = #{city} THEN '同城市'
+                    WHEN b.college = #{college} THEN '同学院'
+                    WHEN b.school = #{school} THEN '同学校'
+                    else ''
+                   END)     as recommondReason
+        from account a
+                 left join (select max(account_id) as account_id, school, college, start_time
+                            from education
+                            group by account_id) b on a.account_id = b.account_id
+                 left join (select max(account_id) as account_id, company, position from job group by account_id) c
+                           on a.account_id = c.account_id
+        where a.account_id NOT in
+              (select distinct d.friend_account_id
+               from friend d
+               where d.account_id = #{accountId}
+                 and d.status = 2)
+          and a.account_id != #{accountId}
+        order by recommondReason DESC
+    </select>
+
+
+    <select id="recommandWithFilter"
+            parameterType="java.util.Map"
+            resultType="cn.edu.seu.alumni_server.controller.dto.BriefInfo">
+        select a.account_id as accountId,
+               a.openid,
+               a.avatar,
+               a.name,
+               a.city,
+               a.self_desc  as selfDesc,
+               b.school,
+               b.college,
+               b.start_time,
+               c.company,
+               c.position,
+               (CASE
+                    WHEN b.school = #{school} THEN '同学校'
+                    WHEN a.city = #{city} THEN '同城市'
+                    WHEN c.company = #{company} THEN '同公司'
+                    else ''
+                   END)     as recommondReason
+        from account a
+                 left join (select max(account_id) as account_id, school, college, start_time
+                            from education
+                            group by account_id) b on a.account_id = b.account_id
+
+                 left join (select max(account_id) as account_id, company, position from job group by account_id) c
+                           on a.account_id = c.account_id
+
+        where a.account_id NOT in (select distinct d.friend_account_id
+                                   from friend d
+                                   where d.account_id = #{accountId}
+                                     and d.status = 2)
+          and a.account_id != #{accountId}
+        <if test="filter == 0">
+            AND b.school = (select school from education e where account_id = #{accountId} order by e.start_time desc limit 1)
+        </if>
+        <if test="filter == 1">
+            AND a.city = (select city from account aa where account_id = #{accountId} limit 1)
+        </if>
+        order by recommondReason DESC
+    </select>
+    <!--  (long myAccountId, long accountId)  -->
+</mapper>

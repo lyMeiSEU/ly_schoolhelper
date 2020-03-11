@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.seu.alumni_server.dao.mapper.MessageMapper">
+    <resultMap id="BaseResultMap" type="cn.edu.seu.alumni_server.dao.entity.Message">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="message_id" jdbcType="INTEGER" property="messageId"/>
+        <result column="timestamp" jdbcType="INTEGER" property="timestamp"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="payload" jdbcType="VARCHAR" property="payload"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="c_time" jdbcType="TIMESTAMP" property="cTime"/>
+        <result column="u_time" jdbcType="TIMESTAMP" property="uTime"/>
+        <result column="valid_status" jdbcType="INTEGER" property="validStatus"/>
+        <result column="from" jdbcType="LONGVARCHAR" property="from"/>
+        <result column="to" jdbcType="LONGVARCHAR" property="to"/>
+    </resultMap>
+    <select id="getMessagesByAccountId" resultType="cn.edu.seu.alumni_server.controller.dto.MessageDTO">
+        select m.message_id,
+        m.type,
+        '交换名片申请' as typeDesc,
+        m.title,
+        m.content,
+        m.status,
+        m.timestamp,
+        m.from_user,
+        a.name as fromUserName,
+        a.avatar,
+        m.to_user
+        from message m
+        left join account a on m.from_user = a.account_id
+        where m.to_user = #{accountId} and m.type != 10
+        <if test="status != null">
+            and m.status = #{status}
+        </if>
+        union
+        select m.message_id,
+        m.type,
+        concat('活动通知:', ACT.activity_name) as typeDesc,
+        m.title,
+        m.content,
+        m.status,
+        m.timestamp,
+        m.from_user,
+        ac.alumni_circle_name as fromUserName,
+        ac.avatar,
+        m.to_user
+        from message m
+        left join activity ACT on m.from_user = ACT.activity_id
+        left join alumni_circle ac on ACT.alumni_circle_id = ac.alumni_circle_id
+        where m.to_user = #{accountId} and m.type = 10
+        <if test="status != null">
+            and m.status = #{status}
+        </if>
+    </select>
+
+</mapper>
