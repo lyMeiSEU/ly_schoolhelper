@@ -1,0 +1,220 @@
+条件表达式：
+处理if--then--else逻辑
+1. case 语句  考试会考（case或者decode）
+2. decode函数
+
+select count(*) total, sum(decode(to_char(hire_date,'yyyy'),2001,1)) "2001"，sum(decode(to_char(hire_date,'yyyy'),2002,1)) "2002" from hr.employees;  2001年入职的人数
+
+================================================
+select max(salary) from hr.employees;
+
+SQL> select max(1,4,7);
+select max(1,4,7)
+       *
+第 1 行出现错误:
+ORA-00909: 参数个数无效
+
+
+SQL> select greatest(1,4,7) from dual;
+
+GREATEST(1,4,7)
+---------------
+              7
+
+group by
+where:记录筛选
+having:分组筛选
+
+SQL> select department_id,avg(salary) from hr.employees group by department_id;
+
+DEPARTMENT_ID AVG(SALARY)
+------------- -----------
+           50  3475.55556
+           40        6500
+          110       10154
+           90  19333.3333
+           30        4150
+           70       10000
+                     7000
+           10        4400
+           20        9500
+           60        5760
+          100  8601.33333
+
+DEPARTMENT_ID AVG(SALARY)
+------------- -----------
+           80  8955.88235
+
+已选择 12 行。
+
+
+
+SQL> select department_id bmh,avg(salary) from hr.employees group by bmh;
+select department_id bmh,avg(salary) from hr.employees group by bmh
+                                                                *
+第 1 行出现错误:
+ORA-00904: "BMH": 标识符无效
+
+分组时不能起别名
+select department_id,job_id,sum(salary) from hr.employees where department_id>40 group by department_id,job_id group by department_id;
+
+select department_id,job_id,sum(salary) from hr.employees where department_id>40 group by rollup(department_id,job_id) group by department_id;
+
+SQL> select department_id,job_id,sum(salary) from hr.employees where department_id>40 group by department_id,job_id;
+
+DEPARTMENT_ID JOB_ID               SUM(SALARY)
+------------- -------------------- -----------
+           90 AD_VP                      34000
+          100 FI_MGR                     12008
+           80 SA_REP                    243500
+           90 AD_PRES                    24000
+          110 AC_MGR                     12008
+           60 IT_PROG                    28800
+           80 SA_MAN                     61000
+           50 SH_CLERK                   64300
+           50 ST_CLERK                   55700
+           70 PR_REP                     10000
+          110 AC_ACCOUNT                  8300
+
+DEPARTMENT_ID JOB_ID               SUM(SALARY)
+------------- -------------------- -----------
+           50 ST_MAN                     36400
+          100 FI_ACCOUNT                 39600
+
+已选择 13 行。
+
+SQL> select department_id,job_id,sum(salary) from hr.employees where department_id>40 group by rollup(department_id,job_id);
+
+DEPARTMENT_ID JOB_ID               SUM(SALARY)
+------------- -------------------- -----------
+           50 ST_MAN                     36400
+           50 SH_CLERK                   64300
+           50 ST_CLERK                   55700
+           50                           156400
+           60 IT_PROG                    28800
+           60                            28800
+           70 PR_REP                     10000
+           70                            10000
+           80 SA_MAN                     61000
+           80 SA_REP                    243500
+           80                           304500
+
+DEPARTMENT_ID JOB_ID               SUM(SALARY)
+------------- -------------------- -----------
+           90 AD_VP                      34000
+           90 AD_PRES                    24000
+           90                            58000
+          100 FI_MGR                     12008
+          100 FI_ACCOUNT                 39600
+          100                            51608
+          110 AC_MGR                     12008
+          110 AC_ACCOUNT                  8300
+          110                            20308
+                                        629616
+
+已选择 21 行。
+
+SQL> select department_id,avg(salary) from hr.employees group by department_id having avg(salary)>8000;
+
+DEPARTMENT_ID AVG(SALARY)
+------------- -----------
+          110       10154
+           90  19333.3333
+           70       10000
+           20        9500
+          100  8601.33333
+           80  8955.88235
+
+已选择 6 行。
+
+
+================================================
+将excel文件导入oracle
+create table st(name varchar(20),subject varchar(20),score int);
+利用sqlldr
+
+
+写控制文件
+load
+infile 'd:\st.csv'
+into table hr.st
+fields terminated  by','
+(name char, subject char,score integer external)
+保存到d:/st.ctl
+cmd中sqlldr hr/hr control=d:/st.ctl
+
+
+多张表连接
+1.内部
+2.外部
+3.多表连接
+4.自连接
+5.交叉连接
+
+1.内部连接
+select b.buyer_id,b.buyer_name,s.qty
+from buyers b,sales s
+where b.buyer_id = s.buyer_id
+
+emp 10万员工
+dept 4个部门（10，20，30，40）
+from emp,dept 
+nested loop 嵌套循环
+
+select b.buyer_id,b.buyer_name,s.qty
+from buyers b inner joinsales s
+on b.buyer_id = s.buyer_id (inner可省)
+
+
+2.
+select b.buyer_id,b.buyer_name,s.qty
+from buyers b,sales s
+where b.buyer_id = s.buyer_id（+）  外部连接（最好用内部连接）
+
+select b.buyer_id,b.buyer_name,s.qty
+from buyers b outer join sales s
+on b.buyer_id = s.buyer_id
+
+select b.buyer_id,b.buyer_name,s.qty
+from buyers b full outer sales s
+on b.buyer_id = s.buyer_id
+
+3.多表：
+select b.buyer_name,p.prof_name,s.qty
+from buyers b,sales s,product p
+where b.buyers_is = s.buyer_id
+and p.prof_id = s.prof_id
+或
+select b.buyer_name,p.prof_name,s.qty
+from buyers b join sales s
+on b.buyers_is = s.buyer_id
+join product p
+on p.prof_id = s.prof_id
+
+4.
+select a.buyer_id as buyer1,a.prof_id,b.buyer_id as buyer2
+from sales a,sales b
+where a.prof_id = b.prof_id
+and a.buyer_id = b.buyer_id
+会查出一样的数据（镜像）
+select a.buyer_id as buyer1,a.prof_id,b.buyer_id as buyer2
+from sales a,sales b
+where a.prof_id = b.prof_id
+and a.buyer_id < b.buyer_id
+
+5.
+select b.buyer_name,s.qty from buyers b,sales s;
+
+select b.buyer_name,s.qty from buyers b cross join sales s;
+
+select e.first_name||' ' ||e.last_name as 职工姓名,m.first_name||' '||m.last_name as 汇报经理 from employees？？？
+
+练习：
+last_name.salary,department_id,salavg
+条件：其工资高于其部门的平均工资
+
+select last_name.salary,department_id,b.salavg
+from employees a,
+(select department_id,avg(salary) salavg from employees group by department_id) b
+where a.department_id = b.department_id
+and a.salary > b.salavg

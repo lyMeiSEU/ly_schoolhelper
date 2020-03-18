@@ -1,0 +1,297 @@
+回滚段的主要作用：
+1.读一致性：若一事务对表里第三条记录进行修改，将改前的数据 复制一份 放入 回滚段。其他事务不允许修改它。
+被锁住。另一事务要select的话，对复制在回滚段的进行处理，其他用户看到的都是改前的数据。
+
+2.回滚：未提交前
+delete from t1;//都删掉
+所有数据都在回滚段
+roll back;//自动把在回滚段的都拿回来
+
+3.闪回恢复:已提交后也数据不怕丢掉
+delete from t1;//都删掉
+commit;
+提交后查，数据都没有
+rollback自动回滚回不来
+查询回滚段：insert into t1 select * from t1 as of timestamp(systimestamp-interval'3'minute);//3分钟前的数据
+
+==========================================================================
+锁：
+
+第一个事务修改第三行update t1 set name='Smith' where id =103;
+Smith在内存中存在
+让第二个事务修改第四行update t1 set id =4 where id =104;//可改
+=>行锁
+第三个事务修改第四行update t1 set name='Lisi' where id =104;//进入等待状态，等第二个事务释放锁才可进行。
+第二个事务再修改第三行=>死锁
+自动解决死锁，自动回滚掉导致死锁的语句（没有做李四）
+1
+2
+2//断掉
+1
+
+第 1 行出现错误:
+ORA-00060: 等待资源时检测到死锁
+
+死锁=>锁
+1卡死
+desc v$lock
+block: number类型（1阻住，0未阻住）
+select sid,block from v$lock where block=1;//SID747de
+desc v$session会话信息
+username sid……
+select sid,serial#,username from v$session where sid=747;//747 59756 hr
+alter system kill session '747,59756';
+1执行了
+=====================================
+DDL语句：产生系统数据的定义
+(create,alter,drop,rename,truncate,comment)
+
+数据库常见对象：
+表：表名长度1-30,表名不可为 oracle保留字，须以字母开头，包含A-Z,a-z,0-9,_,$,#
+       表名不可和 同一用户下 相同名称空间namespace的 对象 同名。
+视图：指向表
+序列：自动产生
+索引
+synonym同义词
+
+desc dictionary/dict/table_name;
+select index_name from user_indexes;
+
+create view emp_info as select * from emp;
+grant create view to scott;//赋予权限
+
+create view emp_info as select * from emp;
+select view_name from user_views;
+create table EMP_INFO(id int);//不可创建同名的对象
+
+create sequence s1;
+create table s1(id int);//不可创建同名的对象
+
+create sysnonym em for emp;
+grant create sysnonym to scott;//赋予权限
+create table em(id int);//不可创建同名的对象
+
+表名不可和 同一用户下 相同名称空间namespace的 对象 同名。
+select object_name,object_type,namespace from user_objects;
+
+create table procedure(id int);//dui
+function(id int);//dui
+trigger(id int);//cuo
+
+
+SQL> conn sys/admin as sysdba
+已连接。
+SQL> create user demo identified by admin;
+SQL> conn demo/admin
+ERROR:
+ORA-01045: 用户 DEMO 没有 CREATE SESSION 权限; 登录被拒绝
+SQL> conn sys/admin as sysdba
+已连接。
+SQL> grant create session to demo;
+授权成功。
+SQL> conn demo/admin
+已连接
+SQL> create table t1(id int);
+create table t1(id int)
+*
+第 1 行出现错误:
+ORA-01031: 权限不足
+grant create table to demo;
+SQL> create table t1(id int);
+表已创建。
+
+show parameter defer
+alter system set deferred_segment_creation(false);//不允许延时，创建时就要分配
+
+alter user demo quota 5m on users;
+                 unlimit
+
+create table scott.t1(id int);//不可以 create仅可对自己建表
+grant create any table to scott;
+create table scott.t1(id int);//demo对scott建表
+
+create table t3 as select * from scott.emp;//基于其他表select要有权限
+grant select on scott.emp to demo;
+
+pseudocolumn伪列，存在表里，但查不到
+伪军
+Base 64 code//具体物理地址
+1.文件号
+2.块号
+3.行号
+rowid为索引的指针，伪列
+
+全本扫描
+索引查找（目录）-指针
+rowid访问（知道rowid地址）
+
+select empno,rowid from emp;
+包dbms_rowid.ROWID_RELATIVE_FNO
+ROWID_BLOCK_NUMBER
+ROWID_ROW_NUMBER
+
+select empno,dbms_rowid.ROWID_RELATIVE_FNO(rowid) File#,
+dbms_rowid.ROWID_BLOCK_NUMBER(rowid) Block#,
+dbms_rowid.ROWID_ROW_NUMBER(rowid) Row#
+from emp;
+     EMPNO      FILE#     BLOCK#       ROW#
+---------- ---------- ---------- ----------
+      7369          7        189          0
+      7499          7        189          1
+      7521          7        189          2
+      7566          7        189          3
+      7654          7        189          4
+      7698          7        189          5
+      7782          7        189          6
+      7839          7        189          7
+      7844          7        189          8
+      7900          7        189          9
+      7902          7        189         10
+
+     EMPNO      FILE#     BLOCK#       ROW#
+---------- ---------- ---------- ----------
+      7934          7        189         11
+select name from v$datafile where file#=7;
+NAME
+--------------------------------------------------------------------------------
+F:\APP\LUYAO\ORADATA\DB18C\USERS01.DBF
+select tablespace_name from dba_data_files
+where file_name='F:\APP\LUYAO\ORADATA\DB18C\USERS01.DBF';//USERS
+
+
+conn demo/admin
+create table t3(id int,id char(5));//重复的列名
+create table t4(id int,row_id char(5));//ok
+
+============================================================
+char(20)：定长  已用10个，剩下的用空格填满          （字符串比较时，性能好）
+varchar(20)：变长     最多20，已用10个，剩下的就空着（变长的，节省存储空间）
+nchar()
+nvarchar()
+字符集：字符的集合
+ASCII
+A编码01000001  65
+
+修改表：
+1.修改表名
+alter table 旧表名 RENAME TO 新表名；
+RENAME 旧表名 TO 新表名；
+desc c
+2.增加字段
+alter table 表名 add(字段名 字段类型 默认值 是否为空)
+alter table 表名 add(userName varchar2(30) default'空' not null)；
+alter table c add c3 varchar(20);
+3.修改字段
+1)修改字段名
+ALTER TABLE 表名 RENAME COLUMN 列名 TO 新列名;
+alter table c rename column birthday to age;
+2)修改字段类型
+alter table c modify BITRH_DATE char(8);//要修改的列为空
+alter table c modify BUYER_ID char(10)；//修改的列不为空，失败
+3)修改字段大小
+alter table c modify BUYER_NAME varchar(30);//改大,ok
+alter table c modify BUYER_NAME char(29)//改小,ok
+4.删除字段（列）
+1)直接删除
+alter table 表名 drop column 列名;
+alter table 表名 drop (列名1，列名2……);
+2）先标记为未使用，然后再删除标记为未使用的列
+alter table c set unused column buyer_name;//标记为未使用，desc c 差不到
+select table_name from dict where table_name like '_UNUSED_';
+desc USER_UNUSED_COL_TABS
+select * from USER_UNUSED_COL_TABS;
+col table_name for a20
+/
+alter table c drop unused column;//删除未使用的列
+5.将表改为只读
+select * from c;
+alter table c read only;
+select table_name,read_only from user_tables;
+只读不可删/加数据
+6.给表添加注释
+comment on table hello is 'this is a test table';
+desc user_tab_comments
+select comments from user_tab_comments where table_name='hello';
+7.删除表
+drop table c;//还在回收站
+flashback table c to before recyclebin;
+drop table c purge;
+select * from recyclebin;
+
+
+======================================
+数据完整性：
+1代码
+2触发器
+3约束
+
+约束类型：
+1.not null
+2. unique
+3.primary key
+4.foreign key
+5.check
+
+两个数据字典 user_constraints表/user_cons_columns字段:
+select constraint_name,constraint_type,table_name
+from user_constraints
+where table_name='EMP';
+CONSTRAINT_NAME      CONSTRAINT_TYPE TABLE_NAME
+-------------------- --------------- ----------
+FK_DEPTNO            R               EMP//外键
+PK_EMP               P               EMP//主键
+不知在何字段上
+desc user_cons_columns
+select column_name from user_cons_columns where constraint_name='PK_EMP';//empno
+
+定义表级别的约束：关键字，约束名称，约束类型，字段
+定义列级别的约束：关键字，约束名称，约束类型
+create table employees(employee_id number(6) not null,
+……
+CONSTRAINT emp_emp_id_pk PRIMARY KEY(EMPLOYEE_ID));
+
+定义外键
+CONSTRAINT emp_emp_id_fk FOREIGN KEY(EMPLOYEE_ID)
+REFERENCES departments(department_id) on delete cascade;
+
+delete from dept where deptno=10;//报错
+员工表中仍有在10号部分的
+on delete cascade//级联删掉 仍在10号部门的员工
+on delete set null//原10号部门的员工的 部门号 设为空（员工待分配）
+
+check (salary>0)不符合这个公式就输不进去:
+SQL> conn demo/admin
+已连接。
+SQL> create table emp(id int,name varchar(20),sal int);
+表已创建。
+SQL> insert into emp values(1,'Tom',3000);
+ORA-01950: 对表空间 'USERS' 无权限
+？？？
+select * from user_sys_privs;
+connect / as sysdba;
+SQL> ALTER USER "ZHAOH" QUOTA UNLIMITED ON "USERS";
+
+alter table emp add constraint sal_min check (sal>0);//添加约束
+insert into emp values(2,'A',-3000);//负数插不进去了
+
+alter table emp drop constraint SAL_MIN;//删除约束
+
+数据+规则->有效，合理的
+
+exceptions异常表
+
+=====================================================
+SQL
+
+1.QL（select）分组、多张表连接、子查询方式
+2.DML(insert update delete merge)增删改
+3.TCL事务 (commit,rollback,savepoint)
+4DCL数据控制语句(grant,revoke)
+5.DDL对象(create alter drop truncate rename comment)
+
+管理部分
+
+
+
+
+

@@ -1,0 +1,515 @@
+管理控制文件
+二进制，记录整个数据库的状态，没有控制文件无法定位数据库
+
+1.查看控制文件的名称和位置
+show parameter control_files
+select name from v$controlfile
+
+2. 控制文件的内容
+oradebug dump controlf 3  未指定进程
+oradebug setmypid 定义转储的进程
+oradebug TRACEFILE_NAME
+notepad 文件目录
+
+3. 控制文件多路复用（控制文件只有一个，多个的话都一模一样）
+1)修改初始化参数
+alter system set control_files = 
+'F:\MXYYY\APP\PINKPIG\ORADATA\DB18C\CONTROL01.CTL',
+'F:\MXYYY\APP\PINKPIG\ORADATA\DB18C\CONTROL02.CTL', 
+'F:\NIT\CONTROL03.CTL' scope = spfile
+
+2）shutdown immediate
+3) 复制出第三个控制文件
+4）startup
+5) 检查控制文件 select name from v$controlfile
+
+4. 重建控制文件
+1）
+select status from v$instance
+alter database backup controlfile to trace as 'D:\NIT\controf.sql'
+2）shutdown immediate
+3） 删除所有控制文件
+4）startup
+5)  执行创建控制文件的语句（在上面目录的文件中）
+6）alter database open
+
+练习：
+1. 查看控制文件名称及内容
+2. 控制文件的复用（产生多个控制文件）
+3. 重建控制文件
+
+========================================
+管理日志文件
+1. 日志文件的作用
+恢复，记录对数据所做的改变，提供恢复机制
+2. 日志文件原理
+select group#,sequence#,status from v$log;
+    GROUP#  SEQUENCE# STATUS
+---------- ---------- --------------------------------
+         1         19 INACTIVE
+         2         20 CURRENT
+         3         18 INACTIVE
+select group#,member from v$logfile
+    GROUP#
+----------
+MEMBER
+--------------------------------------------------------------------------------
+         3
+F:\MXYYY\APP\PINKPIG\ORADATA\DB18C\REDO03.LOG
+
+         2
+F:\MXYYY\APP\PINKPIG\ORADATA\DB18C\REDO02.LOG
+
+         1
+F:\MXYYY\APP\PINKPIG\ORADATA\DB18C\REDO01.LOG
+
+3. 数据库日志模式
+1） 非存档模式
+2） 存档模式:连接备份
+select log_mode from v$database;
+
+SQL> alter system switch logfile;
+
+系统已更改。
+
+SQL> select group#,sequence#,status from v$log;
+
+    GROUP#  SEQUENCE# STATUS
+---------- ---------- --------------------------------
+         1         19 INACTIVE
+         2         20 ACTIVE
+         3         21 CURRENT
+一个日志最少两个组，一个组至少一个成员，一个组中的每个成员都是镜像关系，放在不同磁盘上。
+
+4. 添加日志文件组
+alter database add logfile group 4
+('F:\mxyyy\app\pinkpig\oradata\DB18C\redo04a.log') size 10m;
+
+数据库已更改。
+
+5. 查看日志组信息
+desc v$log
+select group#,sequence#,status from v$log;
+
+    GROUP#  SEQUENCE# STATUS
+---------- ---------- --------------------------------
+         1         19 INACTIVE
+         2         20 INACTIVE
+         3         21 CURRENT
+         4          0 UNUSED
+
+6. 产看日志成员信息
+desc v$logfile
+select group#,member from v$logfile;
+
+
+    GROUP#
+----------
+MEMBER
+--------------------------------------------------------------------------------
+         3
+F:\MXYYY\APP\PINKPIG\ORADATA\DB18C\REDO03.LOG
+
+         2
+F:\MXYYY\APP\PINKPIG\ORADATA\DB18C\REDO02.LOG
+
+         1
+F:\MXYYY\APP\PINKPIG\ORADATA\DB18C\REDO01.LOG
+
+
+    GROUP#
+----------
+MEMBER
+--------------------------------------------------------------------------------
+         4
+F:\MXYYY\APP\PINKPIG\ORADATA\DB18C\REDO04A.LOG
+
+7. 添加日志文件成员
+alter database add logfile member 'F:\mxyyy\app\pinkpig\oradata\DB18C\redo04b.log' to group 4;
+
+select group#,member from v$logfile;
+
+    GROUP#
+----------
+MEMBER
+--------------------------------------------------------------------------------
+         3
+F:\MXYYY\APP\PINKPIG\ORADATA\DB18C\REDO03.LOG
+
+         2
+F:\MXYYY\APP\PINKPIG\ORADATA\DB18C\REDO02.LOG
+
+         1
+F:\MXYYY\APP\PINKPIG\ORADATA\DB18C\REDO01.LOG
+
+
+    GROUP#
+----------
+MEMBER
+--------------------------------------------------------------------------------
+         4
+F:\MXYYY\APP\PINKPIG\ORADATA\DB18C\REDO04A.LOG
+
+         4
+F:\MXYYY\APP\PINKPIG\ORADATA\DB18C\REDO04B.LOG
+
+8.  删除日志文件组 active不可删
+组的状态：current,active,inactive,unused
+alter session nls_language = america
+...
+alter system switch logfile
+...
+alter system checkpoint 检查点，不会有active
+select group#,status from v$log;
+alter database drop logfile group 2; 
+select group#,status from v$log;
+
+    GROUP# STATUS
+---------- --------------------------------
+         1 INACTIVE
+         3 CURRENT
+         4 UNUSED
+
+9. 删除日志文件成员
+alter database drop logfile member
+alter system switch logfile
+alter database drop logfile member 'F:\mxyyy\app\pinkpig\oradata\DB18C\REDO04B.LOG';（物理上没有删除）
+
+10. OMF(oracle管理文件）
+配置相应的初始化参数来实现OMF
+show parameter db_create
+
+NAME                                 TYPE
+------------------------------------ ----------------------
+VALUE
+------------------------------
+db_create_file_dest                  string
+
+db_create_online_log_dest_1          string
+
+db_create_online_log_dest_2          string
+
+db_create_online_log_dest_3          string
+
+db_create_online_log_dest_4          string
+
+NAME                                 TYPE
+------------------------------------ ----------------------
+VALUE
+------------------------------
+
+db_create_online_log_dest_5          string
+
+
+create tablespace users datafile 'F:\mxyyy\app\pinkpig\oradata\DB18C\USERS01.DBF';
+drop tablespace users 没有物理删除
+show parameter db_create_file_dest
+
+NAME                                 TYPE
+------------------------------------ ----------------------
+VALUE
+------------------------------
+db_create_file_dest                  string
+
+alter system set db_create_file_dest='F:\mxyyy\app\omf'
+show parameter db_create_file_dest
+
+NAME                                 TYPE
+------------------------------------ ----------------------
+VALUE
+------------------------------
+db_create_file_dest                  string
+F:\mxyyy\app\omf
+
+select name from v$datafile
+drop tablespace users 物理删除
+
+日志文件自动OMF
+alter database add logfile 默认存储在闪回区
+配置相应的初始化参数来实现日志文件自动OMF
+show parameter db_create
+
+NAME                                 TYPE
+------------------------------------ ----------------------
+VALUE
+------------------------------
+db_create_file_dest                  string
+F:\mxyyy\app\omf
+db_create_online_log_dest_1          string
+
+db_create_online_log_dest_2          string
+
+db_create_online_log_dest_3          string
+
+db_create_online_log_dest_4          string
+
+db_create_online_log_dest_5          string
+
+在F:\mxyyy\app\omf\log1和F:\mxyyy\app\omf\log2中各放两个成员：
+alter system set db_create_online_log_dest_1 = 'F:\mxyyy\app\omf\log1'
+alter system set db_create_online_log_dest_2 = 'F:\mxyyy\app\omf\log2'
+
+alter database drop logfile group 5;
+
+11. 清除日志文件内容
+alter database clear logfile;
+alter database clear logfile group n;
+alter database clear logfile ' ...';
+
+12. 修改数据库的日志模式,一定要在mount阶段执行
+归档-非归档
+shutdown immediate
+startup mount
+alter database archivelog;
+archive log list
+alter database noarchivelog;
+alter database open;
+
+13. 设置归档日志目的地 并 进行归档
+show parameter log_archive_dest
+NAME                                 TYPE
+------------------------------------ ----------------------
+VALUE
+------------------------------
+log_archive_dest                     string
+
+log_archive_dest_1                   string
+
+log_archive_dest_10                  string
+
+log_archive_dest_11                  string
+
+log_archive_dest_12                  string
+
+NAME                                 TYPE
+------------------------------------ ----------------------
+VALUE
+------------------------------
+
+log_archive_dest_13                  string
+
+log_archive_dest_14                  string
+
+log_archive_dest_15                  string
+
+log_archive_dest_16                  string
+
+
+NAME                                 TYPE
+------------------------------------ ----------------------
+VALUE
+------------------------------
+log_archive_dest_17                  string
+
+log_archive_dest_18                  string
+
+log_archive_dest_19                  string
+
+log_archive_dest_2                   string
+
+log_archive_dest_20                  string
+
+NAME                                 TYPE
+------------------------------------ ----------------------
+VALUE
+------------------------------
+
+log_archive_dest_21                  string
+
+log_archive_dest_22                  string
+
+log_archive_dest_23                  string
+
+log_archive_dest_24                  string
+
+
+NAME                                 TYPE
+------------------------------------ ----------------------
+VALUE
+------------------------------
+log_archive_dest_25                  string
+
+log_archive_dest_26                  string
+
+log_archive_dest_27                  string
+
+log_archive_dest_28                  string
+
+log_archive_dest_29                  string
+
+NAME                                 TYPE
+------------------------------------ ----------------------
+VALUE
+------------------------------
+
+log_archive_dest_3                   string
+
+log_archive_dest_30                  string
+
+log_archive_dest_31                  string
+
+log_archive_dest_4                   string
+
+
+NAME                                 TYPE
+------------------------------------ ----------------------
+VALUE
+------------------------------
+log_archive_dest_5                   string
+
+log_archive_dest_6                   string
+
+log_archive_dest_7                   string
+
+log_archive_dest_8                   string
+
+log_archive_dest_9                   string
+
+NAME                                 TYPE
+------------------------------------ ----------------------
+VALUE
+------------------------------
+
+log_archive_dest_state_1             string
+enable
+log_archive_dest_state_10            string
+enable
+log_archive_dest_state_11            string
+enable
+log_archive_dest_state_12            string
+enable
+
+NAME                                 TYPE
+------------------------------------ ----------------------
+VALUE
+------------------------------
+log_archive_dest_state_13            string
+enable
+log_archive_dest_state_14            string
+enable
+log_archive_dest_state_15            string
+enable
+log_archive_dest_state_16            string
+enable
+log_archive_dest_state_17            string
+
+NAME                                 TYPE
+------------------------------------ ----------------------
+VALUE
+------------------------------
+enable
+log_archive_dest_state_18            string
+enable
+log_archive_dest_state_19            string
+enable
+log_archive_dest_state_2             string
+enable
+log_archive_dest_state_20            string
+enable
+
+NAME                                 TYPE
+------------------------------------ ----------------------
+VALUE
+------------------------------
+log_archive_dest_state_21            string
+enable
+log_archive_dest_state_22            string
+enable
+log_archive_dest_state_23            string
+enable
+log_archive_dest_state_24            string
+enable
+log_archive_dest_state_25            string
+
+NAME                                 TYPE
+------------------------------------ ----------------------
+VALUE
+------------------------------
+enable
+log_archive_dest_state_26            string
+enable
+log_archive_dest_state_27            string
+enable
+log_archive_dest_state_28            string
+enable
+log_archive_dest_state_29            string
+enable
+
+NAME                                 TYPE
+------------------------------------ ----------------------
+VALUE
+------------------------------
+log_archive_dest_state_3             string
+enable
+log_archive_dest_state_30            string
+enable
+log_archive_dest_state_31            string
+enable
+log_archive_dest_state_4             string
+enable
+log_archive_dest_state_5             string
+
+NAME                                 TYPE
+------------------------------------ ----------------------
+VALUE
+------------------------------
+enable
+log_archive_dest_state_6             string
+enable
+log_archive_dest_state_7             string
+enable
+log_archive_dest_state_8             string
+enable
+log_archive_dest_state_9             string
+enable
+
+archive log list;
+alter system archive log current  手动归档命令
+默认归档日志存储在闪回区
+
+14.查看归档日志文件信息（v$archived_log）
+归档为两份，存储在下面两个文件夹
+alter system set log_archive_dest_1 = 'location=F:\mxyyy\app\arch1';
+alter system set log_archive_dest_10 = 'location=F:\mxyyy\app\arch2';
+select member from v$logfile
+
+15.日志文件的移动或重命名
+1）允许移动（不是正在被使用时）
+shutdown immediate
+2) 利用操作系统命令移动或改名
+3）更新控制文件
+alter database rename dile '...log' to '...log';
+startup mount
+select member from v$logfile
+alter database rename dile '...log' to '...log';
+select member from v$logfile
+alter database open;
+select group#,status from v$log;
+select group#,member from v$logfile;
+alter database drop logfile member '...'(不要敲分号，敲回车）
+
+16. 处理日志丢失
+1）非当前日志文件丢失
+select group#,status from v$log;
+select group#,member from v$logfile;
+删除第四个成员（非当前）
+shutdown immediate
+startup会报错 ，运行不起来
+startup mount
+alter database clear logfile group 4;
+alter database open;
+
+
+2) 当前日志文件丢失
+update scott.emp set sal=2800 where empno = 7839
+shutdown immediate
+startup mount
+alter database clear logfile group 1;
+recover database until cancel;
+
+
+
+
+
+
+

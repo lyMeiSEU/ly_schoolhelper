@@ -1,0 +1,67 @@
+重做日志缓存
+redo
+do
+undo ——对冲 回滚
+redo ——重做，前滚，恢复
+
+日志的作用：恢复
+记录事务
+
+事情，任务
+ACID
+atom 原子性
+consistent 一致性
+isolation 隔离性 只能看到一个事务开始或者结束之后的状态 不能看到中间过程
+durable 持久性，永久性 在内存当中是临时的 存在文件中是永久的
+
+backup
+
+restore 还原
+recover 恢复
+
+
+表——表空间——数据文件
+create tablespace sales datafile '...\...' size 10m;
+create table scott.customers(id int,name varchar(20)) tablespace sales;
+insert into scott.customers values(1,'Tom');
+alter database create datafile 5;
+recover datafile 5; 介质已经恢复
+alter tablespace sales online; 表空间已经更改
+数据文件+日志文件
+
+进程结构：（主要分为3类）
+1 用户进程
+UI
+名称解析
+端口
+
+协议
+TCP
+
+2 服务器进程
+用户进程的代理
+
+3 后台进程
+
+SQL
+1 QL(select)
+2 DML(insert,update,delete,merge)修改的是用户数据
+3 DDL(create,alter,drop)修改的是系统数据
+4 DCL(grant,revoke)
+5 TCL(commit,rollback,savepoint)
+
+select
+1 返回所有数据
+ select * from
+2 投影
+
+NULL空值 三值现象
+单引号 单引号里套单引号①两个连续的单引号 'I''m a student'②使用q'[xxx]'的形式q'[I'm a student]'
+双引号
+%匹配任意多个字 _匹配任意一个字
+
+TOP N
+FETCH FIRST n ROWS ONLY;
+OFFSET n ROWS FETCH FIRST n ROWS ONLY;
+FETCH FIRST n ROWS WITH TIES;
+TP

@@ -1,0 +1,101 @@
+RMAN下的整库备份和恢复
+1.创建测试表
+create table scott.hotbak(a varchar(30)) tablespace users;
+insert into scott.hotback values('')
+2. 备份前的准备
+备份spfile
+备份控制文件
+
+rman target/
+RMAN>show all
+Configure controlfile autobackup on
+
+备份数据文件
+Channel(通道）
+Configure channel.device bzd
+RMAN>Configure channel.device type disk format '\d\demobak\%d_%u_%T'
+Configure controlfile autobackup format for device type disk to 'd:\demobak\auto\%F';
+
+备份归档日志文件
+select log_mode from v$database;//数据库中的归档模式（mount 修改状态，归档模式）
+Alter system archive log current ;当前日志归档
+
+
+3. 开始备份
+backup database plus archivelog//自动备份开关打开了，回车开始备份
+
+4.增加新的记录
+insert into scott.hotbak values('After backup');
+commit;
+Demo_编号_日期  备份文件
+
+delete backup;
+Configure device type disk parallelism 3;
+Alter system archive log current;
+
+Show all;
+backup database plus archivelog;//3个通道
+select tablespace_name,status from dba_tablespaces;
+备份 数据文件、初始化参数文件
+
+RMAN>select * from scot.hotbak;
+Insert into scott/hotbak values('After backup');
+RMAN>select * from scott.hotbak;
+
+5. 复制联机重做日志文件
+D:\demobak\文件夹中新建文件夹log
+把日志文件拷过去
+Demo>Select member from v$logfile;//查询有哪些日志文件
+复制需要的日志文件至此文件夹D：\demobak\log
+
+6.破坏数据库
+全部删掉
+运行dbca
+cmd>dbca
+删除数据库（删demo 数据），口令验证文件sys-admin1#3
+完成删除整个数据库
+
+7. 恢复
+恢复初始化参数文件spfile
+set oracle sid-demo
+rman target/
+oradim -new -sid demo(用管理员身份创建)
+多了oracledemoservice服务里面
+rman target /
+连接到目标数据库未启动，无法恢复
+rman>restore spfile form'd:\demobak\auto\'C-....;
+无初始化参数文件无法启动
+Rman target /
+rman> startup nomount 找不到初始化参数文件（RMAN提供了一个简化的初始化参数文件）
+启动好执行restore spfile form 'd:\demobak\auto\'C-...';
+Oracle \product\18.2.0\database\下有了初始化参数文件spfiledamo.ora
+
+8. 创建相应的目录结构
+创建D:\app\oracle\admin\damo文件夹
+oracle\oradata\data
+fast_recovery_area\demo
+重新启动
+shutdown immediate
+startup nomount
+
+9. 恢复控制文件
+restore controlfile form 'd:\demobak\auto\'C-...';
+alter database mount
+
+10. 恢复数据文件
+restore database;//恢复整个数据库
+
+11.将前面复制的日志文件复制到demo文件夹中
+recover database;//完成恢复
+
+12.打开数据库
+alter database open resetlogs;
+
+
+
+
+
+
+
+
+

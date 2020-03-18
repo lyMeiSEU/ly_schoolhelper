@@ -1,0 +1,180 @@
+查询时和用户交互
+提交变量
+
+1. &--提示用户从键盘输入，将条件带入并执行
+2. define 定义变量
+3. &&  提示用户输入并定义
+
+sqlplus scott/tiger as sysdba
+select empno.ename,sal from emp where  empno = 7369;
+
+select empno.ename,sal from emp where  empno = &（给用户的提示）工号;
+
+select empno.ename,sal from emp where  ename = &xm;  会报错说标识符无效，加引号会显示“未选定行”
+
+select empno.ename,sal from emp where  empno = ‘&xm’;这时用户不用输入引号，但需要注意大小写
+
+select empno.ename,sal from emp where  empno = upper(‘&xm’);这是用户不用在意大小写
+
+define gh  会显示符号未定义
+define gh = 7369
+select empno.ename,sal from emp where  empno = &gh;这时会直接使用gh的值进行查询
+
+select empno,ename,(用户输入)&&c3 from emp order by &c3
+输入c3:sal   
+define c3  运行后会打印出c3的值“sal”
+
+取消定义： undefine c3
+define c3  这时显示未定义
+
+===============================================
+sqlplus配置
+1.查看配置：  show     
+show all   
+show autoc
+set autoc on(设置自动提交)
+2.修改配置：  set
+show time
+set time on(显示操作时间)
+set time off
+show linesize(默认是80）
+show pagesize
+show sqlprompt
+
+select * from emp  已选择12行
+select * from emp where mgr = 7698  没有已选择5行
+set feed 5 
+select * from emp where mgr = 7698  会显示已选择5行
+show define  默认是&
+set define !  会报错
+undefine gh
+select empno.ename,sal from emp where  empno = !gh;
+
+================================================
+函数：预置好的公式
+select empno,ename from emp;
+
+
+单行函数，只对单行进行处理select empno,lower(ename) from emp;
+initcap 首字母大写
+CONCAT 字符串连接 select CONCAT("Hello","World") from dual;  只能有两个参数，多个字符串可以嵌套连接
+select 'a'||'b'||'c' from dual   ||是连接符
+SUBSTR 取子串  SUBSTR（“helloworld”,1,5）不写参数就取全串,-2从倒数第二个开始
+INSTR（“helloworld”,'w',从第几个开始（默认第一个开始找））返回字母位置
+LPAD左填充
+RPAD右填充
+
+
+多行函数 select empno,ename, from emp
+求每个部门的平均工资select deptno,avg(...) from emp
+
+
+层次查询
+col ename for a20
+select lpad(' ',(level-1)*2)||ename ename,level from emp  规定格式
+start with empno=7566  起始点
+connect by prior mgr=empno;  定方向
+
+
+select Round(43.926,-1)from dual;
+select ROUNF(53.099,-2) from dual; 得到100
+trunc,ceil,floor
+
+===============================================
+sysdate
+current_data
+systimestamp(最多9位)
+SQL> select systimestamp from dual;
+
+SYSTIMESTAMP
+---------------------------------------------------------------------------
+08-3月 -19 02.59.11.079000 下午 +08:00
+
+SQL> select systimestamp(3) from dual;
+
+SYSTIMESTAMP(3)
+---------------------------------------------------------------------------
+08-3月 -19 02.59.45.733 下午 +08:00
+
+
+
+oracle存储的时间包括：century,year,month,
+
+SQL> select sysdate from dual;
+
+SYSDATE
+--------------
+08-3月 -19
+
+nls参数：国家语言支持
+nls_data_format
+ alter session set nls_data_format= 'yyyy-mm-dd hh:mi:ss';
+nls_language
+desc nls_session_parameters
+col parameter for a40
+col value for 
+
+用两位数字表示年份，可能会出现误解。
+1. YY格式：和系统日期处于同一个世纪。
+2. RR格式：默认格式。接近系统日期的那个世纪。
+
+计算时间：
+MONTH_BETWEEN
+ADD_MONTH
+NEXT_DAY
+LAST_DAY
+
+练习：
+hr.emloyees工会主席安排休假，休假方案。有5个名额，马尔代夫；20个名额 云南；按工龄来安排休假。
+
+ select LAST_NAME,HIRE_DATE from hr.employees order by 2;
+
+第一份名单：5人，按照YEARS+MONTHS降序排序
+LAST_NAME  YEARS  MONTHS
+De Haan         18        1
+
+第二份名单：20人
+
+select last_name, trunc(months_between(sysdate, hire_date)/12) years,trunc(mod(months_between(sysdate, hire_date)/12)) months 
+from hr.employees order by 2 desc,3desc 
+fetch first 5 rows with ties;
+
+select last_name, trunc(months_between(sysdate, hire_date)/12) years,trunc(mod(months_between(sysdate, hire_date)/12)) months 
+from hr.employees order by 2 desc,3desc 
+offset 5 rows
+fetch first 5 rows with ties;
+
+转换函数：
+隐式转换（自动转换）
+显示转换
+TO_CHAR
+select to_char(sysdate,'yyyy-mm-dd') from dual;
+fm会去掉前导，比如空格啥的 选择题！所以显示日期的时候不要加fm
+
+select empno,ename,to_char(sal,'99,999.99') sal from emp;
+select empno,ename,to_char(sal,'90,999.99') sal from emp;
+select empno,ename,to_char(sal,'L90,999.99') sal from emp;
+alter session set NLS_TERRITORY = AMERICA
+alter session set NLS_TERRITORY = 'UNITED KINGDOM'
+
+
+INSERT INTO EMP(EMPNO,ENAME.HIREDATE)VALUES(1234,'TOM','1985-07-11')  报错
+
+INSERT INTO EMP(EMPNO,ENAME.HIREDATE)VALUES(1234,'TOM',to_date('1985-07-11','yyyy-mm-dd'));
+
+处理NULL值的一些函数：
+NVL
+select empno,ename,sal,comm from emp;
+select empno,ename,sal,nvl(comm,0) from emp;空的地方用0补
+select nvl(to_char(mgr),'boss') from emp;
+
+NVL2
+为空显示第二个，不为空显示第三个
+select ename,sal,comm,sal+comm income from emp;因为有空值，所以会报错
+select ename,sal,comm,nvl2(comm,sal+comm,sal) income from emp;
+
+NULLIF
+比较两个表达式，一样显示为NULL,不一样显示为第一个表达式的值。
+
+COALESCE 找第一个非空的（空值只要做运算就等于空值）
+select ename,sal,comm,coalesce(sal+comm,sal) income from emp;与上面语句效果相同

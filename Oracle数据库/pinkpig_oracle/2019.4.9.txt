@@ -1,0 +1,252 @@
+set oracle_sid=demo
+sqlplus sys/admin1#3 as sysdba
+sqlplus scott/tiger as sysdba
+ set sqlprompt "_user'@'_connect_identifier> "
+=====================================
+授权
+
+权力：（全局，用户）
+权限：（局部，资源）
+
+给用户——能干这件事的最小权限原则
+
+1.系统权限：建表
+2.对象权限
+3.权限的传递规则：
+
+①对象权限是连带的
+A、B、C三用户（A附权给B，B附权给C，当A收回B的权限时，C的权限也被收回）
+create user a identified by a;
+create user b identified by b;
+授权登陆
+select any table
+select on scott.emp
+grant select on soctt.emp to b;//权限不足
+grant select on soctt.emp to a with grant option;//传递对象权限
+revoke select on scott.emp from a;//收回a的权限
+desc scott.emp
+
+②系统权限不连带
+A、B、C三用户（A附权给B，B附权给C，当A收回B的权限时，C的权限不被收回）
+grant create table to a;//SYS给权限
+create table t1(id int);//A用户
+show parameter defer
+alter system set deffered_segment_creattion//延时创建
+
+grant create table to b;//A
+grant create table to a with admin grant option;//sys，传递系统权限（建表）
+revoke create table from a
+
+4.角色（权限的集合）的作用：
+①简化权限的管理，减少授权次数；
+②动态权限管理（权限是静态的，有就可以干；用户有角色时有时可干、有时不可干）
+角色一定要处于激活状态(登陆之后激活)
+
+1）用户自定义角色
+create role r1;
+create role r2 identified by r2;
+grant select on scott.emp to r1,r2;//都对此表有访问的权限
+
+grant r1 to a;//r1角色指派给A，A用户默认角色
+默认角色在登录时激活，
+desc scott.emp;
+conn a/a;
+desc scott.emp;
+
+alter user a default role none;非默认角色（未登陆前可以，登陆后不可以，用set role r1;命令激活非默认角色）
+
+grant r2 to b;
+desc scott.emp;//不可
+conn b/b
+desc scott.emp;//不可，角色不可激活（r2角色带口令）
+set role r2 identified by r2;//激活带口令的角色
+desc scott.emp//可以
+
+2)预定义角色（oracle自带角色）查数据字典  PDFP344页
+角色名:connect\resource\dba……
+
+3）应用程序角色（通过某应用程序激活角色，不用登陆激活）
+revoke r1 from a;//角色撤回
+revoke r2 from b;
+
+create role app_r1 identified using scott.p1;//创建应用程序角色，create role app_r1 identified using 具体应用程序，角色可通过scott下表的p1应用激活
+grant select on scott.emp to app_r1;//给角色分配权限，角色不需要事先指派给某一用户
+//创建应用程序/过程
+create or replace procedure scott.p1
+   authid current_user as
+begin
+    dbms_session.set_role('APP_R1');
+end;
+/
+show error
+
+grant execute on scott.p1 to a,b;//赋执行权限
+conn a/a;
+desc scott.emp//不行，无权限
+execute scott.p1;//A用户
+desc scott.emp//√仅跑完过程的当前登陆之后获得权限，退出后重新登陆后不跑过程还是无权限
+
+drop role r1;//删角色
+desc dba_roles//看有哪些角色
+
+5.角色传递规则
+sys：
+grant r1 to a;
+a用户:
+grant r1 to b;
+sys:
+revoke r1 from a;
+b:????????类似系统权限，不连带，仍可以
+
+SYS@demo> create role r1;
+角色已创建。
+SYS@demo> grant select on scott.test to r1;
+SYS@demo> create user a identified by a;
+用户已创建。
+SYS@demo> create user b identified by b;
+用户已创建。
+SYS@demo> grant r1 to a;
+授权成功。
+SYS@demo> grant create session to a;//给a赋登陆权限
+SYS@demo> grant create session to b;//给b赋登陆权限
+SYS@demo> grant r1 to a with grant option;
+SYS@demo> conn a/a
+已连接。
+A@demo> grant r1 to b;
+A@demo>select * from scott.test;
+SYS@demo> conn b/b
+已连接。
+B@demo>select * from scott.test;
+
+B@demo> conn sys/admin1#3 as sysdba
+已连接。
+SYS@demo> revoke r1 from a;
+b还有权限SELECT scott.test
+
+===================================
+审核
+1.默认审核 （强制审核）：重大的数据库事件会记录
+查：访问警告日志文件
+2.标准数据库审核
+
+1）启用审核，通过初始化参数audit_trail
+alter system set audit_trail=extend xml,none,os,db;//none时不启用审核，os：审核记录存放在操作系统。
+db：审核记录放在数据库aud$表里，xml：审核记录放在一个xml表里，放在audit_file_dest的路径里，extended不可单独使用，与其他的一起，记录的信息更能详细，开销也大
+
+2）指定审核选项
+①审核用户：权限审核
+audit select any table by scott;
+②审核对象：对象审核
+audit delete on scott.emp;
+③审核语句：和某种行为有关
+audit create trigger;
+
+noaudit delete on scott.emp;//不审核
+audit delete on scott.emp whenever successful;//删成功审计，识别忽略不计
+sudit session whenever not successful;//仅登陆失败时记录
+audit update on scott.emp  by session;//会话中只要是update记录，只要1个
+audit update on scott.emp by access//每次都记录
+
+****************
+show parameter audit_trail
+select count(*)from aud$
+无审核记录
+设置审核
+audit select,insert,update,delete on scott.emp by access;//设置对象审核，每干1次记录1次
+grant select,insert,update,delete on scott.emp to a,b;
+select * from scott.emp;
+select count(*)from aud$
+1
+
+查视图des dba_audit_trial
+alter session set nls_date_format='yyyy-mm-dd hh24:mi:ss';
+col username for a10;
+col action_name for a20;
+select timestamp,username,action_name from dba_audit_trail; 
+
+3.基于值的审核（通过触发器发现）
+
+可以自动执行的一段代码，不可以手工调用（和procedure不同）
+①dml触发器：触发条件为dml语句
+conn scott/tiger
+create table soctt.tr_test1(……);
+//一般触发器不创建在sys下
+create or replace tigger scott.tr1
+after update on scott.emp
+begin 
+     insert into soctt.tr_test1 values('Be changed!');
+end;
+/
+select * from scott.tr_test1;无
+update scott.emp set sal=2800 where empno=7369;
+select * from scott.tr_test1;//有
+rollup
+select * from scott.tr_test1;无
+
+update scott.emp set sal=2800 where mgr=7698;//动了5条
+select * from scott.tr_test1;//一条记录
+修改触发器（逐行触发）加for each row
+create or replace tigger scott.tr1
+after update on scott.emp for each row
+begin 
+     insert into soctt.tr_test1 values('Be changed!');
+end;
+/
+修改触发器（新旧值）
+after update on scott.emp referencing old as o new as n for each row when(n.sal>5000)有这个条件后触发
+
+练习：
+create table sal_change(ename varchar2(10),old_sal number(7,2),new_sal number(7,2));
+利用触发器记录员工的工资改变情况!!
+
+drop tigger tr1;
+
+create or replace trigger scott.tr1
+after update on emp referencing old as o new as n for each row
+begin 
+     insert into scott.sal_change values(:o.ename,:o.sal,:n.sal);
+end;
+/
+
+select * from sal_change;
+update scott.emp set sal=2800 where empno=7369;
+
+②系统触发器
+
+create table scott.logon_rec(username varchar(30),logon_time date);
+grant administer database trigger to scott;//赋权限
+//创建触发器，只要用户登陆了数据库，就有记录
+create or replace trigger scott.tr3
+after logon on database
+begin 
+    insert into scott.logon_rec values(user,sysdate);
+end;
+/
+conn a/a;
+select * from scott.logon_rec；
+
+
+4.细粒度审计（FGA）：
+desc dbms_fga
+调用包
+execute dbms_fga.ADD_POLICY('SCOTT','EMP','FGA_DEMO',STATEMENT_TYPES='select,insert,delete');
+
+A:
+select empno,ename,sal from scott.emp；
+//处理错误
+alter index scott.pk_emp rebuild;
+alter user scott quota unlimited……；
+insert into scott.emp(empno,ename)values(1234,'Tom'); 
+update scott.emp set sal=3000 where empno=1234;
+delete from scott.emp wheer empno=1234;
+select * from scott.emp;
+
+sys:
+查询dba_fga_audit_trail结果
+desc dba_fga_audit_trail
+alter session set nls_date_format='yyyy-mm-dd hh24:mi:ss';
+select timestamp,db_user,sql_text from dba_fga_audit_trail where policy_name='FGA_DEMO';//policy名
+
+
+
+

@@ -1,0 +1,197 @@
+1.创建hr.test表：create table test(id number(5),name varchar(20));
+2.插入数据：insert into test values(1,'aaa');
+insert into test values(3,'bbb');
+3.添加约束：alter table test add constraint uni_name unique(name);//name字段添加唯一性约束
+insert into test values(2,'aaa');//报错，违反唯一性约束
+4.禁用约束alter table test disable constraint uni_name;//禁用约束
+
+5.使用exceptions表（找表中违反约束的lowid放入exception表中）
+desc exceptions//不存在
+6.app/oracle/product/18.3.0/rdbms/admin中的脚本utlexcept.sql
+调用脚本创建excptions表，@?\rdbms\admin\utlexcpt.sql
+?为oracle home，即F:\app\oracle\product\18.3.0
+7.启用约束，找表中违反约束的lowid放入exception表中：
+alter table test enable constraint uni_name exceptions into exceptions；
+ORA-02299: 无法验证 (HR.UNI_NAME) - 找到重复关键字
+select row_id,table_name from exceptions;
+select rowid,id，name from test where rowid in（select row_id from exceptions);
+8.update hr.test set name='ccc' where rowid='AAAS6yAADAAAQv1AAC';
+9.再次启用约束alter table test enable constraint uni_name;
+10.truncate table exceptions;//截断表，清空异常表供以后使用
+11.在数据字典汇总查询约束信息(user_constraints,user_cons_columns)
+
+===================================================
+视图：
+虚表：不是存储结构，是语句的定义
+表：一种具体的存储结构
+ conn scott/tiger
+create view emp_info as select empno,ename,sal from emp;
+
+视图的作用：
+1.收集感兴趣的数据
+2.屏蔽敏感数据
+3.简化查询（复杂的语句变成视图）
+4.简化权限的管理
+385页
+视图的分类：
+1.简单视图
+2.复杂视图
+
+创建视图
+create view emp_info as select empno,ename,sal from emp;
+修改视图
+create or replace view emp_info as select
+empno,ename,sal,deptno from emp;
+表达式 要起别名
+
+update emp_info set deptno=20 where empno=;
+
+create or replace 
+
+T1
+A B C(NOT NULL)
+
+V1
+A B
+
+drop view **;//与表没关系，相当于链接
+
+伪列rowid
+ROWNUM行号:对结果进行编号
+select rownum,ename from emp where rownum<=3;
+select rownum,ename from (select rownum aa,emp.* from emp)
+where aa>=10;//对rownum取别名
+
+====================================
+
+管理例程
+1.关闭例程（4种模式）
+1）正常关闭(normal)
+2)  事务性关闭(TRAMSACTIONAL)
+3)  立即关闭(immediate)不需要等事务结束
+4）中止退出(abort)  丢数据
+shutdown abort
+3个需要进行检查点检查
+shutdown immediate
+
+2.启动（3个阶段）
+1)启动例程(内存/进程结构)：分配内存，同时启动后台进程
+startup nomount
+条件：需要访问初始化参数文件（默认：oracle主目录下的database目录18.3.0、database/SPFILEDB18C.ORA/非windows：oracle 的dbms目录下）
+ conn sys/admin as sysdba
+select status from v$instance;
+nomount状态下只能访问一部分动态性能视图（来自内存的内容）
+select * from v$sga；//ok
+select name from v$datafile;//（来自控制文件，报错）
+2)加载数据库(mount阶段)
+alter database mount;
+条件：需要访问控制文件show parameter control_files可以访问所有的动态性能视图，访问不了数据文件
+app/oracle/oradata/db18c/control01.CTL
+3)打开数据库（open阶段）
+①alter database open;
+条件：open阶段要访问 联机重做日志文件和数据文件
+select member from v$logfile;
+app/oracle/oradata/db18c/redo01.LOG文件：日志文件
+app/oracle/oradata/db18c/sales01.DBF文件：数据文件
+app/oracle/diag诊断/rdbms/db18c/trace/alert_db18c.log文件
+从后往前看
+app/oracle/oradata/db18c
+可以访问所有的数据
+
+空闲例程（oracle未启动）->startup（默认startup open）
+
+②以只读方式打开数据库
+startup open read only;
+select name,open_mode from v$database;
+select current_scn from v$database;//随时间变化的序列
+
+③以受限模式打开数据库
+startup restrict;
+desc v$instance;
+select instance_name,logins from v$instance;
+$cls清空命令行
+让有些用户连，有些用户不连（有restriction权限的可以访问）
+grant restriction session to hr;
+禁用受限模式
+alter system disable restricted session;
+启用受限模式
+alter system enable restricited session;
+
+3.配置例程：初始化参数文件
+1）文本文件 pfile 参数文件，每次重启数据库时修改 
+init<sid>.ora  --initdb18c.ora
+2）二进制文件 spfile 服务器管理的参数文件（可显示字符 组成）不可用文本编辑器修改
+show parameter spfile查看具体的值，有spfile，无则全是pfile
+敲命令修改     spfile<sid>.ora  --spfiledb18c.ora
+
+①查看初始化参数
+show parameter看所有初始化参数
+show parameter shared_pool_size  看具体某一个（共享池大小）
+show parameter share  包含share的参数全部都显示，匹配
+②修改初始化参数
+不要改这个文件18.3.0/database/spfiledb18c.ora
+alter system set shared_pool_size =128m;//big integer类型
+
+show parameter sga_max_size  
+alter system set shared_pool_size =5000m;//无法动态修改，先写到文件里，重启才可生效。
+
+desc v$parameter
+deferred延时，不会马上/也不需要生效，重新连接就可生效
+immediate可立即改
+false不可直接改
+select name,ISSYS_MODIFIABLE from v$parameter where name like 's%';
+/
+
+scope=memory内存/spfile/both
+memory:只在内存改，不在文件改（临时生效）
+spfile:先写在文件中，下次重启生效
+both:立即生效，同时在文件中修改
+
+alter system set shared_pool_size=160m scope=memory;
+alter system set sga_max_size=5000m scope=spfile;
+=======================
+alter session set nls_language=english;
+③将初始化参数还原成默认值
+show parameter shared_server
+alter system reset shared_server;复位
+
+shutdown immediate
+startup
+④将所有初始化参数都还原成默认值：
+初始化参数文件中没有的都取默认值，删掉文件18.3.0/database/initdb18c.dba
+shutdown immediate
+startup找不到初始化参数文件
+nodepad写一个空文件到18.3.0/database/initdb18c.dba
+参数库文件中要加 数据库名字:
+文件中加
+*.dbname='db18c'
+再加1属性
+*.control_files='F:/app/oracle/produce/18.3.0/database/control01.ctl''D:app/oracle/……/control02.ctl'
+(其他默认)再重启
+
+
+⑤修复错误的初始化参数：
+show parameter spfile
+alter system set shared_pool_size=200G scope=spfile;//下次重启生效
+show parameter cpu_count
+搞坏参数，startup报错 sga_target 4864M太小，其中的一部分太大
+
+根据一个spfile创建pfile文件
+create pfile from spfile;
+INTIDB18c.ora文本文件可修改
+修改 128m，保存
+改名
+
+根据pfile创建spfile
+show parameter spfile
+
+
+⑥例程在启动时选择初始化参数文件的顺序
+1)spfile<sid>.ora有此文件，其他文件都不看，第一顺位
+2)spfile.ora第二顺位
+3)init<sid>.ora
+都找不到 就报错=>解决：利用指定的初始化参数文件启动
+startup pfile=d:\a\a.ora
+
+
+

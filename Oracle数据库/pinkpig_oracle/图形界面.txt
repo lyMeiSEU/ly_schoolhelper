@@ -1,0 +1,87 @@
+sqldeveloper
+lsnrctl status
+见照片3.1
+
+
+shutdown immediate 关闭数据库
+startup  装载数据库
+select name from ...   文件名
+
+集群
+www.baidu.com 主机
+
+三种用户：（用哪个看你需要用什么）
+sys   
+conn sys/admin会报错
+--sysdba 管理整个oracle  包括instance和database
+@调用脚本scott.sql百度下载
+select * from emp
+shutdown immediate如果可以关闭则说明他可以管理整个Instance
+
+
+--sysoper   只能管理instance
+conn sys/admin as sysoper 已连接到空闲历程
+startup
+select *from scott.emp报错
+
+
+system  只能管database
+shutdown immediate 权限不足
+
+conn scott/tiger as sysdba
+sys@>
+
+表--表空间--数据文件
+select file_name from dab_data_files 
+where tablespace_name = (select tablespace_name
+from dba_tables
+where table_name = 'emp');
+第一次访问的时候调到内存里，
+
+
+================================================
+instance
+例程：
+1）内存结构
+SGA系统全局区 ： 所有会话共享的区域
+PGA 创建会话时创建
+2）进程结构
+                                                                                                                                                                                                                                  
+================================================
+表 table 全称叫 堆表heap table,无序的。
+
+================================================
+代码
+数据：
+--用户数据:select...
+--系统数据：desc scott.emp
+
+================================================
+共享池 shared pool
+1.库缓存（SQL区， PL/SQL区（过程化））
+SQL:结构化查询语言，访问关系型数据的一种规范。所有关系型数据库都支持SQL。
+4GL:描述性语句。解析。
+dll 动态链接库。存放某些中间过程（代码）
+2.数据字典缓存
+--动态性能视图（指向内存 控制文件）
+--数据字典视图（指向数据文件）
+desc dictionary
+desc dict
+
+USER_表示当前用户是所有者  desc user_tables; desc user_indexes;desc user_triggers;desc user_jobs;
+
+ALL_还有有访问权限的表
+
+DBA_有一些DBA有权限而HR没有权限的表，会报错；用sys用户，则可以。
+
+
+RBO  CBO
+analyze table emp compute statistic
+
+================================================
+set timing on
+执行代码 绑定变量 防止多次执行相同步骤37s->0.13s
+
+
+
+

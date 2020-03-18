@@ -1,0 +1,317 @@
+教材：D33996-9i
+
+pl/sql 过程化结构，过程化语言
+练习： hr.t
+drop table t purge;//删除表
+create table t(id int)
+插入10条记录，需Insert语句十次，用块
+
+块：
+块类型：
+1.匿名块(不能作为对象存到数据库中）
+声明
+declare(声明部分）
+	TYPE......
+begin（可执行部分）
+
+exception（异常处理部分）
+
+end
+
+==============================================
+declare可能没有，exception也可能没有，看到begin和end就是pl
+
+2.命名块：后台开发 一个对象，可以存到数据库中
+块结构：
+1. 声明部分（可选）
+2.可执行部分（必选）
+3.异常处理部分（可选）
+
+desc user_procedures
+select object_name,object_type from user_procedures 
+where object_type = 'PROCEDURE'
+
+
+create procedure p3
+as(as和begin之间写声明）
+
+begin
+
+
+循环
+1.无条件循环，进入循环体不需要任何条件，体内需要一个退出条件
+2. 条件循环(while)循环
+3. 固定次数的循环(for循环)
+begin
+	for i in 1..10 loop
+		insert into t values(i)
+	end loop;
+end;
+/             (表示pl/sql语句的结束）
+当某个功能结束时学分号，未结束不写。
+
+truncate table t
+
+
+
+create procedure p7
+as
+begin
+	for i in 1..10 loop
+		insert into p values(i);
+	end loop;
+end;
+/
+
+
+ 
+desc user_source
+select text from user_source where name = 'p7';
+
+execute p7
+call p7会报错
+call p7()
+
+显示为2列
+select a.id,b.id from p a,p b where a.id+5 = b.id;
+where a.id+(select count(*) from t)/2 = b.id 
+
+如果有11行
+select a.id,b.id from p a,p b where a.id+round((select count(*) from p)/2) = b.id 
+显示出来没有6
+select a.id,b.id from p a,p b where a.id+round((select count(*) from p)/2) = b.id (+)
+这样会报错
+select a.id,b.id from p a,p b where a.id = b.id(+)-round((select count(*) from p)/2)
+这样第一列会有11个数
+select a.id,b.id from p a,p b where a.id = b.id(+)-round((select count(*) from p)/2) and a.id<=round((select count(*) from p)/2);
+
+==============================================
+scott
+子查询
+1.  嵌套子查询 
+select empno,ename,sal from emp;
+select sal from emp where ename = "SMITH";
+select empno,ename,sal from emp where sal >2800;
+select sal from emp where sal>(select sal from emp where ename = 'SMITH');
+
+select * from emp where deptno in (select deptno from dept where loc in ('NEW YORK','CHICAGO'));
+
+运算的步骤放在右边效率会高一些。
+
+2.关联子查询
+查询谁工资最少
+select last_name,job_id,salary
+from hr.employees
+where salary = (
+select min(salary) from hr.employees);
+查询每个部门工资最少的（用group by）
+
+==============================================
+多行操作符：
+1. in
+2. any
+3. all
+
+SQL>  select empno,ename,sal from emp where sal = (1500,2800);
+ select empno,ename,sal from emp where sal = (1500,2800)
+                                           *
+第 1 行出现错误:
+ORA-01797: 此运算符后面必须跟 ANY 或 ALL
+
+
+
+SQL>  select empno,ename,sal from emp where sal in (1500,2800);
+
+     EMPNO ENAME                       SAL
+---------- -------------------- ----------
+      7844 TURNER                     1500
+
+
+SQL>  select empno,ename,sal from emp where sal>any(1500,2800);
+
+     EMPNO ENAME                       SAL
+---------- -------------------- ----------
+      7499 ALLEN                      1600
+      7566 JONES                      2975
+      7698 BLAKE                      2850
+      7782 CLARK                      2450
+      7839 KING                       5000
+      7902 FORD                       3000
+
+已选择 6 行。
+
+
+SQL>  select empno,ename,sal from emp where sal>all(1500,2800);
+
+     EMPNO ENAME                       SAL
+---------- -------------------- ----------
+      7566 JONES                      2975
+      7698 BLAKE                      2850
+      7839 KING                       5000
+      7902 FORD                       3000
+
+
+练习：
+desc hr.employees
+要求：
+last_name 普通群众（非领导）
+
+
+答：
+select last_name from hr.employees
+where employee_id in (select  MANAGER_ID from hr.employees);
+未选定行 //原因是因为manager_id里有空值
+
+select last_name from hr.employees
+where employee_id in (select  nvl(MANAGER_ID,0) from hr.employees);
+共有18个
+
+exists
+select last_name from hr.employees e
+where exists (select 'X' from hr.employees
+where e.employee_id = manager_id);
+
+
+练习：
+last_name,salary,department_id
+条件：高于其部门的平均工资
+利用关联子查询实现
+38个
+
+select e.last_name,e.salary,e.department_id 
+from hr.employees e,
+(select avg(salary) as avgsal,department_id from hr.employees group by department_id) s 
+where e.salary > s.avgsal and e.DEPARTMENT_ID = s.DEPARTMENT_ID;
+或
+select e.last_name,e.salary,e.department_id 
+from hr.employees e
+where salary>(select avg(salary)from hr.employees
+where e.department_id = department_id
+group by department_id);
+
+=============================================
+处理多个结果集
+select empno,ename,sal from emp where depyto =10;
+select empno,ename,sal from emp where depyto =30;
+两个结果集如何合并？
+
+4个操作符：
+1. union
+2. union all 允许重复
+3. intersect  取交集
+4. minus 取第一个结果集去掉交集
+
+select empno,ename,sal from emp where deptno =10
+union
+select empno,ename,sal from emp where deptno =30;
+
+     EMPNO ENAME                       SAL
+---------- -------------------- ----------
+      7499 ALLEN                      1600
+      7521 WARD                       1250
+      7654 MARTIN                     1250
+      7698 BLAKE                      2850
+      7782 CLARK                      2450
+      7839 KING                       5000
+      7844 TURNER                     1500
+      7900 JAMES                       950
+      7934 MILLER                     1300
+
+已选择 9 行。
+
+
+select count(*)from job_history;
+
+
+=======================================
+column a_dummy noprint
+select 'sing' AS "my dream" from dual
+union
+select 'i''d like to teach' from dual
+union
+select 'the world to' from dual
+order by 1;
+
+my dream
+----------------------------------
+i'd like to teach
+sing
+the world to
+
+column a_dummy noprint
+select 'sing' AS "my dream",3 from dual
+unio
+
+select 'i''d like to teach' ,1 from dual
+union
+select 'the world to',2 from dual
+order by 2;
+
+my dream                                    3
+---------------------------------- ----------
+i'd like to teach                           1
+the world to                                2
+sing                                        3
+
+================================================insert:
+desc departments 
+
+create table t1(id int, name varchar(20));
+insert into t1 values(1,'tom');
+insert into t1 values(2,null);
+insert into t1 values(3,null);
+
+create table demo as select * from emp where 1=2;
+
+insert into where
+
+update:
+update t1 set name = 'jerry';
+update t1 set name = 'jerry' where id = 2;
+
+delete:
+select * from t1;
+delete from t1;全删
+delete from t1 where id = 3;
+
+
+drop table emp_hz;
+drop table emp_gz;
+scott 下建表：
+create table emp_hz as select empno,ename,sal from emp
+where deptno = 30;
+create table emp_gz as select * from emp_hz where 1=2;
+insert into emp_gz values(1234,'tom',3500);
+insert into emp_gz values(7900,'james',4500);
+
+merge into emp_hz h
+using emp_gz g
+on(h.empno=g.empno)
+when matched then
+update set
+h.ename = g.ename,
+h.sal = g.sal
+when not matched then
+insert values(g.empno,g.ename,g.sal);
+
+select * from t1;
+insert into t1 values(4,default);//默认的默认值是空值（前提是该字段允许为空);
+insert into t1 (id) values(5);
+alter table t1 modify name default 'zhangsan';
+insert into t1 values(6,default);
+insert into t1 values(7,default);
+换一个用户看t1表，只有5条记录，alter语句ddl自动提交。
+
+grant 
+revoke 
+很多语句不需要commit提交，它会自动提交，比如ddl、dcl语句,所以他们只能发一条语句，然后就提交了...
+
+SQL
+1. QL(select)
+2. DML(insert,update,delete,merge)
+3. DCL(grant,revoke)
+4. TCL (commit,rollback,savepoint)
+save point aaa;
+delete from t1 where name = 'zhangsan';
+rollback的话全回来了
+rollback to savepoint aaa;

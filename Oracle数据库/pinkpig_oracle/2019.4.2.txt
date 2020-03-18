@@ -1,0 +1,279 @@
+管理表空间和数据文件
+1.数据库存储的结构层次
+
+数据库-表空间-物理上为：数据文件
+段（存储结构）
+区（oracle最小的空间分配单位）
+块（oracle最小的io单位，不能小于操作系统块，一般为其整数倍）---操作系统的块
+desc dba_segments查一下段有哪些类型
+select unique segment_type from dba_segments
+
+database pro查数据库视图
+
+2.创建users表空间并设为数据库默认的表空间
+
+create tablespace users datafile'F:/app/oracle/oradata/demo/users01.dbf' size 20m;
+alter database default tablespace users;
+
+查看修改后的结果(默认表空间)
+col property_name for a50
+select property_name,property_value from database_properties;
+select tablespace_name from dba_tables where table_name='EMP';
+alter table scott.emp move tablespace users;//将表移到其他表空间
+
+3.创建一个由2k的块组成的表空间
+create tablespace smalltbs datafile'F:/app/oracle/oradata/demo/small01.dbf' size 10m blocksize 2k;
+表空间块大小2k不匹配
+show parameter cache
+db_2k_cache_size   value=0内存中没有地方可以放2k的块
+alter system set db_2k_cache_size=16m;
+create tablespace smalltbs datafile'F:/app/oracle/oradata/demo/small01.dbf' size 10m blocksize 2k;
+//创建大块
+create tablespace bigtbs datafile'F:/app/oracle/oradata/demo/big01.dbf' size 10m blocksize 16k;
+内存中间开辟16k的块
+alter system set db_16k_cache_size=16m;
+
+4.表空间的空间管理
+1）本地管理（常用，减少数据字典（系统数据）的使用--避免回滚，每个区都一样大【没有碎片】）
+2）数据字典管理
+desc dba_tablespaces表空间
+select tablespace_name,extent_management from dba_tablespaces;//查看是本地管理还是数据字典管理
+
+create tablespace userdata
+datafile'F:/app/oracle/oradata/demo/userdata01.dbf' size 10m
+extent management dictionary;//创建数据字段管理的表空间
+
+5.表空间的类型
+1）常规表空间（可读可写）permanent
+2）撤销表空间（放回滚数据）undo
+3）临时表空间（排序）temporary
+查看表空间所属类型：contents
+desc dba_tablespaces
+select tablespace_name,contents from dba_tablespaces;
+show parameter undo_tablespace;//undo为当前表空间
+
+创建撤销表空间undotbs2且设为数据库默认的撤销表空间
+create undo tablespace undotbs2 datafile 'F:/app/oracle/oradata/demo/undotbs02.dbf' size  20m;
+alter system set undo_tablespace=undotbs2;
+show parameter undo_tablespace;
+select tablespace_name,contents from dba_tablespaces;
+
+创建临时表空间temp2并设为数据库默认的临时表空间
+create temporary tablespace temp2 tempfile 'F:/app/oracle/oradata/demo/temp02.dbf' size  20m;
+alter system default temporary_tablespace temp2;
+show parameter default_temporary_tablespace;
+select tablespace_name,contents from dba_tablespaces;
+
+6.表空间的状态
+1）联机可读写online
+2）只读（数据文件只读）
+3）脱机
+select tablespace_name,status from dba_tablespaces;
+online->只读：
+create table scott.test1(id int,name varchar(20)) tablespace smalltbs;//创建一张表放到表空间中
+insert into soctt.test1 values(1,'Tom');//表插入一条记录
+commit;
+将表空间改为只读：修改完成后，不可对表进行插入记录/删字段，可查+增加字段+删表
+alter tablespace smalltbs read only;
+select tablespace_name,status from dba_tablespaces;
+alter table scott.test1 add birth_date date;//可增加字段
+alter table scott.test1 drop column birthdate;//不可删除某一字段
+drop table scott.test1;//可删表
+
+不能脱机的3个表空间：
+1)system
+2)当前的撤销表
+3)临时表空间
+
+alter tablespace system offline;//除非shutdown，系统表空间不可脱机
+alter tablespace sysaux offline;//脱机
+alter tablespace sysaux online;//连接
+alter tablespace undodbs1 offline;//非当前的撤销表空间-->online
+show parameter undo_tablespace 
+显示的value值为当前的撤销表空间
+alter tablespace temp offline;//只可对临时文件脱机，不可对临时表空间脱机
+只读->读写
+alter tablespace smalltbs read write;
+
+7.删除表空间
+drop tablespace smalltbs;
+删除表空间后，对应的数据文件还在，要手动删除
+select name from v$datafile;
+cmd：D:dir
+del D:\……\demo\small01.dbf要手动在OS中删除数据文件
+SQL>create table scott.test1(id int) tablespace bigtbs;
+
+drop tablespace bigtbs;//不可删，当表空间有内容不可删
+drop tablespace bigtbs including contents and datafiles;//内容+数据文件一块删掉
+
+8.OMF（oracle管理文件）
+show parameter db_create
+初始化参数db_create_file_dest
+create tablespace test 缺datafile/tempfile
+alter system set db_create_file_dest=F:/app/omf/;
+create tablespace test;
+
+9.扩展表空间大小
+1)修改员数据文件大小
+手动扩展：
+alter database datafile'……' resize 200m
+自动扩展：
+alter database datafile'D:\……\demo\small01.dbf' size 200m autoextend on next 10m maxsize 500m;
+2)增加新数据文件
+alter tablespace app_data add datafile'……'
+
+10.数据文件的移动或重命名：
+select name from v$datafile;//所有的数据文件在哪
+移到F:/app/omf/下
+alter database move datafile 'D:app/oracle/oradata/demo/userdata01.dbf' to'D:app/omf/data01.dbf';物理上也移动了，原来文件没有了，相当于移动
+移回去:
+alter database move datafile'D:app/omf/data01.dbf' to 'D:app/oracle/oradata/demo/userdata01.dbf' keep;加keep原来文件还有，相当于copy
+
+练习：
+set oracle_sid=demo
+sqlplus sys/admin as sysdba
+startup
+desc database_properties
+ 名称                                      是否为空? 类型
+ ----------------------------------------- -------- ----------------------------
+ PROPERTY_NAME                                      VARCHAR2(128)
+ PROPERTY_VALUE                                     VARCHAR2(4000)
+ DESCRIPTION                                        VARCHAR2(4000)
+col property_name for a30
+col property_value for a30
+select property_name,property_value from database_properties;
+1.创建users表空间，并设为数据库默认的永久表空间；database_properties视图
+create tablespace users datafile'F:/app/luyao/oradata/demo/users01.dbf' size 20m;
+alter database default tablespace users;
+select property_name,property_value from database_properties;//default_permanent_tablespace对应的值为users
+2.创建一个由4k的块组成表空间test（test01.dbf 10m）
+create tablespace test datafile'F:/app/luyao/oradata/demo/test01.dbf' size 10m blocksize 4k;
+ORA-29339: tablespace block size 4096 does not match configured block sizes
+show parameter cache
+name   type
+db_4k_cache_size=0
+alter system set db_4k_cache_size=16m;
+create tablespace test datafile'F:/app/luyao/oradata/demo/test01.dbf' size 10m blocksize 4k;
+3.向表空间添加一个10m的数据文件(test02.dbf)，将test01.dbf修改为15m
+alter tablespace test add datafile'F:/app/luyao/oradata/demo/test02.dbf' size 10m;
+alter database datafile 'F:/app/luyao/oradata/demo/test01.dbf' resize 15m;
+4.移动test01.dbf
+select name from v$datafile;
+alter database move datafile 'F:/app/luyao/oradata/demo/test01.dbf' to'F:/app/omf/test01.dbf';
+alter database move datafile 'F:/app/omf/test01.dbf' to 'F:/app/luyao/oradata/demo/test01.dbf' keep;
+5.在test表空间内创建一张表table1(insert)
+create table table1(id int,name varchar(20)) tablespace test;
+insert into table1 values(1,'Tom');
+commit;
+6.将test表空间改为read only
+alter tablespace test read only;
+7.删除表table1(dml,create table,alter)
+drop table table1;
+8.将表空间改为read write
+alter tablespace test read write;
+9.删除test表空间：检查数据文件是否被删除：未删除，要加上including……
+drop tablespace test;
+10.使用OMF创建表空间：检查数据文件是否被删除:已删除
+show parameter db_create,初始化参数db_create_file_dest
+create tablespace test //缺datafile/tempfile
+alter system set db_create_file_dest='F:/app/omf/';
+create tablespace test;
+drop tablespace test;
+11.创建1个撤销表空间undotbs2，并把它设为系统当前的撤销表空间
+create undo tablespace undotbs2 datafile 'F:/app/luyao/oradata/demo/undotbs02.dbf' size  20m;
+alter system set undo_tablespace=undotbs2;
+show parameter undo_tablespace;//看系统默认的撤销表空间
+select tablespace_name,contents from dba_tablespaces;//看表空间类型
+12.创建临时表空间temp2,并把它设为数据库默认的临时表空间
+create temporary tablespace temp2 tempfile 'F:/app/luyao/oradata/demo/temp2.dbf' size  20m;
+alter database default temporary tablespace temp2;
+select property_name,property_value from database_properties;
+select tablespace_name,contents from dba_tablespaces;//看表空间类型
+13.没有备份的恢复（归档模式）？？？？？？还没做
+1）创建一个表空间tbs1(tbs1.dbf)
+2)在tbs1表空间内创建一张表t1(insert into)
+3)shutdown immediate
+4)手工删除表空间tbs1的数据文件
+5)startup
+6)将数据文件tbs1.dbf脱机
+7)alter database open;
+8)alter database create datafile 'path/tbs1.dbf'
+9)recover datafile 'path/tbs1.dbf'
+10)将数据文件tbs1.dbf联机
+11)检查数据是否恢复
+=============================
+oracle安全
+
+安全3A：
+一、验证：
+1）用户分类（sys、non-sys验证方式不同，sys用户密码不在数据库中）
+数据库不打开，非sys用户不可连上
+sqlplus /nolog
+进入提示符，不连数据库，无法conn非sys用户as sysdba，包括system/manager用户
+①sys：
+1*、操作系统验证（默认）
+sqlplus asda/asdasd as sysdba
+sqlplus / as sysdba
+连到数据库上，完全信操作系统
+
+2*、口令文件验证（密码一定要正确）
+创建口令验证文件 F:\app\oracle\product\18.3.0\database\PWDdb18c.ora
+show parameter password
+初始化参数remote_login_passwordfile:（NONE：禁止使用口令验证文件;
+EXCLUSIVE：启用口令验证文件，独占，单例程多用户，只可从一个例程（结点）连，可以有很多用户，哪些用户可用参考v$pwfile_users;
+desc v$pwfile_users;
+select username,sysdba from v$pwfile_users;
+grant sysdba to scott;授权
+SHARED：启用口令验证文件，共享，多例程单用户，只可用sys用户连接其他用户不行）
+
+启用口令验证文件时，还可使用os验证：操作系统验证和口令文件验证同时允许时，优先OS验证。
+文件F:app/oracle/product/18.3.0/network/admin/sqlnet.ora中sqlnet.suthenticaltion_servise=(NTS)、不允许OS验证改为(NONE)
+
+F:app/oracle/product/18.3.0/database/PWDdemo.ora
+用命令创建口令验证文件
+orapwd file=F:app/oracle/product/18.3.0/database/PWDdemo.ora password=admin1#3 force=y;//覆盖已有的（以后sys密码为admin1#3）
+
+练习：
+1.sqlplus / as sysdba 默认操作系统验证
+2.orapwd file=F:\app\oracle\product\18.3.0\database\PWDdemo.ora password=admin1#3 force=y;//覆盖已有的（以后sys密码为admin1#3）
+3.修改F:app/oracle/product/18.3.0/network/admin/sqlnet.ora文件中的sqlnet.suthenticaltion_servise=(NTS)、不允许OS验证改为(NONE)
+4.sqlplus /as sysdba
+5.sqlplus sys/admin1#3 as sysdba口令文件生效
+6.sqlplus scott/tiger as sysdba/conn scott/tiger as sysdba==>之前给scott授权
+7.select username,sysdba from v$pwfile_users;
+8.grant sysdba to scott;
+
+②非sys用户/普通用户：
+
+1）数据库验证
+desc user$
+select name,password from user$;
+口令放在 数据库中
+create user nit identified by admin;//新建一个用户，放到表中
+
+2)操作系统（外部)验证
+1*初始化参数os_authent_prefix（默认时ops$）
+show parameter os
+2*创建操作系统用户：右击计算机--点管理-- 本地用户和组 --用户-- 用户名os1 --创建
+3*在数据库中创建对应的用户
+create user ops$os1 identified externally;
+4*赋予相应的权限
+grant create session to ops$os1;//赋可以登陆的权限
+5*windows注册表修改：
+regedit：hkey_local_machine/software/oracle/key-oradb18home1/增加osauth prefix domain值改为false
+6*以操作系统用户os1登录
+cmd:runas /?
+runas /user:os1 cmd //以os1用户登录运行cmd程序
+输入密码:os1
+弹出窗口
+7*在窗口敲sqlplus /；conn/
+用户名口令不对==》注册表
+
+二、授权
+三、审核（黑匣子--看什么原因造成的）
+
+shutdown immediate
+startup mount
+
+
+

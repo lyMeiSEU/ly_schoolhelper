@@ -1,0 +1,119 @@
+setup 仅设置用户-企业版-创建WINDOWS用户
+
+配置监听器  点击加号 建立LISTENER 网络地址TCPIP 添加数据库 名字随便db18c
+
+配置服务名 db18c 文件-保存
+
+启动监听器 lsnrctl start
+
+运行dbca安装数据库-创建数据库-高级配置-数据库类型 单实例 一般类型-不要创建为容器数据库 全局数据库名是刚刚自己写的-将以下项-归档-配置 示例方案打钩-用户身份证明 所有账户使用同一管理口令
+
+================================================
+闪回：drop table 表名
+flashback table 表名 to before
+sqlplus/nolog
+
+使用：
+sqlplus 用户名/口令
+sys
+用户账号解锁
+修改用户口令
+1.  password 用户名
+2.  alter user 用户名 identified by 口令
+查询dba_users
+
+
+
+Microsoft Windows [版本 10.0.17134.472]
+(c) 2018 Microsoft Corporation。保留所有权利。
+
+C:\Users\mxyyy>sqlplus scott/tiger
+
+SQL*Plus: Release 18.0.0.0.0 - Production on 星期二 2月 26 11:11:53 2019
+Version 18.3.0.0.0
+
+Copyright (c) 1982, 2018, Oracle.  All rights reserved.
+
+ERROR:
+ORA-01017: 用户名/口令无效; 登录被拒绝
+
+
+请输入用户名:  pinkpig
+输入口令:
+ERROR:
+ORA-01017: 用户名/口令无效; 登录被拒绝
+
+
+请输入用户名:  ^Z
+
+C:\Users\mxyyy>sqlplus sys/admin as sysdba
+
+SQL*Plus: Release 18.0.0.0.0 - Production on 星期二 2月 26 11:13:23 2019
+Version 18.3.0.0.0
+
+Copyright (c) 1982, 2018, Oracle.  All rights reserved.
+
+
+连接到:
+Oracle Database 18c Enterprise Edition Release 18.0.0.0.0 - Production
+Version 18.3.0.0.0
+
+SQL> show sqlprompt
+sqlprompt "SQL> "
+SQL> set sqlprompt
+SP2-0311: 未找到所需的字符串
+SQL> set sqlprompt _user"@" _connect_identifier
+SP2-0735: 未知的 SET 选项开头 "_connect_i..."
+SYS@alter user hr account unlock
+  2  ;
+
+用户已更改。
+
+SYS@conn hr/hr
+ERROR:
+ORA-01017: 用户名/口令无效; 登录被拒绝
+
+
+警告: 您不再连接到 ORACLE。
+@conn / as sys
+SP2-0306: 选项无效。
+用法: CONN[ECT] [{logon|/|proxy} [AS {SYSDBA|SYSOPER|SYSASM|SYSBACKUP|SYSDG|SYSKM|SYSRAC}] [edition=value]]
+其中 <logon> ::= <username>[/<password>][@<connect_identifier>]
+      <proxy> ::= <proxyuser>[<username>][/<password>][@<connect_identifier>]
+@conn / as sysdba
+已连接。
+SYS@desc dab_users
+ERROR:
+ORA-04043: 对象 dab_users 不存在
+
+
+SYS@desc dba_users
+ 名称                                      是否为空? 类型
+ ----------------------------------------- -------- ----------------------------
+ USERNAME                                  NOT NULL VARCHAR2(128)
+ USER_ID                                   NOT NULL NUMBER
+ PASSWORD                                           VARCHAR2(4000)
+ ACCOUNT_STATUS                            NOT NULL VARCHAR2(32)
+ LOCK_DATE                                          DATE
+ EXPIRY_DATE                                        DATE
+ DEFAULT_TABLESPACE                        NOT NULL VARCHAR2(30)
+ TEMPORARY_TABLESPACE                      NOT NULL VARCHAR2(30)
+ LOCAL_TEMP_TABLESPACE                              VARCHAR2(30)
+ CREATED                                   NOT NULL DATE
+ PROFILE                                   NOT NULL VARCHAR2(128)
+ INITIAL_RSRC_CONSUMER_GROUP                        VARCHAR2(128)
+ EXTERNAL_NAME                                      VARCHAR2(4000)
+ PASSWORD_VERSIONS                                  VARCHAR2(17)
+ EDITIONS_ENABLED                                   VARCHAR2(1)
+ AUTHENTICATION_TYPE                                VARCHAR2(8)
+ PROXY_ONLY_CONNECT                                 VARCHAR2(1)
+ COMMON                                             VARCHAR2(3)
+ LAST_LOGIN                                         TIMESTAMP(9) WITH TIME ZONE
+ ORACLE_MAINTAINED                                  VARCHAR2(1)
+ INHERITED                                          VARCHAR2(3)
+ DEFAULT_COLLATION                                  VARCHAR2(100)
+ IMPLICIT                                           VARCHAR2(3)
+ ALL_SHARD                                          VARCHAR2(3)
+
+SYS@col username for a30
+SYS@

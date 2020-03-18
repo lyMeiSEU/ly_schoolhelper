@@ -1,0 +1,192 @@
+导入/导出
+imp/exp
+
+exp：
+1.交互式（问什么答什么）
+C:>exp
+2.命令模式
+exp scott/tiger file = emp.dmp tables=emp.dept;
+imp scott/tiger file = emp.dmp tables=emp;
+3.获取帮助
+exp help=y
+
+4.exp可以导出的对象：
+1)整库（整个数据库） full=y
+2)表空间 tablespaces=users
+grant exp_full_database to scott;//把角色赋给用户scott->赋权（注意权限！）
+D:\exp>exp scott/tiger file=users.dmp tablespaces=users
+3)方案 owner=
+D:\exp>exp scott/tiger file=scott.dmp owner=scott,……其他用户;
+4)表 tables=dept;
+5)导出表的子集（只要表的一部分）
+D:\exp>exp scott/tiger file=sal2500.dmp tables=emp query='where sal>2500'//缺少右引号（命令行>默认为输出）
+D:\exp>dir
+D:\exp>exp scott/tiger file=sal2500.dmp tables=emp query='where "sal>2500"'
+6)使用参数文件
+D:\exp>exp scott/tiger file
+
+nodepad中写，并保存p1.par:
+userid=scott/tiger
+file=p1.dmp
+tables=emp
+query='where sal>2500'
+
+D:\exp>exp parfile=p1.par
+
+
+imp类似exp
+导入imp的注意事项：
+1.ignore忽略创建错误：
+truncate table scott.emp;//表记录全部清空，但表还在
+drop table scott.emp;//删掉表
+imp scott/tiger file=emp1.dmp tables=emp;//导入时，需先创建这张表create table，导入出错->忽略创建错误
+imp scott/tiger file=emp1.dmp tables=emp ignore=y;//索引出错
+alter index  ……（粘贴）rebuild;
+imp scott/tiger file=emp1.dmp tables=emp ignore=y;
+2.fromuser,touser将用户导到哪去
+
+
+==============================
+练习：权限问题
+先将scott.emp中工资大于2500的记录导出，不导出约束contraints=N，
+然后导入到hr.emp里（换用户from/touser）
+
+F:\exp>exp scott/tiger file=sal2500.dmp tables=emp query='where "sal>2500"' constraints=N
+F:\exp>imp hr/hr file=sal2500.dmp fromuser=scott touser=hr tables=emp//无权限
+SYS@demo>grant imp_full_database to hr;
+F:\exp>imp hr/hr file=sal2500.dmp fromuser=scott touser=hr tables=emp constraints=N
+//创建用户hr
+create user hr identified by hr;
+grant create session to hr;
+
+EXP-00091: 正在导出有问题的统计信息。//字符集不匹配，要转换会出现乱码
+
+===============================================
+数据泵——快
+expdp/impdp
+并行---提高性能
+1.大任务
+2.足够多的空闲资源
+
+1.expdp help=y显示参数列表
+F:\exp>expdp scott/tiger file=F:\exp\empdp.dmp tables=emp       //报错??换db18c
+文件名里不能包含路径说明
+F:\exp>expdp scott/tiger file=empdp.dmp tables=emp 
+必须指定目录对象参数且不可为空
+创建目录
+set oracle_sid=db18c
+sqlplus / as sysdba
+create directory expdp_dest as 'F:\exp';
+F:\exp>expdp scott/tiger directory=expdp_dest file=empdp.dmp tables=emp  //scott用户对目录无权限
+sys@db18c>grant read,write on directory expdp_dest to scott;
+F:\exp>expdp scott/tiger directory=expdp_dest file=empdp.dmp tables=emp
+
+imp scott/tiger diretory=expdp_dest dumpfile=empdp.dmp tables=emp  //出错，表已存在
+imp scott/tiger diretory=expdp_dest dumpfile=empdp.dmp tables=emp table_exists_action=replace
+sys@db18c可select scott.emp
+
+2.remap_table=emp:emp1       表
+remap_schema=scott:hr         （源：目标）换到另一个用户下
+remap_tablespace=tbs1:tbs2    换到另一个表空间
+
+exclude=constraints;//不导出约束
+=========
+练习：
+利用expdp导出scott.emp ，不导出约束，然后导入到hr.emp1*（remap_table,remap_schema),且换一个表空间：
+select tablespace_name from dba_tables
+where owner='scott' and table_name='emp';//查scott.emp表在哪个表空间
+select name from v$tablespace;(remap_tablespace)
+
+F:\exp>expdp scott/tiger directory=expdp_dest dumpfile=scott.dmp tables=emp exclude=constraint
+创建目录
+set oracle_sid=db18c
+sqlplus / as sysdba
+create directory expdp_dest as 'F:\exp';
+grant read,write on directory expdp_dest to scott;
+
+grant read,write on directory expdp_dest to hr;
+impdp hr/hr directory=expdp_dest dumpfile=scott.dmp remap_table=emp:emp1   remap_schema=scott:hr remap_tablespace=users:demo；
+
+=================================
+数据库备份和恢复
+用户误操作
+
+1.使用logMiner日志挖掘器（工具）查询重做日志文件**
+
+1）启用数据库补充日志：记日志比较全面
+查询启动了吗？desc v$database
+supplemental_log_data_min
+select supplemental_log_data_min from v$database;//NO未启动
+alter database add/drop supplemental log data;//启用/关闭
+select supplemental_log_data_min from v$database;//YES启动了
+
+2）创建/产生一个数据字典文件：日志文件中—对象号：二进制/16进制记日记，人看不懂，对照数据字典文件——能对应看懂
+放到F:/dict
+create directory dict as 'F:\dict';//物理路径+逻辑路径。创建目录
+execute dbms_logmnr_d.build('v816dic.ora','DICT');//加单引号之后要大写
+
+3）开始一个事务：开始记日记
+scott:
+set oracle_sid=db18c
+sqlplus scott/tiger
+
+select empno,ename,sal from emp;
+update emp set sal=1800 where empno=7369;
+commit;//提交，记日记
+
+4)添加需要分析的日志文件
+sys db18c>select group#,status from v$log;
+select group#,member from v$logfile;
+查到日志文件名~F:\APP\LUYAO\ORADATA\DB18C\REDO03.LOG
+execute dbms_logmnr.add_logfile(LogFileName=>'F:\APP\LUYAO\ORADATA\DB18C\REDO03.LOG',options=>dbms_logmnr.new);
+
+5)执行分析：
+execute dbms_logmnr.start_logmnr(DictFileName=>'F:\dict\v816dic.ora');
+
+6)查询结果
+视图v$logmnr_contents中
+desc v$logmnr_contents
+alter session set nls_date_format='yyyy-mm-dd hh24:mi:ss';
+select timestamp,sql_redo from v$logmnr_contents 
+where SEG_NAME='EMP' and operation='update';//对哪个表操作的seg_name
+
+2.RMAN工具：Recover manage（恢复管理器，处理备份和恢复）
+两种方式：冷备份（数据库未打开，mount状态下的备份，不是shutdown状态下）、热备份（数据库打开时做的备份）
+1）冷备份：MOUNT
+2）热备份：打开数据库的备份
+
+认识RMAN：
+进入RMAN：
+F:\exp>rman
+备份一个表空间users
+backup tablespace users;//报错，未连接到目标数据库
+connect target sys/admin 
+backup tablespace users;//非归档模式只能做冷备份，不可做热备份
+sys@db18c>shutdown immediate
+sys@db18c>startup mount
+sys@db18c>alter database archievelog;//修改数据库日志模式（非存档->存档模式）
+sys@db18c>select log_mode from v$datafile;
+RMAN>backup tablespace users;
+RMAN>exit
+
+犯错：删数据文件
+sys db18c:select name from v$datafile;
+select * from scott.emp;
+alter tablespace users offline;
+目录夹中users01.dbf删掉
+sys db18c>select * from scott.emp;//查不到了，找备份
+
+F:\exp>rman targer /
+restore tablespace users;
+recover tablespace users;
+sys db18c>select * from scott.emp;//查到了
+
+RMAN>exit
+
+删掉数据文件
+F:\exp>rman target /
+RMAN>advise failure all;
+看修复文件脚本这个文件
+RMAN>repair failure;
+db18c>alter tablespace users online;
+可select

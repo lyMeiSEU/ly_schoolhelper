@@ -1,0 +1,92 @@
+数据库管理：
+手工创建一个数据库：（demo）
+1.创建oracle服务  之前有的服务oracleservicedb18c
+命令：oradim（管理员权限）
+oradim -new -sid demo
+输入 Oracle 服务用户的口令:626yao817
+2.将demo设为当前sid
+set oracle_sid=demo
+sqlplus sys/admin as sysdba
+3.创建/编辑 初始化参数文件（二进制文件不可修改）
+ create pfile from spfile;//spfile->pfile
+F:/app/oracle/product/18.3.0/database/INITDB18C.ORA右击粘贴
+改名INITdemo.ORA
+内容修改：查找全部替换db18c->demo
+4.创建（初始化参数文件中出现的）相应的目录结构:新建对应的文件夹
+5.启动例程（仅有初始化参数文件）
+SQL>startup nomount
+6.创建数据库，执行创建数据库的语句：
+select name from v$datafile;得到datafile的路径
+create database demo
+datafile 'F:\app\luyao\oradata\demo\system01.dbf' size 400m
+sysaux datafile 'F:\app\luyao\oradata\demo\sysaux01.dbf' size 400m
+undo tablespace undotbs1 datafile 'F:\app\luyao\oradata\demo\undotbs01.dbf' size 50m
+default temporary tablespace temp tempfile 'F:\app\luyao\oradata\demo\temp01.dbf' size 400m
+logfile 
+group 1 ('F:\app\luyao\oradata\demo\redo01.log') size 10m,
+group 2 ('F:\app\luyao\oradata\demo\redo02.log') size 10m,
+group 3 ('F:\app\luyao\oradata\demo\redo03.log') size 10m;
+
+控制文件（创建数据库时，控制文件会自动创建）
+连接重做日志文件
+数据文件
+
+三个表空间必须在创建数据库时创建（system,sysaux,undo）
+insert into st values(1,'Tom');
+数据字典表
+desc user_tables此对象不存在
+alter session set nls_language=english;
+
+7.创建数据字典视图
+catalog.sql创建数据字典视图 sysdba运行脚本
+@？/rdbms/admin/catalog
+自动创建
+desc user_tables
+
+8.注册表编辑器
+oracle/key_Oradb18cHome 默认db18c
+
+9.创建spfile
+show parameter spfile无spfile
+create spfile from pfile;
+
+10.创建口令验证文件
+18.3.0/database/pwddb18c.ora
+exit
+orapwd file=F:\app\oracle\product\18.3.0\database\pwddemo.ora password=admin1#23
+
+11.创建oracle 的内部包：所有的包都不存在，调用脚本
+desc row_id……
+@?/rdbms/admin/catproc
+
+12.创建scott方案、对象：
+18.3.0/rdbms/admin/scott.sql
+sqlplus / as sysdba
+@?/rdbms/admin/scott
+alter user scott identified by tiger;//改密码
+
+conn scott/tiger
+调用脚本utlsample.sql
+
+13.加载产品概要信息，先联system/manager,加载脚本：
+@?/sqlplus/admin/pupbld.sql
+14.配置监听器（服务器端）和服务名（客户端），
+net manager
+再原有Listener添加数据库，主机名
+重启监听：lsnrctl stop，再start
+配置服务名 全demo
+
+
+15.配置em express
+conn sys/admin as sysdba;
+select dbms_xdb.gethttpport from dual;
+execute dbms_xdb.sethttpport(6789);
+select dbms_xdb.gethttpport from dual;
+http://LAPTOP-5U5N2LPC:6789/em。。。。。。。。。。。？
+
+=============================
+修改sqlplus默认提示符
+SQL> set sqlprompt "_user'@'_connect_identifier> "
+SYS@db18c>
+
+

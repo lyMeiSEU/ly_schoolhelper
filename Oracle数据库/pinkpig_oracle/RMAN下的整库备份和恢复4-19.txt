@@ -1,0 +1,85 @@
+RMAN下的整库备份和恢复（归档模式）
+
+1   创建测试表
+create table scott.hotbak(a varchar(30)) tablespace users;
+insert into scott.hotbak values('Before Backup');
+2   备份前的准备
+备份spfile
+备份控制文件
+
+rman target /
+RMAN> show all;
+RMAN>CONFIGURE CONTROLFILE AUTOBACKUP ON;
+
+备份数据文件
+
+channel(通道)
+RMAN>CONFIGURE CHANNEL DEVICE TYPE DISK FORMAT   'd:\demobak\%d_%u_%T';
+RMAN> CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK TO 'D:\demobak\auto\%F';
+
+备份归档日志文件
+RMAN> alter system archive log current;
+
+3   开始备份
+RMAN> backup database plus archivelog;
+
+4   增加新的记录
+insert into scott.hotbak values('After Backup');
+commit;
+
+5   复制联机重做日志文件
+新建了D:\demobak\log文件夹
+SYS@demo>select member from v$logfile;
+复制需要的日志文件至D:\demobak\log文件夹
+
+
+6   破坏数据库
+运行DBCA,删除数据库
+
+恢复
+
+7   恢复初始化参数文件(spfile)
+oradim -new -sid demo (用管理员身份)
+
+rman target /
+startup nomount
+restore spfile from 'D:\demobak\auto\C-3748002068-20190419-01';
+
+8   创建相应的目录结构
+D:\app\oracle\admin\demo
+D:\app\oracle\oradata\demo
+D:\app\oracle\fast_recovery_area\demo
+重新启动
+shutdown immediate
+startup nomount
+
+9   恢复控制文件
+restore controlfile from 'D:\demobak\auto\C-3748002068-20190419-01';
+alter database mount;
+
+10  恢复数据文件
+restore database;
+
+11  将前面复制的日志文件复制到D:\app\oracle\oradata\demo文件夹
+recover database;
+
+12  打开数据库
+RMAN> alter database open resetlogs;
+
+13   检查数据
+select * from scott.hotbak;
+
+结束！
+
+
+
+
+
+
+
+
+
+
+
+
+
