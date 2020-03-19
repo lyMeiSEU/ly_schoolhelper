@@ -25,10 +25,12 @@ import random
 sys.path.append('../单点枚举_1.27/')
 sys.path.append('../单点智能DQN1/')
 sys.path.append('../人工交互_1.27/')
+sys.path.append('../时段划分/')
 
 from simulation import SinglePointSimulation
 from runner import Runner
 from interaction import Interaction
+from division import Division
 
 
 class MysumoUtil():
@@ -48,12 +50,24 @@ class MysumoUtil():
             if Js["method"]=="InteractionSumo":
                 print(str(Js["data"]["phase1_green"])+' '+str(Js["data"]["phase1_yellow"])+' '+str(Js["data"]["phase2_green"])+' '+str(Js["data"]["phase2_yellow"])+' '+str(Js["data"]["phase3_green"])+' '+str(Js["data"]["phase3_yellow"]))
                 return str(self.InteractionSumo(Js["data"]["phase1_green"],Js["data"]["phase1_yellow"],Js["data"]["phase2_green"],Js["data"]["phase2_yellow"],Js["data"]["phase3_green"],Js["data"]["phase3_yellow"]))
+            if Js['method']=="Division":
+                print(Js["data"]["n"],Js["data"]["X"])
+                return str(self.Division(Js["data"]["n"],Js["data"]["X"]))
             
         except Exception as e:
             mysumoutil = MysumoUtil()
             return str(e)
         finally:
             mysumoutil = MysumoUtil()
+    
+    def Division(self,n,X):
+        try:
+            division=Division()
+            return division.init(n,X)
+        except Exception as e:
+            mysumoutil = MysumoUtil()
+            return str(e)
+
 
     def SingleRoadSUMO(self,min_greentimme,max_greentimme,interval):
         try:
