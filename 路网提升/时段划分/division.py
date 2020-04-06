@@ -160,7 +160,7 @@ class Division():
         if not isinstance(X,int) or X<=1:
             return "输入不合法，请重新输入"
         filePath="./csv"
-        savePath="./result"
+        savePath="/var/www/html/public/时段划分"
         directoryFiles=[f for f in listdir(filePath) ]
         for i in directoryFiles:
             print(i)

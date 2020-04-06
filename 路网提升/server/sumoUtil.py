@@ -9,8 +9,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import optparse
 import subprocess
-import sumolib
-import traci
 import time
 import re
 import xml.dom.minidom
@@ -26,7 +24,11 @@ sys.path.append('../单点枚举_1.27/')
 sys.path.append('../单点智能DQN1/')
 sys.path.append('../人工交互_1.27/')
 sys.path.append('../时段划分/')
+sys.path.append('/usr/share/sumo/tools') #import traci,sumolib
+sumoBinary = "/usr/bin/sumo" #sumo or sumo-gui connection
 
+import sumolib
+import traci
 from simulation import SinglePointSimulation
 from runner import Runner
 from interaction import Interaction

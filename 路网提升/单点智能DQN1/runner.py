@@ -165,10 +165,10 @@ def run(RL, number_of_simulation, ep_steps):
     traveltimeList = []
     for ep in range(ep_steps):
         options = get_options()
-        if options.nogui:
-            sumoBinary = checkBinary('sumo')
-        else:
-            sumoBinary = checkBinary('sumo')
+        # if options.nogui:
+        #     sumoBinary = checkBinary('sumo')
+        # else:
+        sumoBinary = checkBinary('sumo-gui')
         traci.start([sumoBinary, "-c", os.path.dirname(os.path.abspath(__file__))+"/simulation.sumocfg"])
 
         time_step = 0
@@ -273,7 +273,7 @@ def run(RL, number_of_simulation, ep_steps):
         reward_list.append(ep_reward)
         traveltime = traveltime/3600
         traveltimeList.append(traveltime)
-        file=open("../result/实时在线/"+"run结果.txt","w",encoding='utf-8')
+        file=open("/var/www/html/public/实时在线/"+"run结果.txt","w",encoding='utf-8')
         file.write(str(ep)+"th ep_reward:"+str(ep_reward)+";travel time:"+str(traveltime))
         print(str(ep)+"th ep_reward:"+str(ep_reward)+";travel time:"+str(traveltime))
 
@@ -313,7 +313,7 @@ class Runner():
         plt.ylabel('veh*h')
         plt.grid(True)
         #plt.show()
-        plt.savefig('../result/实时在线/output.png')
+        plt.savefig('/var/www/html/public/实时在线/output.png')
         plt.close()
 
 if __name__ == "__main__":

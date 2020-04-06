@@ -241,10 +241,10 @@ class Interaction():
         dom = xml.dom.minidom.parse(os.path.dirname(os.path.abspath(__file__))+'/output-tripinfos.xml')
         options = get_options()    
 
-        if options.nogui:
-            sumoBinary = checkBinary('sumo')
-        else:
-            sumoBinary = checkBinary('sumo')
+        # if options.nogui:
+        #     sumoBinary = checkBinary('sumo')
+        # else:
+        sumoBinary = checkBinary('sumo-gui')
 
         #---------------------------------------
         #输入人工交互配时方案，得到评价结果
@@ -304,7 +304,7 @@ class Interaction():
             speeds.append(speed)
             waitingtime.append(wT_tran)
 
-        file=open("../result/人工交互/"+"最终方案输出.txt","w",encoding='utf-8')
+        file=open("/var/www/html/public/人工交互/"+"最终方案输出.txt","w",encoding='utf-8')
         file.write("人工交互方案："+'\n')
         file.write("总周期时间： " + str(sum(phase)) + 's'+'\n')
         
@@ -328,7 +328,7 @@ class Interaction():
             "第三黄灯时间：" + str(phase3_yellow))
         print("-----------------------------------------------------------------------------------------------------------------------------------------")
 
-        file=open("../result/人工交互/"+"人工交互优化方案评价结果输出.txt","w",encoding='utf-8')
+        file=open("/var/www/html/public/人工交互/"+"人工交互优化方案评价结果输出.txt","w",encoding='utf-8')
         file.write("人工交互优化方案评价结果输出:"+'\n')
         file.write("单位时间通过车辆数(辆/s):"+str(int(np.min(traveltime)/3600))+'\n')
         

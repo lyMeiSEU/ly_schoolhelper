@@ -275,8 +275,8 @@ class SinglePointSimulation():
         P=Process(target=self.run)
         return P.start()
     def run(self):
-        os.system('rm /home/ubuntu/路网提升/result/定时周期/最终*.txt')
-        os.system('rm /home/ubuntu/路网提升/result/定时周期/定时周期优化最优方案.txt')
+        os.system('rm /var/www/html/public/定时周期/最终*.txt')
+        os.system('rm /var/www/html/public/定时周期/定时周期优化最优方案.txt')
         if 'SUMO_HOME' in os.environ:
             tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
             sys.path.append(tools)
@@ -308,10 +308,10 @@ class SinglePointSimulation():
         # 输入最大周期时间（由最大、最小绿灯时间算得）
         max_cycletime = maxmum + min_greentimme*3 + 3*3
         options = get_options()    
-        # if options.nogui:
-        sumoBinary = checkBinary('sumo')
+        # # if options.nogui:
+        # sumoBinary = checkBinary('sumo')
         # else:
-        #     sumoBinary = checkBinary('sumo-gui')
+        sumoBinary = checkBinary('sumo-gui')
         # number of action sets and features
         simulation_time = 0
         Game_Name = "Cross"
@@ -340,7 +340,7 @@ class SinglePointSimulation():
                         p = [tp1,tp2,tp3]
                         P.append(p)
                         # 输出每一次迭代的训练日志
-                        file=open("../result/定时周期/10s迭代第"+str(simulation_time)+"次仿真：日志.txt",'w',encoding='utf-8')
+                        file=open("/var/www/html/public/定时周期/10s迭代第"+str(simulation_time)+"次仿真：日志.txt",'w',encoding='utf-8')
                         
                         file.writelines(str("第"+str(simulation_time)+"次仿真：")+'\n')
                         file.writelines("第一主相位时间："+str(tp1)+'s\n'+
@@ -394,13 +394,13 @@ class SinglePointSimulation():
         plt.plot(np.arange(len(SystemTravelTime)), SystemTravelTime)
         plt.ylabel('System Travel Time')
         plt.xlabel('Episodes')
-        plt.savefig("../result/定时周期/"+'1.png')
+        plt.savefig("/var/www/html/public/定时周期/"+'1.png')
         
         plt.close()
         # print the best tp we found
         [ best_10s_1 , best_10s_2 , best_10s_3 ] = P[SystemTravelTime.index(np.min(SystemTravelTime))]
 
-        file=open("../result/定时周期/"+"10s迭代的最终输出结果.txt",'w',encoding='utf-8')
+        file=open("/var/www/html/public/定时周期/"+"10s迭代的最终输出结果.txt",'w',encoding='utf-8')
         # 输出10s迭代的最终输出结果
         file.writelines("以%ds为间隔迭代的初始最优结果为：" % interval)
         file.writelines("第一主相位时间："+str(best_10s_1)+"第二主相位时间："+str(best_10s_2)+"第三主相位时间："+str(best_10s_3)+"第一黄灯时间："+str(3)+"第二黄灯时间："+str(3)+"第三黄灯时间："+str(3))
@@ -436,7 +436,7 @@ class SinglePointSimulation():
                     SystemTravelTime1.append(EpisodeTotalTravelTime)
                     p = [tp1, tp2, tp3]
                     P1.append(p)
-                    file=open("../result/定时周期/1s迭代第"+str(simulation_time1)+"次仿真：日志.txt",'w',encoding='utf-8')
+                    file=open("/var/www/html/public/定时周期/1s迭代第"+str(simulation_time1)+"次仿真：日志.txt",'w',encoding='utf-8')
                     
                     file.writelines(str("第"+str(simulation_time1)+"次仿真：")+'\n')
                     file.writelines("第一主相位时间：" + str(tp1) + 's\n' +
@@ -495,14 +495,14 @@ class SinglePointSimulation():
         plt.ylabel('System Travel Time')
         plt.xlabel('Episodes')
         
-        plt.savefig("../result/定时周期/"+'2.png')
+        plt.savefig("/var/www/html/public/定时周期/"+'2.png')
         plt.close()
         best_index = np.argpartition(SystemTravelTime1, 10)
         for i in range(1, 11):
             [best_1s_1, best_1s_2, best_1s_3] = P1[SystemTravelTime1.index(np.min(SystemTravelTime1))]
         [best_1s_1, best_1s_2, best_1s_3] = P1[SystemTravelTime1.index(np.min(SystemTravelTime1))]
         phasetime = [best_1s_1, best_1s_2, best_1s_3,3,3,3]
-        file=open("../result/定时周期/"+"定时周期优化最优方案.txt",'w',encoding='utf-8')
+        file=open("/var/www/html/public/定时周期/"+"定时周期优化最优方案.txt",'w',encoding='utf-8')
         file.writelines("定时周期优化最优方案："+'\n')
         file.writelines("总周期时间： " + str(sum(phasetime)) + 's')
         file.writelines(str("第一主相位时间：" + str(best_1s_1) + 's\n' +
@@ -556,7 +556,7 @@ class SinglePointSimulation():
             duration.append(dura_tran)
             speeds.append(speed)
             waitingtime.append(wT_tran)
-        file=open("../result/定时周期/"+"最终方案输出.txt",'w',encoding='utf-8')
+        file=open("/var/www/html/public/定时周期/"+"最终方案输出.txt",'w',encoding='utf-8')
         # 最终方案输出
         file.writelines("定时周期优化最优方案：")
         file.writelines("总周期时间： " + str(sum(phasetime)) + 's\n')
@@ -579,7 +579,7 @@ class SinglePointSimulation():
             "第三主相位时间：" + str(best_1s_3) + 's\n' +
             "第三黄灯时间：" + str(3))
         print("-----------------------------------------------------------------------------------------------------------------------------------------")
-        file=open("../result/定时周期/"+"最终方案评价结果输出.txt",'w',encoding='utf-8')
+        file=open("/var/www/html/public/定时周期/"+"最终方案评价结果输出.txt",'w',encoding='utf-8')
         # 最终方案评价结果输出
         file.writelines("最终方案评价结果输出:"+'\n')
         file.writelines("单位时间通过车辆数(辆/s):"+ str(int(np.min(SystemTravelTime1)/3600))+'\n')

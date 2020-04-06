@@ -292,7 +292,7 @@ if __name__ == "__main__":
     plt.ylabel('veh*h')
     plt.grid(True)
     plt.show()
-    plt.savefig('figure/output.png')
+    plt.savefig('/var/www/html/public/output.png')
     plt.close()
 
 

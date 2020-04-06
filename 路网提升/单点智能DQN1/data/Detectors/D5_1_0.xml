@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 02/08/20 12:28:02 by Eclipse SUMO Version 1.4.0
+<!-- generated on 04/05/20 22:11:47 by Eclipse SUMO GUI Version 1.4.0
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
-        <net-file value="D:\GitHub\ly_schoolhelper\路网提升\单点智能DQN1/gnet.net.xml"/>
-        <route-files value="D:\GitHub\ly_schoolhelper\路网提升\单点智能DQN1/grou.rou.xml"/>
-        <additional-files value="D:\GitHub\ly_schoolhelper\路网提升\单点智能DQN1/gadd.additional.xml"/>
+        <net-file value="d:\GitHub\ly_schoolhelper\路网提升\单点智能DQN1/gnet.net.xml"/>
+        <route-files value="d:\GitHub\ly_schoolhelper\路网提升\单点智能DQN1/grou.rou.xml"/>
+        <additional-files value="d:\GitHub\ly_schoolhelper\路网提升\单点智能DQN1/gadd.additional.xml"/>
     </input>
 
     <output>
-        <queue-output value="D:\GitHub\ly_schoolhelper\路网提升\单点智能DQN1/Queue.xml"/>
-        <summary-output value="D:\GitHub\ly_schoolhelper\路网提升\单点智能DQN1/Summary.xml"/>
-        <tripinfo-output value="D:\GitHub\ly_schoolhelper\路网提升\单点智能DQN1/output-tripinfos.xml"/>
+        <queue-output value="d:\GitHub\ly_schoolhelper\路网提升\单点智能DQN1/Queue.xml"/>
+        <summary-output value="d:\GitHub\ly_schoolhelper\路网提升\单点智能DQN1/Summary.xml"/>
+        <tripinfo-output value="d:\GitHub\ly_schoolhelper\路网提升\单点智能DQN1/output-tripinfos.xml"/>
     </output>
 
     <time>
@@ -25,11 +25,11 @@
     </processing>
 
     <traci_server>
-        <remote-port value="49204"/>
+        <remote-port value="53543"/>
     </traci_server>
 
     <gui_only>
-        <gui-settings-file value="D:\GitHub\ly_schoolhelper\路网提升\单点智能DQN1/gview.view.xml"/>
+        <gui-settings-file value="d:\GitHub\ly_schoolhelper\路网提升\单点智能DQN1/gview.view.xml"/>
         <quit-on-end value="true"/>
         <start value="true"/>
     </gui_only>
@@ -60,4 +60,6 @@
     <interval begin="570.00" end="600.00" id="D5_1_0" nVehContrib="1" flow="120.00" occupancy="0.94" speed="17.78" harmonicMeanSpeed="17.78" length="5.00" nVehEntered="1"/>
     <interval begin="600.00" end="630.00" id="D5_1_0" nVehContrib="12" flow="1440.00" occupancy="9.85" speed="20.41" harmonicMeanSpeed="20.30" length="5.00" nVehEntered="12"/>
     <interval begin="630.00" end="660.00" id="D5_1_0" nVehContrib="4" flow="480.00" occupancy="2.11" speed="32.80" harmonicMeanSpeed="31.67" length="5.00" nVehEntered="4"/>
-    <interval begin="660.00" end="690.00" id="D5_1_0" nVehContrib="1" flow="120.00" occupancy="0.84" speed="19.73" harmonicMeanSpeed="19.73" length="5.
+    <interval begin="660.00" end="690.00" id="D5_1_0" nVehContrib="1" flow="120.00" occupancy="0.84" speed="19.73" harmonicMeanSpeed="19.73" length="5.00" nVehEntered="1"/>
+    <interval begin="690.00" end="693.00" id="D5_1_0" nVehContrib="0" flow="0.00" occupancy="0.00" speed="-1.00" harmonicMeanSpeed="-1.00" length="-1.00" nVehEntered="0"/>
+</detector>
